@@ -12,7 +12,6 @@ public class BulletSystem {
 	public int maxBullets;
 	public int maxBulletsStock;
 
-
 	public event EventHandler OnBulletsChange;
 
 	public int GetCurrentBullets ()

@@ -9,7 +9,6 @@ public class ArmorItemPickUp : ItemPickUp {
 	public override bool PickUp (CharacterBase cb, bool clickedPickUp = false)
 	{
 		cb.healthSystem.HealArmor (armorAmount);
-		DestroyItem ();
 		return true;
 	}
 

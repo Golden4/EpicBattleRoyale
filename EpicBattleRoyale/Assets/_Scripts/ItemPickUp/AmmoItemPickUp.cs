@@ -21,7 +21,6 @@ public class AmmoItemPickUp : ItemPickUp {
 						AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
 						if (automaticWeapon.weaponType == bulletType) {
 							automaticWeapon.bulletSystem.GiveBulletsStock (20);
-							DestroyItem ();
 							return true;
 						}
 					}

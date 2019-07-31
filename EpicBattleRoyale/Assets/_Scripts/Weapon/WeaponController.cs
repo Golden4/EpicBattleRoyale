@@ -41,7 +41,6 @@ public class WeaponController : MonoBehaviour {
 	{
 		Weapon newWeapon;
 		int emptySlot = GetEmptySlot ();
-		Debug.Log ("emptySlot " + emptySlot);
 		if (emptySlot >= 0) {
 			newWeapon = GiveWeapon (weapon, emptySlot);
 		} else {

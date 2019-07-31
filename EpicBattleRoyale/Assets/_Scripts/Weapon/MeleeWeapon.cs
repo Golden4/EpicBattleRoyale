@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class MeleeWeapon : Weapon {
 
@@ -11,23 +12,23 @@ public class MeleeWeapon : Weapon {
 
 	State curState;
 
-
 	void Update ()
 	{
-		
 		if (!isActive)
 			return;
-
+		
 		switch (curState) {
 		case State.Normal:
-
-			if (Input.GetButton ("Fire1")) {
-
+			
+			shootingSide = CrossPlatformInputManager.GetAxisRaw ("Shoot");
+			if (Mathf.Abs (shootingSide) > 0) {
+				wc.cb.PlayShootAnimation (fireRate, shootingSide < 0);
 				curState = State.Beating;
 			}
 			break;
 		case State.Beating:
-			if (!Input.GetButton ("Fire1")) {
+			if (Mathf.Abs (shootingSide) < 0) {
+				wc.cb.StopShootAnimation ();
 				curState = State.Normal;
 			}
 			break;

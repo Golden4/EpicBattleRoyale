@@ -26,6 +26,8 @@ public class Weapon : MonoBehaviour {
 		ShotGun
 	}
 
+	public float shootingSide;
+
 	public float fireRate = 0.05f;
 
 	/*	[Header ("Muzzle Flash and Tracer")]

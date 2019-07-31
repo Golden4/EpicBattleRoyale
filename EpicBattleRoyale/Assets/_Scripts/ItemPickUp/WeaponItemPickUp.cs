@@ -11,20 +11,18 @@ public class WeaponItemPickUp : ItemPickUp {
 		WeaponController wc = cb.GetComponent <WeaponController> ();
 		if (wc != null) {
 			Weapon weapon = wc.FindWeaponInInventory (weaponName);
-			Debug.Log ("sdasdasd" + cb.name + "  " + clickedPickUp);
 			if (weapon == null) {
 
 				if (wc.InventoryFull ()) {
 					if (clickedPickUp) {
 						wc.GiveWeapon (weaponName);
-						DestroyItem ();
+						return true;
+					} else {
+						return false;
 					}
 				} else {
 					wc.GiveWeapon (weaponName);
-					DestroyItem ();
 				}
-
-
 				return true;
 			} else {
 				if (weapon.GetType () == typeof(AutomaticWeapon)) {
@@ -36,8 +34,6 @@ public class WeaponItemPickUp : ItemPickUp {
 					automaticWeapon.bulletSystem.GiveBulletsStock (5);
 
 					/*Debug.Log (bulletInfo.ToString ());*/
-
-					DestroyItem ();
 					return true;
 				}
 			}

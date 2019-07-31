@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ItemPickUp : MonoBehaviour {
 	
@@ -61,6 +62,8 @@ public class ItemPickUp : MonoBehaviour {
 		return go.GetComponent<ItemPickUp> ();
 	}*/
 
+	public static EventHandler OnPickUp;
+
 	public virtual void Setup (Vector3 position)
 	{
 		transform.position = position;
@@ -78,28 +81,26 @@ public class ItemPickUp : MonoBehaviour {
 
 	public void DestroyItem ()
 	{
+		ScreenUI.Ins.mobileInputsUI.HidePickUpBtn ();
 		Destroy (gameObject);
 	}
 
 	CharacterBase cb;
-
-	void Update ()
-	{
-		if (cb != null) {
-			if (Input.GetKeyDown (KeyCode.Z)) {
-				PickUp (cb, true);
-			}
-		}
-	}
 
 	void OnTriggerEnter2D (Collider2D col)
 	{
 		cb = col.transform.GetComponent <CharacterBase> ();
 
 		if (cb != null) {
-			PickUp (cb);
+			if (!PickUp (cb)) {
+				ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn (() => {
+					if (PickUp (cb, true))
+						DestroyItem ();
+				});
+			} else {
+				DestroyItem ();
+			}
 		}
-		Debug.Log ("OnTriggerEnter2D " + col.name);
 	}
 
 	void OnTriggerExit2D (Collider2D col)
@@ -107,10 +108,9 @@ public class ItemPickUp : MonoBehaviour {
 		cb = col.transform.GetComponent <CharacterBase> ();
 
 		if (cb != null) {
+			ScreenUI.Ins.mobileInputsUI.HidePickUpBtn ();
 			cb = null;
 		}
-
-		Debug.Log ("OnTriggerExit2D " + col.name);
 	}
 
 }

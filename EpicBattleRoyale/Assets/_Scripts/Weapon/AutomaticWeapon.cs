@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class AutomaticWeapon : Weapon {
 	
@@ -62,10 +63,12 @@ public class AutomaticWeapon : Weapon {
 		switch (curState) {
 		case State.Normal:
 			
-			if (Input.GetKeyDown (KeyCode.R))
-				Reload ();
-			
-			if (Input.GetButton ("Fire1")) {
+			/*if (Input.GetKeyDown (KeyCode.R))
+				Reload ();*/
+
+			shootingSide = CrossPlatformInputManager.GetAxisRaw ("Shoot");
+
+			if (Mathf.Abs (shootingSide) > 0) {
 				isFiring = true;
 				if (Bullets <= 0) {
 					Reload ();
@@ -76,6 +79,7 @@ public class AutomaticWeapon : Weapon {
 			}
 			break;
 		case State.Shooting:
+			
 			if (Bullets <= 0) {
 				Reload ();
 			}
@@ -91,13 +95,18 @@ public class AutomaticWeapon : Weapon {
 
 	public bool Reload ()
 	{
-		if (curState != State.Reloading && bulletSystem.CanReload ()) {
-			curState = State.Normal;
+		if (CanReload ()) {
+			/*curState = State.Normal;*/
 			StartCoroutine ("ReloadCoroutine");
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	public bool CanReload ()
+	{
+		return curState != State.Reloading && bulletSystem.CanReload ();
 	}
 
 	public override bool isShooting ()
@@ -130,10 +139,9 @@ public class AutomaticWeapon : Weapon {
 	IEnumerator ShootCoroutine ()
 	{
 		while (curState == State.Shooting && isActive && isFiring && Bullets > 0) {
-			bool shootingSide = Input.mousePosition.x > Screen.width / 2; 
-			wc.cb.PlayShootAnimation (shootAnimationTime, shootingSide);
+			wc.cb.PlayShootAnimation (shootAnimationTime, shootingSide < 0);
 			yield return new WaitForSeconds (shootAnimationTime / 2f);
-			Shot (shootingSide);
+			Shot (shootingSide < 0);
 			yield return new WaitForSeconds (shootAnimationTime / 2f);
 			wc.cb.StopShootAnimation ();
 			yield return new WaitForSeconds (fireRate - shootAnimationTime);
@@ -145,18 +153,22 @@ public class AutomaticWeapon : Weapon {
 
 	IEnumerator ReloadCoroutine ()
 	{
+		curState = State.Reloading;
+
 		wc.cb.PlayReloadAnimation (reloadTime);
 
 		if (OnReload != null)
 			OnReload (reloadTime);
 		
-		curState = State.Reloading;
 		Debug.Log ("Reloading " + reloadTime + "s.");
+
 		yield return new WaitForSeconds (reloadTime);
+
 		if (curState == State.Reloading && isActive) {
 			bulletSystem.ReloadBullets ();
 			curState = State.Normal;
 			wc.cb.StopReloadAnimation ();
+
 			if (OnReloadComplete != null)
 				OnReloadComplete ();
 			Debug.Log ("Reload was done");

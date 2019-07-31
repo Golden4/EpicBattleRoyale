@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class CharacterBase : MonoBehaviour {
 	public float maxSpeed = 4;
@@ -17,8 +18,8 @@ public class CharacterBase : MonoBehaviour {
 	Rigidbody2D rb;
 
 	public Weapon.WeaponType weaponType;
-	public bool shootingSideRight;
 	public bool isShooting;
+	bool shootingSide;
 	public float move;
 	bool isDead;
 
@@ -35,26 +36,49 @@ public class CharacterBase : MonoBehaviour {
 
 	}
 
+	float jumpDelay;
+
 	void Update ()
 	{
-		if (!isJumping) {
-			isJumping = Input.GetButtonDown ("Jump");
+		jumpDelay -= Time.deltaTime;
+
+		if (jumpDelay < 0) {
+			if (!isJumping) {
+				isJumping = CrossPlatformInputManager.GetButtonDown ("Jump");
+
+				if (!isJumping)
+					isJumping = Input.GetButtonDown ("Jump");
+			}
 		}
 	}
 
 	private void FixedUpdate ()
 	{
 		isGrounded = false;
-		Collider2D[] colliders = Physics2D.OverlapCircleAll (groundCheck.position, k_GroundedRadius, whatIsGround);
+
+		Debug.DrawRay (groundCheck.position, Vector3.down * .2f);
+
+		RaycastHit2D[] hit = Physics2D.RaycastAll (groundCheck.position, Vector3.down, .2f);
+		//Debug.Log (hit.collider.name);
+/*		Collider2D[] colliders = Physics2D.OverlapCircleAll (groundCheck.position, k_GroundedRadius, whatIsGround);
 		for (int i = 0; i < colliders.Length; i++) {
 			if (colliders [i].gameObject != gameObject)
 				isGrounded = true;
+		}*/
+
+		for (int i = 0; i < hit.Length; i++) {
+			if (hit [i].collider != null && hit [i].collider.gameObject != gameObject) {
+				isGrounded = true;
+			}
 		}
 
 		anim.SetBool ("Jump", !isGrounded);
 
-		move = Input.GetAxisRaw ("Horizontal");
-		bool shootingSide = Input.mousePosition.x > Screen.width / 2; 
+		move = Mathf.RoundToInt (CrossPlatformInputManager.GetAxisRaw ("Horizontal"));
+
+		if (move == 0)
+			move = Input.GetAxisRaw ("Horizontal");
+		
 		Move (move, isShooting, isJumping, shootingSide);
 		isJumping = false;
 
@@ -85,6 +109,7 @@ public class CharacterBase : MonoBehaviour {
 	public void PlayShootAnimation (float fireRate, bool shootingSide)
 	{
 		Flip (shootingSide);
+		this.shootingSide = shootingSide;
 		anim.SetFloat ("ShootingTime", 1f / fireRate);
 		anim.Play ("Shoot" + weaponType.ToString (), 1);
 		anim.SetBool ("Fire", true);
@@ -136,6 +161,7 @@ public class CharacterBase : MonoBehaviour {
 		}
 		if (isGrounded && jump && !anim.GetBool ("Jump")) {
 			isGrounded = false;
+			jumpDelay = .2f;
 			rb.AddForce (new Vector2 (0f, jumpForce));
 		}
 	}
