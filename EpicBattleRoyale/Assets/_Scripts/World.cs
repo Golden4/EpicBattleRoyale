@@ -19,6 +19,8 @@ public class World : MonoBehaviour {
 		SpawnItemPickUpWeapon (GameAssets.WeaponsList.Beretta, new Vector3 (5, -2));
 		SpawnItemPickUpWeapon (GameAssets.WeaponsList.SniperRiffle, new Vector3 (3, -2));
 		SpawnItemPickUpHealth (GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3 (-3, -2));
+		SpawnItemPickUpAmmo (GameAssets.PickUpItemsData.AmmoPickUpList.automaticWeapon, new Vector3 (-8, -2));
+		SpawnItemPickUpArmor (GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3 (8, -2));
 		//SpawnItemPickUp (ItemPickUp.ItemPickUpType.Weapon, );
 	}
 

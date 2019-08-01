@@ -34,7 +34,7 @@ public class WeaponsUI : MonoBehaviour {
 					true,
 					i == weaponController.GetCurrentActiveWeaponIndex (),
 					delegate {
-						weaponController.SwitchWeapon (index);
+						weaponController.SwitchWeapon (index, true);
 					},
 					automaticWeapon.GetWeaponSprite (),
 					automaticWeapon.bulletSystem
@@ -47,7 +47,7 @@ public class WeaponsUI : MonoBehaviour {
 					true,
 					i == weaponController.GetCurrentActiveWeaponIndex (),
 					delegate {
-						weaponController.SwitchWeapon (index);
+						weaponController.SwitchWeapon (index, true);
 					},
 					meleeWeapon.GetWeaponSprite ()
 				);

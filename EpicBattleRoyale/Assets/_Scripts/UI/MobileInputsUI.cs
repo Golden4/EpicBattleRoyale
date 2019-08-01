@@ -41,15 +41,16 @@ public class MobileInputsUI : MonoBehaviour {
 	}
 
 
-	public void SetReloadTimeProgress ()
+	public void SetReloadTimeProgress (float progress)
 	{
 		reloadImageProgress.gameObject.SetActive (true);
-		reloadImageProgress.fillAmount = reloadProgress / reloadTime;
+		reloadImageProgress.fillAmount = progress / reloadTime;
 	}
 
 	public void HideReloadTimeProgress ()
 	{
 		reloadImageProgress.gameObject.SetActive (false);
+		reloadProgress = 0;
 	}
 
 	public void Setup (WeaponController wc)
@@ -76,13 +77,20 @@ public class MobileInputsUI : MonoBehaviour {
 			}
 
 			if (reloadProgress > 0) {
-				Debug.Log (reloadProgress);
-				reloadProgress -= Time.deltaTime;
-				SetReloadTimeProgress ();
-			} else if (reloadProgress < 0) {
-					reloadProgress = 0;
+				if (aw.curState == AutomaticWeapon.State.Reloading) {
+					reloadProgress -= Time.deltaTime;
+					SetReloadTimeProgress (reloadProgress);
+				} else {
+					SetReloadTimeProgress (0);
 					HideReloadTimeProgress ();
 				}
+			} else if (reloadProgress < 0) {
+					HideReloadTimeProgress ();
+				}
+
+		} else {
+			HideReloadBtn ();
+			HideReloadTimeProgress ();
 		}
 	}
 

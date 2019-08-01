@@ -11,8 +11,9 @@ public class ScreenUI : ScreenBase {
 	public override void OnInit ()
 	{
 		Ins = this;
-		healthArmorUI.Setup (Player.Ins.characterBase.healthSystem);
-		weaponsUI.Setup (Player.Ins.weaponController);
-		mobileInputsUI.Setup (Player.Ins.weaponController);
+		healthArmorUI.Setup (World.Ins.GetPlayer().characterBase.healthSystem);
+		weaponsUI.Setup (World.Ins.GetPlayer().weaponController);
+		mobileInputsUI.Setup (World.Ins.GetPlayer().weaponController);
+		Debug.Log("InitScreenUI");
 	}
 }

@@ -35,7 +35,7 @@ public class AutomaticWeapon : Weapon {
 
 	public ShootMode mode;
 
-	State curState;
+	public State curState;
 
 	public float reloadTime = 2;
 	public float shootAnimationTime = .2f;
@@ -57,16 +57,16 @@ public class AutomaticWeapon : Weapon {
 
 	public void Update ()
 	{
-		if (!isActive)
+		if (!isActive || wc.curState == WeaponController.State.Switching)
 			return;
-
+		
+		shootingSide = CrossPlatformInputManager.GetAxisRaw ("Shoot");
 		switch (curState) {
 		case State.Normal:
 			
 			/*if (Input.GetKeyDown (KeyCode.R))
 				Reload ();*/
 
-			shootingSide = CrossPlatformInputManager.GetAxisRaw ("Shoot");
 
 			if (Mathf.Abs (shootingSide) > 0) {
 				isFiring = true;
@@ -77,6 +77,7 @@ public class AutomaticWeapon : Weapon {
 						StartCoroutine ("ShootCoroutine");
 					} 
 			}
+
 			break;
 		case State.Shooting:
 			
@@ -84,9 +85,10 @@ public class AutomaticWeapon : Weapon {
 				Reload ();
 			}
 
-			if (!Input.GetButton ("Fire1")) {
+			if (Mathf.Abs (shootingSide) == 0) {
 				isFiring = false;
 			}
+
 			break;
 		default:
 			break;
@@ -96,7 +98,7 @@ public class AutomaticWeapon : Weapon {
 	public bool Reload ()
 	{
 		if (CanReload ()) {
-			/*curState = State.Normal;*/
+			curState = State.Reloading;
 			StartCoroutine ("ReloadCoroutine");
 			return true;
 		} else {
@@ -139,22 +141,19 @@ public class AutomaticWeapon : Weapon {
 	IEnumerator ShootCoroutine ()
 	{
 		while (curState == State.Shooting && isActive && isFiring && Bullets > 0) {
-			wc.cb.PlayShootAnimation (shootAnimationTime, shootingSide < 0);
+			bool side = shootingSide < 0;
+			wc.cb.PlayShootAnimation (shootAnimationTime, side);
 			yield return new WaitForSeconds (shootAnimationTime / 2f);
-			Shot (shootingSide < 0);
+			Shot (side);
 			yield return new WaitForSeconds (shootAnimationTime / 2f);
 			wc.cb.StopShootAnimation ();
 			yield return new WaitForSeconds (fireRate - shootAnimationTime);
-
 		}
-
 		curState = State.Normal;
 	}
 
 	IEnumerator ReloadCoroutine ()
 	{
-		curState = State.Reloading;
-
 		wc.cb.PlayReloadAnimation (reloadTime);
 
 		if (OnReload != null)
@@ -168,7 +167,6 @@ public class AutomaticWeapon : Weapon {
 			bulletSystem.ReloadBullets ();
 			curState = State.Normal;
 			wc.cb.StopReloadAnimation ();
-
 			if (OnReloadComplete != null)
 				OnReloadComplete ();
 			Debug.Log ("Reload was done");
@@ -184,7 +182,10 @@ public class AutomaticWeapon : Weapon {
 		if (curState == State.Shooting) {
 			StopCoroutine ("ShootCoroutine");
 		}
-		wc.cb.StopReloadAnimation ();
 		curState = State.Normal;
+		wc.cb.StopReloadAnimation ();
+		wc.cb.StopShootAnimation ();
+		isFiring = false;
+		shootingSide = 0;
 	}
 }

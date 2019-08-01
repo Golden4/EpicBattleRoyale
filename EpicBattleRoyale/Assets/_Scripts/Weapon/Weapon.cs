@@ -7,7 +7,7 @@ public class Weapon : MonoBehaviour {
 	public GameAssets.WeaponsList weaponName;
 	public WeaponType weaponType;
 
-	[System.NonSerialized]public bool isActive;
+	public bool isActive;
 	public Vector2 m_damage = new Vector2 (30, 50);
 	public Sprite sprite;
 	protected WeaponController wc;

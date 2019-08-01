@@ -748,14 +748,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 4
-  jumpForce: 500
+  jumpForce: 550
   airControl: 1
   whatIsGround:
     serializedVersion: 2
     m_Bits: 4294967295
   isFacingRight: 1
   weaponType: 0
-  shootingSideRight: 0
   isShooting: 0
   move: 0
   healthSystem:
@@ -773,6 +772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42eada6490fd52e4e86949fb9e92882d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curState: 0
   weaponHandHolder: {fileID: 1475273756280995447}
   orderInLayerHandWeapon: 12
   weaponBackHolder: {fileID: 1475273755847133358}

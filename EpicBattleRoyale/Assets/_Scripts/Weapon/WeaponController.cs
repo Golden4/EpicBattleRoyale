@@ -15,7 +15,7 @@ public class WeaponController : MonoBehaviour {
 		Switching,
 	}
 
-	State curState;
+	public State curState;
 	public Transform weaponHandHolder;
 	public int orderInLayerHandWeapon;
 	public Transform weaponBackHolder;
@@ -42,6 +42,7 @@ public class WeaponController : MonoBehaviour {
 		Weapon newWeapon;
 		int emptySlot = GetEmptySlot ();
 		if (emptySlot >= 0) {
+			DropWeaponFromInventory (emptySlot);
 			newWeapon = GiveWeapon (weapon, emptySlot);
 		} else {
 			DropWeaponFromInventory (currentWeaponInHandIndex);
@@ -123,11 +124,10 @@ public class WeaponController : MonoBehaviour {
 			break;
 		case State.Normal:
 			if (Input.GetKeyDown (KeyCode.E))
-				if (currentWeaponInHandIndex != 0 && weaponsInInventory [0] != null)
-					SwitchWeapon (0);
+				SwitchWeapon (0, true);
+			
 			if (Input.GetKeyDown (KeyCode.Q))
-				if (currentWeaponInHandIndex != 1 && weaponsInInventory [1] != null)
-					SwitchWeapon (1);
+				SwitchWeapon (1, true);
 			break;
 		default:
 			break;
@@ -137,8 +137,13 @@ public class WeaponController : MonoBehaviour {
 			cb.isShooting = GetCurrentWeapon ().isShooting ();
 	}
 
-	public void SwitchWeapon (int weaponIndex)
+	public void SwitchWeapon (int weaponIndex, bool checkCanSwitch = false)
 	{
+		if (checkCanSwitch) {
+			if (currentWeaponInHandIndex == weaponIndex || weaponsInInventory [weaponIndex] == null || curState == State.Switching)
+				return;
+		}
+
 		currentWeaponInHandIndex = weaponIndex;
 
 		SetWeaponLocations (weaponIndex);
