@@ -3,201 +3,270 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class WeaponController : MonoBehaviour {
-	
-	public readonly int WEAPON_COUNT = 2;
-	int currentWeaponInHandIndex = 0;
+public class WeaponController : MonoBehaviour
+{
+    bool isInit;
+    public readonly int WEAPON_COUNT = 4;
+    int currentWeaponInHandIndex = 0;
 
-	Weapon[] weaponsInInventory = new Weapon[2];
+    Weapon[] weaponsInInventory = new Weapon[4];
 
-	public enum State {
-		Normal,
-		Switching,
-	}
+    public enum SlotType
+    {
+        Automatic,
+        Pistol,
+        Melee
+    }
 
-	public State curState;
-	public Transform weaponHandHolder;
-	public int orderInLayerHandWeapon;
-	public Transform weaponBackHolder;
-	public int orderInLayerBackWeapon;
-	public Transform pistolBackHolder;
-	public int orderInLayerPistolWeapon;
-	public float switchingWeaponTime = .5f;
-	float switchingWeapon;
+    public enum State
+    {
+        Normal,
+        Switching,
+    }
 
-	public event EventHandler OnWeaponSwitch;
-	public event EventHandler OnGiveWeapon;
+    public Slot[] slotsVisual;
 
-	public CharacterBase cb;
+    public State curState;
+    // public Transform weaponHandHolder;
+    // public int orderInLayerHandWeapon;
+    // public Transform weaponBackHolder;
+    // public int orderInLayerBackWeapon;
+    // public Transform pistolBackHolder;
+    // public int orderInLayerPistolWeapon;
+    public float switchingWeaponTime = .5f;
+    float switchingWeapon;
 
-	void Start ()
-	{
-		cb = GetComponent <CharacterBase> ();
-		GiveWeapon (GameAssets.WeaponsList.Fists);
-		//GiveWeapon (GameAssets.WeaponsList.MP5, 1);
-	}
+    public event EventHandler OnWeaponSwitch;
+    public event EventHandler OnGiveWeapon;
 
-	public Weapon GiveWeapon (GameAssets.WeaponsList weapon)
-	{
-		Weapon newWeapon;
-		int emptySlot = GetEmptySlot ();
-		if (emptySlot >= 0) {
-			DropWeaponFromInventory (emptySlot);
-			newWeapon = GiveWeapon (weapon, emptySlot);
-		} else {
-			DropWeaponFromInventory (currentWeaponInHandIndex);
-			newWeapon = GiveWeapon (weapon, currentWeaponInHandIndex);
-		}
-		return newWeapon;
-	}
+    public CharacterBase cb;
 
-	public Weapon FindWeaponInInventory (GameAssets.WeaponsList weapon)
-	{
-		for (int i = 0; i < WEAPON_COUNT; i++) {
-			if (weaponsInInventory [i] != null && weaponsInInventory [i].weaponName == weapon)
-				return weaponsInInventory [i];
-		}
-		return null;
-	}
+    void Awake()
+    {
+        if (!isInit)
+            Setup();
+    }
 
-	public Weapon GiveWeapon (GameAssets.WeaponsList weapon, int indexInInventory)
-	{
-		GameObject go = Instantiate (GameAssets.Get.GetWeapon (weapon).gameObject);
-		weaponsInInventory [indexInInventory] = go.GetComponent<Weapon> ();
-		weaponsInInventory [indexInInventory].Setup (this);
+    public void Setup()
+    {
+        if (isInit)
+            return;
+        isInit = true;
+        cb = GetComponent<CharacterBase>();
+        GiveWeapon(GameAssets.WeaponsList.Fists);
+        cb.OnDie += OnDie;
+    }
 
-		if (OnGiveWeapon != null)
-			OnGiveWeapon (weapon, EventArgs.Empty);
-		
-		SwitchWeapon (indexInInventory);
-		return weaponsInInventory [indexInInventory];
-	}
+    public Weapon GiveWeapon(GameAssets.WeaponsList weapon)
+    {
+        Weapon newWeapon = null;
+        SlotType slotType = GameAssets.Get.GetWeapon(weapon).GetSlotType();
+        int slotIndex = GetSlotIndex(slotType);
+        DropWeaponFromInventory(slotIndex);
+        newWeapon = GiveWeapon(weapon, slotIndex);
+        return newWeapon;
+    }
+
+    public Weapon FindWeaponInInventory(GameAssets.WeaponsList weapon)
+    {
+        for (int i = 0; i < WEAPON_COUNT; i++)
+        {
+            if (weaponsInInventory[i] != null && weaponsInInventory[i].weaponName == weapon)
+                return weaponsInInventory[i];
+        }
+        return null;
+    }
+
+    public Weapon GiveWeapon(GameAssets.WeaponsList weapon, int indexInInventory)
+    {
+        GameObject go = Instantiate(GameAssets.Get.GetWeapon(weapon).gameObject);
+        weaponsInInventory[indexInInventory] = go.GetComponent<Weapon>();
+        weaponsInInventory[indexInInventory].Setup(this);
+
+        if (OnGiveWeapon != null)
+            OnGiveWeapon(weapon, EventArgs.Empty);
+
+        SwitchWeapon(indexInInventory);
+        return weaponsInInventory[indexInInventory];
+    }
 
 
-	public void DropWeaponFromInventory (int index)
-	{
-		if (weaponsInInventory [index] != null) {
+    public void DropWeaponFromInventory(int index)
+    {
+        if (weaponsInInventory[index] != null)
+        {
+            if (weaponsInInventory[index].weaponName != GameAssets.WeaponsList.Fists)
+            {
+                WeaponItemPickUp weaponItemPickUp = World.Ins.SpawnItemPickUpWeapon(weaponsInInventory[index].weaponName,
+                                                        transform.position + ((cb.isFacingRight) ? 2 : -2) * Vector3.right);
+                //weaponItemPickUp.AddForce (new Vector3 (((cb.isFacingRight) ? 50 : -50), -50));
 
-			if (weaponsInInventory [index].weaponName != GameAssets.WeaponsList.Fists) {
-				WeaponItemPickUp weaponItemPickUp = World.Ins.SpawnItemPickUpWeapon (weaponsInInventory [index].weaponName,
-					                                    transform.position + ((cb.isFacingRight) ? 2 : -2) * Vector3.right);
-				//weaponItemPickUp.AddForce (new Vector3 (((cb.isFacingRight) ? 50 : -50), -50));
 
-
-				/*if (weaponsInInventory [index].GetType () == typeof(AutomaticWeapon)) {
+                /*if (weaponsInInventory [index].GetType () == typeof(AutomaticWeapon)) {
 					AutomaticWeapon automaticWeapon = (AutomaticWeapon)weaponsInInventory [index];
 
 					weaponItemPickUp.AddBulletInfo (automaticWeapon.bulletSystem);
 				}*/
 
-			}
-			Destroy (weaponsInInventory [index].gameObject);
-		}
-	}
+            }
+            Destroy(weaponsInInventory[index].gameObject);
+        }
+    }
 
-	int GetEmptySlot ()
-	{
-		
-		for (int i = 0; i < WEAPON_COUNT; i++) {
-			if (weaponsInInventory [i] == null) {
-				return i;
-			}
-		}
+    int GetSlotIndex(SlotType type)
+    {
+        int index = -1;
+        switch (type)
+        {
+            case SlotType.Automatic:
 
-		for (int i = 0; i < WEAPON_COUNT; i++) {
-			if (weaponsInInventory [i].weaponName == GameAssets.WeaponsList.Fists) {
-				return i;
-			}
-		}
+                for (int i = 0; i < 2; i++)
+                {
+                    if (weaponsInInventory[i] == null)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index == -1)
+                {
+                    if (currentWeaponInHandIndex < 2)
+                        index = currentWeaponInHandIndex;
+                    else
+                    {
+                        index = 1;
+                    }
+                }
 
-		return -1;
-	}
 
-	void Update ()
-	{
-		switch (curState) {
-		case State.Switching:
-			switchingWeapon -= Time.deltaTime;
-			if (switchingWeapon < 0) {
-				curState = State.Normal;
-			}
-			break;
-		case State.Normal:
-			if (Input.GetKeyDown (KeyCode.E))
-				SwitchWeapon (0, true);
-			
-			if (Input.GetKeyDown (KeyCode.Q))
-				SwitchWeapon (1, true);
-			break;
-		default:
-			break;
-		}
+                break;
+            case SlotType.Pistol:
+                index = 2;
+                break;
+            case SlotType.Melee:
+                index = 3;
+                break;
+            default:
+                break;
+        }
 
-		if (GetCurrentWeapon () != null)
-			cb.isShooting = GetCurrentWeapon ().isShooting ();
-	}
+        return index;
+    }
 
-	public void SwitchWeapon (int weaponIndex, bool checkCanSwitch = false)
-	{
-		if (checkCanSwitch) {
-			if (currentWeaponInHandIndex == weaponIndex || weaponsInInventory [weaponIndex] == null || curState == State.Switching)
-				return;
-		}
+    void Update()
+    {
+        if (cb.IsDead())
+            return;
 
-		currentWeaponInHandIndex = weaponIndex;
+        switch (curState)
+        {
+            case State.Switching:
+                switchingWeapon -= Time.deltaTime;
+                if (switchingWeapon < 0)
+                {
+                    curState = State.Normal;
+                }
+                break;
+            case State.Normal:
+                if (Input.GetKeyDown(KeyCode.E))
+                    SwitchWeapon(0, true);
 
-		SetWeaponLocations (weaponIndex);
+                if (Input.GetKeyDown(KeyCode.Q))
+                    SwitchWeapon(1, true);
 
-		curState = State.Switching;
+                if (weaponsInInventory[currentWeaponInHandIndex] != null)
+                    weaponsInInventory[currentWeaponInHandIndex].OnUpdate();
 
-		switchingWeapon = switchingWeaponTime;
 
-		cb.SetWeaponAnimationType (weaponsInInventory [weaponIndex].weaponType);
+                break;
+            default:
+                break;
+        }
+    }
 
-		/*if (GetCurrentWeapon () == null)
+    public void SwitchWeapon(int weaponIndex, bool checkCanSwitch = false)
+    {
+        if (checkCanSwitch)
+        {
+            if (currentWeaponInHandIndex == weaponIndex || weaponsInInventory[weaponIndex] == null || curState == State.Switching)
+                return;
+        }
+
+        currentWeaponInHandIndex = weaponIndex;
+
+        SetWeaponLocations(weaponIndex);
+
+        curState = State.Switching;
+
+        switchingWeapon = switchingWeaponTime;
+
+        cb.SetWeaponAnimationType(weaponsInInventory[weaponIndex].weaponType);
+
+        /*if (GetCurrentWeapon () == null)
 			cb.isWeapon = false;
 		else
 			cb.isWeapon = GetCurrentWeapon ().GetWeaponType () != Weapon.WeaponType.Melee;*/
 
-		if (OnWeaponSwitch != null)
-			OnWeaponSwitch (weaponsInInventory [weaponIndex], EventArgs.Empty);
-	}
+        if (OnWeaponSwitch != null)
+            OnWeaponSwitch(weaponsInInventory[weaponIndex], EventArgs.Empty);
+    }
 
-	void SetWeaponLocations (int activeIndex)
-	{
-		for (int i = 0; i < WEAPON_COUNT; i++) {
+    void SetWeaponLocations(int activeIndex)
+    {
 
-			if (weaponsInInventory [i] == null)
-				continue;
+        for (int i = 0; i < slotsVisual.Length; i++)
+        {
+            slotsVisual[i].isEmpty = true;
+        }
 
-			SetWeaponLocation (weaponsInInventory [i], activeIndex == i, weaponsInInventory [i].weaponType);
-		}
-	}
+        for (int i = 0; i < WEAPON_COUNT; i++)
+        {
+            if (weaponsInInventory[i] == null)
+                continue;
 
-	void SetWeaponLocation (Weapon weapon, bool isActive, Weapon.WeaponType type)
-	{
-		if (isActive) {
-			weapon.isActive = true;
-			weapon.transform.SetParent (weaponHandHolder, false);
-			if (weapon.GetComponentInChildren <SpriteRenderer> () != null)
-				weapon.GetComponentInChildren <SpriteRenderer> ().sortingOrder = orderInLayerHandWeapon;
-		} else if (type == Weapon.WeaponType.Pistol) {
-				weapon.isActive = false;
-				weapon.transform.SetParent (pistolBackHolder, false);
-				if (weapon.GetComponentInChildren <SpriteRenderer> () != null)
-					weapon.GetComponentInChildren <SpriteRenderer> ().sortingOrder = orderInLayerPistolWeapon;
-			} else {
-				weapon.isActive = false;
-				weapon.transform.SetParent (weaponBackHolder, false);
-				if (weapon.GetComponentInChildren <SpriteRenderer> () != null)
-					weapon.GetComponentInChildren <SpriteRenderer> ().sortingOrder = orderInLayerBackWeapon;
-			}
+            SetWeaponLocation(weaponsInInventory[i], activeIndex == i, i);
+        }
+    }
 
-		weapon.transform.localPosition = Vector3.zero;
-		
-	}
+    void SetWeaponLocation(Weapon weapon, bool isActive, int slotIndex)
+    {
+        weapon.gameObject.SetActive(true);
 
-	/*	void ShowWeaponGraphics (int index)
+        if (isActive)
+        {
+            weapon.isActive = true;
+            weapon.transform.SetParent(slotsVisual[0].weaponHolder, false);
+            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
+                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[0].orderInLayerWeapon;
+            slotsVisual[0].isEmpty = false;
+        }
+        else if ((slotIndex == 0 || slotIndex == 1) && slotsVisual[1].isEmpty)
+        {
+            weapon.isActive = false;
+            weapon.transform.SetParent(slotsVisual[1].weaponHolder, false);
+            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
+                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[1].orderInLayerWeapon;
+            slotsVisual[1].isEmpty = false;
+        }
+        else if (slotIndex == 2)
+        {
+            weapon.isActive = false;
+            weapon.transform.SetParent(slotsVisual[2].weaponHolder, false);
+            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
+                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[2].orderInLayerWeapon;
+            slotsVisual[2].isEmpty = false;
+        }
+        else
+        {
+            weapon.isActive = false;
+            weapon.gameObject.SetActive(false);
+        }
+
+        weapon.transform.localPosition = Vector3.zero;
+
+    }
+
+    /*	void ShowWeaponGraphics (int index)
 	{
 		for (int i = 0; i < weaponsInInventory.Count; i++) {
 	
@@ -210,39 +279,76 @@ public class WeaponController : MonoBehaviour {
 	}*/
 
 
-	public Weapon GetCurrentWeapon ()
-	{
-		return weaponsInInventory [currentWeaponInHandIndex];
-	}
+    public Weapon GetCurrentWeapon()
+    {
+        return weaponsInInventory[currentWeaponInHandIndex];
+    }
 
-	public Weapon GetWeapon (int index)
-	{
-		return weaponsInInventory [index];
-	}
+    public Weapon GetWeapon(int index)
+    {
+        return weaponsInInventory[index];
+    }
 
-	public Weapon[] GetWeaponsInInventory ()
-	{
-		return weaponsInInventory;
-	}
+    public Weapon[] GetWeaponsInInventory()
+    {
+        return weaponsInInventory;
+    }
 
-	public int GetCurrentActiveWeaponIndex ()
-	{
-		return currentWeaponInHandIndex;
-	}
+    public int GetCurrentActiveWeaponIndex()
+    {
+        return currentWeaponInHandIndex;
+    }
 
-	public bool InventoryFull ()
-	{
+    public bool InventoryFull()
+    {
 
-		for (int i = 0; i < WEAPON_COUNT; i++) {
-			if (weaponsInInventory [i] == null || weaponsInInventory [i].weaponName == GameAssets.WeaponsList.Fists) {
-				return false;
-			}
-		}
+        for (int i = 0; i < WEAPON_COUNT; i++)
+        {
+            if (weaponsInInventory[i] == null || weaponsInInventory[i].weaponName == GameAssets.WeaponsList.Fists)
+            {
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/*	void OnEnable ()
+    public int GetWeaponIndexWithBullets()
+    {
+        for (int i = 0; i < weaponsInInventory.Length; i++)
+        {
+            if (weaponsInInventory[i] != null && weaponsInInventory[i].GetType() == typeof(AutomaticWeapon))
+            {
+                AutomaticWeapon automaticWeapon = (AutomaticWeapon)weaponsInInventory[i];
+
+                if (!automaticWeapon.bulletSystem.NoBullets())
+                {
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    void OnDie(object obj, EventArgs args)
+    {
+        for (int i = 0; i < weaponsInInventory.Length; i++)
+        {
+            if (weaponsInInventory[i] != null)
+                DropWeaponFromInventory(i);
+        }
+    }
+
+    [System.Serializable]
+    public class Slot
+    {
+        public Transform weaponHolder;
+        public int orderInLayerWeapon;
+        public bool isEmpty;
+    }
+
+    /*	void OnEnable ()
 	{
 		EventManager.OnClickSelectWeaponEvent += (int arg1, GameObject arg2) => switchWeapon (arg1);
 	}

@@ -44,7 +44,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponName: 0
+  weaponType: 0
+  slotType: 2
   isActive: 0
-  m_damage: {x: 10, y: 15}
+  m_damage: {x: 3, y: 6}
+  firingRange: 1
   sprite: {fileID: 21300000, guid: 9d7c6e4896067aa4fa512a00f692ac1c, type: 3}
-  fireRate: 0.5
+  firingSideInput: 0
+  fireRate: 0.25

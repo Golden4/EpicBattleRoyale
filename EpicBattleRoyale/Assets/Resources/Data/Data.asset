@@ -17,7 +17,8 @@ MonoBehaviour:
   - {fileID: 8042397154463595244, guid: dda5c44a906ed1340aaa7a2ae79f755c, type: 3}
   - {fileID: 8042397154463595244, guid: dd6bba69531770b4abe882926d2718bc, type: 3}
   - {fileID: 8042397154463595244, guid: 7b297bf9744d7c84db585463c026a9fd, type: 3}
-  character: []
+  characters:
+  - {fileID: 3467985088730004138, guid: 3cef86f51334e734690b1983da7f4bf1, type: 3}
   pickUpItems:
     weaponsPickUpItems:
     - {fileID: 3531299976100205070, guid: a573c762a3a1ff44d8b640b2a8a25152, type: 3}

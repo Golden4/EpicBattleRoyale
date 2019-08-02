@@ -47,18 +47,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: 3
   weaponType: 2
-  m_damage: {x: 30, y: 50}
+  slotType: 0
+  isActive: 0
+  m_damage: {x: 10, y: 15}
+  firingRange: 10
   sprite: {fileID: 21300000, guid: 80fb53fe5f7438040ae7e4c44625038a, type: 3}
-  shootingSide: 0
+  firingSideInput: 0
   fireRate: 0.4
   bulletSystem:
+    curBullets: 0
+    curBulletsStock: 0
     maxBullets: 15
     maxBulletsStock: 100
   mode: 0
+  curState: 0
   reloadTime: 5
   shootAnimationTime: 0.25
   muzzlePoint: {fileID: 4307691173345453201}
-  isFiring: 0
 --- !u!1 &2450762844211826764
 GameObject:
   m_ObjectHideFlags: 0

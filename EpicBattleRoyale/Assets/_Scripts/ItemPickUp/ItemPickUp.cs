@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
-public class ItemPickUp : MonoBehaviour {
-	
-	/*	public enum ItemPickUpType {
+public class ItemPickUp : MonoBehaviour
+{
+
+    /*	public enum ItemPickUpType {
 		Armor,
 		Health,
 		Weapon,
@@ -14,7 +15,7 @@ public class ItemPickUp : MonoBehaviour {
 
 	public ItemPickUpType type;*/
 
-	/*	public void Setup (ItemPickUpType itemPickUpType, int amount)
+    /*	public void Setup (ItemPickUpType itemPickUpType, int amount)
 	{
 		type = itemPickUpType;
 		this.amount = amount;
@@ -37,7 +38,7 @@ public class ItemPickUp : MonoBehaviour {
 
 	}*/
 
-	/*	public void SetupHealth (int healthAmount)
+    /*	public void SetupHealth (int healthAmount)
 	{
 		type = ItemPickUpType.Health;
 		amount = healthAmount;
@@ -55,62 +56,110 @@ public class ItemPickUp : MonoBehaviour {
 		amount = ammoAmount;
 	}*/
 
-	/*	public static ItemPickUp Create (ItemPickUp itemPickUpGO, Vector2 position, Vector2 throwForce)
+    /*	public static ItemPickUp Create (ItemPickUp itemPickUpGO, Vector2 position, Vector2 throwForce)
 	{
 		GameObject go = Instantiate (itemPickUpGO.gameObject);
 		go.transform.position = position;
 		return go.GetComponent<ItemPickUp> ();
 	}*/
 
-	public static EventHandler OnPickUp;
+    public static event EventHandler OnPickUp;
 
-	public virtual void Setup (Vector3 position)
-	{
-		transform.position = position;
-	}
+    float cantPickUpDelay = 1;
 
-	public void AddForce (Vector3 vec)
-	{
-		GetComponent <Rigidbody2D> ().AddForce ((Vector2)vec);
-	}
+    public virtual void Setup(Vector3 position)
+    {
+        transform.position = position;
+        AddForce((Vector3.up + Vector3.right) * 150);
 
-	public virtual bool PickUp (CharacterBase cb, bool clickedPickUp = false)
-	{
-		return false;
-	}
+        Utility.Invoke(this, cantPickUpDelay, delegate
+        {
+            cantPickUpDelay = 0;
+            TryPickUp();
+        });
+    }
 
-	public void DestroyItem ()
-	{
-		ScreenUI.Ins.mobileInputsUI.HidePickUpBtn ();
-		Destroy (gameObject);
-	}
+    public void AddForce(Vector3 vec)
+    {
+        GetComponent<Rigidbody2D>().AddForce((Vector2)vec);
+    }
 
-	CharacterBase cb;
+    public virtual bool PickUp(CharacterBase cb, bool clickedPickUp = false)
+    {
+        return false;
+    }
 
-	void OnTriggerEnter2D (Collider2D col)
-	{
-		cb = col.transform.GetComponent <CharacterBase> ();
+    public void DestroyItem()
+    {
+        ScreenUI.Ins.mobileInputsUI.HidePickUpBtn();
+        World.Ins.itemsPickUp.Remove(this);
+        cb.OnCharacterPickUp(this);
+        Destroy(gameObject);
+    }
 
-		if (cb != null) {
-			if (!PickUp (cb)) {
-				ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn (() => {
-					if (PickUp (cb, true))
-						DestroyItem ();
-				});
-			} else {
-				DestroyItem ();
-			}
-		}
-	}
+    public virtual void ShowPopUp(string info = "", Sprite sprite = null)
+    {
+        GameObject textMesh = Instantiate(Resources.Load<GameObject>("Prefabs/PopUpInfo"));
 
-	void OnTriggerExit2D (Collider2D col)
-	{
-		cb = col.transform.GetComponent <CharacterBase> ();
+        if (textMesh != null)
+        {
+            textMesh.gameObject.SetActive(true);
+            textMesh.transform.SetParent(null, false);
+            textMesh.GetComponentInChildren<TextMesh>().text = info;
 
-		if (cb != null) {
-			ScreenUI.Ins.mobileInputsUI.HidePickUpBtn ();
-			cb = null;
-		}
-	}
+            if (sprite != null)
+            {
+                textMesh.gameObject.SetActive(true);
+                textMesh.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
+            }
+            textMesh.transform.position = transform.position;
+            iTween.MoveTo(textMesh.gameObject, textMesh.transform.position + Vector3.up * 2, .8f);
+            iTween.FadeTo(textMesh.gameObject, 0f, .8f);
+            Destroy(textMesh.gameObject, 1f);
+        }
+    }
+
+    CharacterBase cb;
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        cb = col.transform.GetComponent<CharacterBase>();
+
+        if (cantPickUpDelay == 0)
+            TryPickUp();
+
+    }
+
+    void TryPickUp()
+    {
+        if (cb != null && cb && cb.CanPickUp())
+        {
+            if (!PickUp(cb))
+            {
+                ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn(() =>
+                {
+                    if (cb.CanPickUp() && PickUp(cb, true))
+                    {
+                        DestroyItem();
+                    }
+                });
+            }
+            else
+            {
+                DestroyItem();
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        cb = col.transform.GetComponent<CharacterBase>();
+
+        if (cb != null)
+        {
+            ScreenUI.Ins.mobileInputsUI.HidePickUpBtn();
+            cb = null;
+        }
+    }
 
 }

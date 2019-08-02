@@ -4,97 +4,108 @@ using UnityEngine;
 using System;
 
 [System.Serializable]
-public class HealthSystem {
-	
-	public int health;
-	int maxHealth = 100;
-	public int armor;
-	int maxArmor = 100;
-	float armorTakeDamagePersent = .8f;
+public class HealthSystem
+{
+    public int health;
+    int maxHealth = 100;
+    public int armor;
+    int maxArmor = 100;
+    float armorTakeDamagePersent = .8f;
 
-	public event EventHandler OnHealthChanged;
-	public event EventHandler OnHealthZero;
+    public event EventHandler OnHealthChanged;
+    public event EventHandler OnHealthZero;
 
-	public int GetHealth ()
-	{
-		return health;
-	}
+    public int GetHealth()
+    {
+        return health;
+    }
 
-	public int GetArmor ()
-	{
-		return armor;
-	}
+    public int GetArmor()
+    {
+        return armor;
+    }
 
-	public void Damage (int damage)
-	{
-		if (health > 0) {
-			
-			if (armor > 0) {
-				armor -= Mathf.RoundToInt (damage * armorTakeDamagePersent);
+    public void Damage(int damage)
+    {
+        if (health > 0)
+        {
 
-			}
+            if (armor > 0)
+            {
+                armor -= Mathf.RoundToInt(damage * armorTakeDamagePersent);
 
-			if (armor < 0) {
-				health += armor;
-				health -= Mathf.RoundToInt (damage * (1 - armorTakeDamagePersent));
-			} else if (armor == 0) {
-					health -= damage;
-				} else {
-					health -= Mathf.RoundToInt (damage * (1 - armorTakeDamagePersent));
-				}
+            }
 
-			if (armor < 0) {
-				armor = 0;
-			}
+            if (armor < 0)
+            {
+                health += armor;
+                health -= Mathf.RoundToInt(damage * (1 - armorTakeDamagePersent));
+            }
 
-			if (health <= 0) {
-				health = 0;
-				if (OnHealthZero != null)
-					OnHealthZero (this, EventArgs.Empty);
-			}
+            else if (armor == 0)
+            {
+                health -= damage;
+            }
+            else
+            {
+                health -= Mathf.RoundToInt(damage * (1 - armorTakeDamagePersent));
+            }
 
-			if (OnHealthChanged != null)
-				OnHealthChanged (this, EventArgs.Empty);
-		}
+            if (armor < 0)
+            {
+                armor = 0;
+            }
 
-		Debug.Log ("Damage " + damage + "  health" + health + "  armor " + armor);
-	}
+            if (health <= 0)
+            {
+                health = 0;
+                if (OnHealthZero != null)
+                    OnHealthZero(this, EventArgs.Empty);
+            }
 
-	public void HealArmor (int heal)
-	{
-		armor += heal;
+            if (OnHealthChanged != null)
+                OnHealthChanged(this, EventArgs.Empty);
+        }
 
-		if (armor > maxArmor)
-			armor = maxArmor;
+        Debug.Log("Damage " + damage + "  health" + health + "  armor " + armor);
+    }
 
-		if (OnHealthChanged != null)
-			OnHealthChanged (this, EventArgs.Empty);
+    public void HealArmor(int heal)
+    {
+        armor += heal;
 
-		Debug.Log ("Heal " + heal + "  armor " + armor);
-	}
+        if (armor > maxArmor)
+            armor = maxArmor;
 
-	public void HealHealth (int heal)
-	{
-		if (health > 0) {
-			health += heal;
+        if (OnHealthChanged != null)
+            OnHealthChanged(this, EventArgs.Empty);
 
-			if (health > maxHealth)
-				health = maxHealth;
+        Debug.Log("Heal " + heal + "  armor " + armor);
+    }
 
-			if (OnHealthChanged != null)
-				OnHealthChanged (this, EventArgs.Empty);
-		}
+    public void HealHealth(int heal)
+    {
+        if (health > 0)
+        {
+            health += heal;
 
-		Debug.Log ("Heal " + heal + "  health " + health);
-	}
+            if (health > maxHealth)
+                health = maxHealth;
 
-	public HealthSystem (int health, int armor)
-	{
-		this.health = health;
-		this.armor = armor;
-		maxHealth = 100;
-		maxArmor = 100;
-	}
-	
+            if (OnHealthChanged != null)
+                OnHealthChanged(this, EventArgs.Empty);
+        }
+
+        Debug.Log("Heal " + heal + "  health " + health);
+    }
+
+    public HealthSystem(int health, int armor)
+    {
+        this.health = health;
+        this.armor = armor;
+        maxHealth = 100;
+        maxArmor = 100;
+    }
+
 
 }

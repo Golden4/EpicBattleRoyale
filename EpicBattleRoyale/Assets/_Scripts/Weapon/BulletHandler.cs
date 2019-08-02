@@ -2,54 +2,66 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletHandler : MonoBehaviour {
-	
-	public int damage;
-	public float bulletSize = .5f;
-	public float speed = 5;
-	float destroyTime = 3;
-	Vector3 direction;
-	public CharacterBase cb;
+public class BulletHandler : MonoBehaviour
+{
+    public int damage;
+    public float bulletSize = .5f;
+    public float speed = 5;
+    float destroyDistance = 3;
+    Vector3 direction;
+    public CharacterBase cb;
+    public Weapon weapon;
 
-	void FixedUpdate ()
-	{
-		destroyTime -= Time.fixedDeltaTime;
-		if (destroyTime <= 0) {
-			DestroyBullet ();
-		}
+    void FixedUpdate()
+    {
+        destroyDistance -= Time.fixedDeltaTime * speed;
 
-		transform.position += direction * Time.fixedDeltaTime * speed;
+        if (destroyDistance <= 0)
+        {
+            DestroyBullet();
+        }
 
-		Debug.DrawRay (transform.position - direction * bulletSize, direction * (bulletSize * 2 + .02f));
+        transform.position += direction * Time.fixedDeltaTime * speed;
 
-		RaycastHit2D hit = Physics2D.Raycast (transform.position - (direction * bulletSize), direction, bulletSize * 2);
+        Debug.DrawRay(transform.position - direction * bulletSize, direction * (bulletSize * 2 + .02f));
 
-		if (hit.collider == null)
-			return;
-		Debug.Log ("Hitted " + hit.collider.name);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2);
 
-		CharacterBase damagable = hit.transform.GetComponent <CharacterBase> ();
-		if (damagable != null)
-			OnHit (hit, damagable);
-	}
+        if (hit.collider == null)
+            return;
 
-	public void Setup (CharacterBase cb, Vector2 dir, int damage)
-	{
-		this.cb = cb;
-		direction = (Vector3)dir.normalized;
-		this.damage = damage;
-	}
+        CharacterBase damagable = hit.transform.GetComponent<CharacterBase>();
 
-	public void DestroyBullet ()
-	{
-		Destroy (gameObject);
+        if (damagable != null)
+            OnHit(hit, damagable);
+    }
 
-	}
+    public void Setup(CharacterBase cb, Vector2 dir, int damage, float destroyDistance, Weapon weapon)
+    {
+        this.cb = cb;
+        direction = (Vector3)dir.normalized;
+        this.damage = damage;
+        this.destroyDistance = destroyDistance;
+        this.weapon = weapon;
+        transform.localEulerAngles = new Vector3(0, 0, Vector3.Angle(Vector3.right, dir));
+    }
 
-	public void OnHit (RaycastHit2D hit, CharacterBase damagable)
-	{
-		damagable.healthSystem.Damage (damage);
-		Debug.Log ("Hitted " + hit.collider.name + " damage =" + damage);
-	}
+    public void DestroyBullet()
+    {
+        Destroy(gameObject);
+    }
+
+    public void OnHit(RaycastHit2D hit, CharacterBase damagable)
+    {
+        if (damagable != cb)
+        {
+            if (damagable.CanHit())
+            {
+                damagable.OnCharacterHitted(cb, weapon, damage);
+                Debug.Log("Hitted " + hit.collider.name + " damage =" + damage);
+                DestroyBullet();
+            }
+        }
+    }
 
 }

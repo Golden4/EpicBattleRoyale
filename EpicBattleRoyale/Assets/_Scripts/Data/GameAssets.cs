@@ -2,104 +2,128 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu ()]
-public class GameAssets : ScriptableObject {
+[CreateAssetMenu()]
+public class GameAssets : ScriptableObject
+{
 
-	static GameAssets data;
+    static GameAssets data;
 
-	static bool Loaded;
+    static bool Loaded;
 
-	public static GameAssets Get {
-		get {
-			if (data == null && !Loaded) {
-				Loaded = true;
-				GameAssets pi = Resources.Load<GameAssets> ("Data/Data");
+    public static GameAssets Get
+    {
+        get
+        {
+            if (data == null && !Loaded)
+            {
+                Loaded = true;
+                GameAssets pi = Resources.Load<GameAssets>("Data/Data");
 
-				data = pi;
-			}
+                data = pi;
+            }
 
-			return data;
-		}
-	}
+            return data;
+        }
+    }
 
-	public List<Weapon> weapons;
-	public List<CharacterBase> character;
+    public List<Weapon> weapons;
 
-	public enum WeaponsList {
-		Fists,
-		MP5,
-		Beretta,
-		SniperRiffle
-	}
+    public enum WeaponsList
+    {
+        Fists,
+        MP5,
+        Beretta,
+        SniperRiffle
+    }
 
-	public enum CharacterList {
-		Swat
-	}
+    public Weapon GetWeapon(WeaponsList weapon)
+    {
+        return weapons.Find(x =>
+        {
+            return x.weaponName == weapon;
+        });
+    }
 
-	public Weapon GetWeapon (WeaponsList weapon)
-	{
-		return weapons.Find (x => {
-			return x.weaponName == weapon;
-		});
-	}
+    public List<CharacterBase> characters;
 
-	public PickUpItemsData pickUpItems;
+    public enum CharacterList
+    {
+        Swat
+    }
 
-	[System.Serializable]
-	public class PickUpItemsData {
-		public List<WeaponItemPickUp> weaponsPickUpItems;
-		public List<ArmorItemPickUp> armorPickUpItems;
-		public List<HealthItemPickUp> healthPickUpItems;
-		public List<AmmoItemPickUp> ammoPickUpItems;
+    public CharacterBase GetCharacter(CharacterList character)
+    {
+        return characters.Find(x =>
+         {
+             return x.characterName == character;
+         });
+    }
 
-		public enum ArmorPickUpList {
-			Small,
-			Big
-		}
+    public PickUpItemsData pickUpItems;
 
-		public enum HealthPickUpList {
-			Small,
-			Big
-		}
+    [System.Serializable]
+    public class PickUpItemsData
+    {
+        public List<WeaponItemPickUp> weaponsPickUpItems;
+        public List<ArmorItemPickUp> armorPickUpItems;
+        public List<HealthItemPickUp> healthPickUpItems;
+        public List<AmmoItemPickUp> ammoPickUpItems;
 
-		public enum AmmoPickUpList {
-			automaticWeapon,
-			sniperWeapon,
-			pistolWeapon
-		}
+        public enum ArmorPickUpList
+        {
+            Small,
+            Big
+        }
 
-		public ItemPickUp GetPickUpItem (WeaponsList item)
-		{
-			return weaponsPickUpItems.Find (x => {
-				return x.weaponName == item;
-			});
-		}
+        public enum HealthPickUpList
+        {
+            Small,
+            Big
+        }
 
-		public ItemPickUp GetPickUpItem (ArmorPickUpList item)
-		{
-			return armorPickUpItems.Find (x => {
-				return x.armorPickUpType == item;
-			});
-		}
+        public enum AmmoPickUpList
+        {
+            automaticWeapon,
+            sniperWeapon,
+            pistolWeapon
+        }
 
-		public ItemPickUp GetPickUpItem (HealthPickUpList item)
-		{
-			return healthPickUpItems.Find (x => {
-				return x.healthPickUpType == item;
-			});
-		}
+        public ItemPickUp GetPickUpItem(WeaponsList item)
+        {
+            return weaponsPickUpItems.Find(x =>
+            {
+                return x.weaponName == item;
+            });
+        }
 
-		public ItemPickUp GetPickUpItem (AmmoPickUpList item)
-		{
-			return ammoPickUpItems.Find (x => {
-				return x.ammoPickUpType == item;
-			});
-		}
-	}
+        public ItemPickUp GetPickUpItem(ArmorPickUpList item)
+        {
+            return armorPickUpItems.Find(x =>
+            {
+                return x.armorPickUpType == item;
+            });
+        }
 
-	public BulletHandler pfBullet;
+        public ItemPickUp GetPickUpItem(HealthPickUpList item)
+        {
+            return healthPickUpItems.Find(x =>
+            {
+                return x.healthPickUpType == item;
+            });
+        }
 
-	/*	void OnValidate ()
+        public ItemPickUp GetPickUpItem(AmmoPickUpList item)
+        {
+            return ammoPickUpItems.Find(x =>
+            {
+                return x.ammoPickUpType == item;
+            });
+        }
+    }
+
+    public BulletHandler pfBullet;
+
+    /*	void OnValidate ()
 	{
 		for (int i = 0; i < weapons.Length; i++) {
 			weapons [i].weaponName = (WeaponsList)i;
