@@ -154,9 +154,10 @@ public class Enemy : MonoBehaviour
                 break;
             case TargetState.TargetCharacter:
 
-                if (targetCharacter == null)
+                if (targetCharacter == null || targetCharacter.IsDead())
                 {
                     curTargetState = TargetState.Finding;
+                    targetCharacter = null;
                 }
                 else
                 {
@@ -283,7 +284,7 @@ public class Enemy : MonoBehaviour
 
             weaponController.GetCurrentWeapon().firingSideInput = Mathf.RoundToInt(dirT.x);
 
-            if (weaponController.GetCurrentWeapon().GetType() == typeof(AutomaticWeapon))
+            if (weaponController.GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
             {
                 AutomaticWeapon aw = (AutomaticWeapon)weaponController.GetCurrentWeapon();
 

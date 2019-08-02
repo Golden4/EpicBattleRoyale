@@ -22,8 +22,8 @@ public class World : MonoBehaviour
     {
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.MP5, new Vector3(-5, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.Beretta, new Vector3(5, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(3, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(6, -3f));
+        SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(3, -3f));
+        SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
         SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
         SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.automaticWeapon, new Vector3(-8, -3f));

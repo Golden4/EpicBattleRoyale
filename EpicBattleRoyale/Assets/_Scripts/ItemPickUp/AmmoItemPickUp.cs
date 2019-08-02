@@ -23,7 +23,7 @@ public class AmmoItemPickUp : ItemPickUp
                 }
                 else
                 {
-                    if (weapon.GetType() == typeof(AutomaticWeapon))
+                    if (weapon.WeaponIs(typeof(AutomaticWeapon)))
                     {
                         AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
                         if (automaticWeapon.weaponType == bulletType)

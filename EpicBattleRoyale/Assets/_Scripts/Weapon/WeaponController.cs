@@ -13,9 +13,9 @@ public class WeaponController : MonoBehaviour
 
     public enum SlotType
     {
-        Automatic,
+        Melee,
         Pistol,
-        Melee
+        Automatic,
     }
 
     public enum State
@@ -83,10 +83,18 @@ public class WeaponController : MonoBehaviour
         weaponsInInventory[indexInInventory] = go.GetComponent<Weapon>();
         weaponsInInventory[indexInInventory].Setup(this);
 
+        if (GetCurrentWeapon() != null && GetCurrentWeapon().isFiring())
+        {
+            SwitchWeapon(currentWeaponInHandIndex);
+        }
+        else
+        {
+            SwitchWeapon(indexInInventory);
+        }
+
         if (OnGiveWeapon != null)
             OnGiveWeapon(weapon, EventArgs.Empty);
 
-        SwitchWeapon(indexInInventory);
         return weaponsInInventory[indexInInventory];
     }
 
@@ -176,8 +184,6 @@ public class WeaponController : MonoBehaviour
 
                 if (weaponsInInventory[currentWeaponInHandIndex] != null)
                     weaponsInInventory[currentWeaponInHandIndex].OnUpdate();
-
-
                 break;
             default:
                 break;
@@ -198,9 +204,10 @@ public class WeaponController : MonoBehaviour
 
         curState = State.Switching;
 
-        switchingWeapon = switchingWeaponTime;
+        if (!GetCurrentWeapon().isFiring())
+            switchingWeapon = switchingWeaponTime;
 
-        cb.SetWeaponAnimationType(weaponsInInventory[weaponIndex].weaponType);
+        cb.SetWeaponAnimationType(weaponsInInventory[weaponIndex].slotType);
 
         /*if (GetCurrentWeapon () == null)
 			cb.isWeapon = false;
@@ -299,15 +306,33 @@ public class WeaponController : MonoBehaviour
         return currentWeaponInHandIndex;
     }
 
-    public bool InventoryFull()
+    public bool InventoryFull(WeaponController.SlotType slotType)
     {
-
-        for (int i = 0; i < WEAPON_COUNT; i++)
+        switch (slotType)
         {
-            if (weaponsInInventory[i] == null || weaponsInInventory[i].weaponName == GameAssets.WeaponsList.Fists)
-            {
-                return false;
-            }
+            case WeaponController.SlotType.Automatic:
+                for (int i = 0; i < 2; i++)
+                {
+                    if (weaponsInInventory[i] == null)
+                    {
+                        return false;
+                    }
+                }
+                break;
+            case WeaponController.SlotType.Pistol:
+                if (weaponsInInventory[2] == null)
+                {
+                    return false;
+                }
+                break;
+            case WeaponController.SlotType.Melee:
+                if (weaponsInInventory[3] == null)
+                {
+                    return false;
+                }
+                break;
+            default:
+                break;
         }
 
         return true;
@@ -317,7 +342,7 @@ public class WeaponController : MonoBehaviour
     {
         for (int i = 0; i < weaponsInInventory.Length; i++)
         {
-            if (weaponsInInventory[i] != null && weaponsInInventory[i].GetType() == typeof(AutomaticWeapon))
+            if (weaponsInInventory[i] != null && weaponsInInventory[i].WeaponIs(typeof(AutomaticWeapon)))
             {
                 AutomaticWeapon automaticWeapon = (AutomaticWeapon)weaponsInInventory[i];
 

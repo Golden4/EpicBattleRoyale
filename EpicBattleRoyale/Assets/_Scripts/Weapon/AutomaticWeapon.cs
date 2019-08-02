@@ -115,7 +115,7 @@ public class AutomaticWeapon : Weapon
         return Bullets > 0 && curState == State.Normal;
     }
 
-    void Shot(bool isFacingRight)
+    public virtual void Shot(bool isFacingRight)
     {
         /*	if (!bulletTracerPS.isPlaying) {
 			bulletTracerPS.Play ();//Воспроизводим партикл
@@ -150,16 +150,25 @@ public class AutomaticWeapon : Weapon
             SpawnBullet(isFacingRight);
 
         bulletSystem.ShotBullet(1);
-
-        if (OnShot != null)
-            OnShot(Bullets);
     }
 
-    void SpawnBullet(bool isFacingRight)
+    protected void SpawnBullet(bool isFacingRight, Vector2 direction = default, int bulletDamage = -1)
     {
         GameObject bullet = Instantiate(GameAssets.Get.pfBullet.gameObject);
         bullet.transform.position = muzzlePoint.transform.position;
-        bullet.GetComponent<BulletHandler>().Setup(wc.cb, Vector3.right * (isFacingRight ? 1 : -1), damage, firingRange, this);
+        int curBulletDamage = damage;
+
+        if (bulletDamage != -1)
+            curBulletDamage = bulletDamage;
+
+        if (direction == default)
+        {
+            bullet.GetComponent<BulletHandler>().Setup(wc.cb, Vector3.right * (isFacingRight ? 1 : -1), curBulletDamage, firingRange, this);
+        }
+        else
+        {
+            bullet.GetComponent<BulletHandler>().Setup(wc.cb, direction * (isFacingRight ? 1 : -1), curBulletDamage, firingRange, this);
+        }
     }
 
     IEnumerator ShootCoroutine()
@@ -169,6 +178,10 @@ public class AutomaticWeapon : Weapon
             bool side = firingSideInput < 0;
             wc.cb.PlayFireAnimation(shootAnimationTime, side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
+
+            if (OnShot != null)
+                OnShot(Bullets);
+
             Shot(side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
             wc.cb.StopFireAnimation();

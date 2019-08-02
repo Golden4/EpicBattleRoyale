@@ -70,7 +70,7 @@ public class ItemPickUp : MonoBehaviour
     public virtual void Setup(Vector3 position)
     {
         transform.position = position;
-        AddForce((Vector3.up + Vector3.right) * 150);
+        //AddForce((Vector3.up + Vector3.right) * 150);
 
         Utility.Invoke(this, cantPickUpDelay, delegate
         {
@@ -112,6 +112,7 @@ public class ItemPickUp : MonoBehaviour
                 textMesh.gameObject.SetActive(true);
                 textMesh.GetComponentInChildren<SpriteRenderer>().sprite = sprite;
             }
+
             textMesh.transform.position = transform.position;
             iTween.MoveTo(textMesh.gameObject, textMesh.transform.position + Vector3.up * 2, .8f);
             iTween.FadeTo(textMesh.gameObject, 0f, .8f);
@@ -132,12 +133,13 @@ public class ItemPickUp : MonoBehaviour
 
     void TryPickUp()
     {
-        if (cb != null && cb && cb.CanPickUp())
+        if (cb != null && cb.CanPickUp())
         {
             if (!PickUp(cb))
             {
                 ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn(() =>
                 {
+                    Debug.Log("ShowPickUpBtn");
                     if (cb.CanPickUp() && PickUp(cb, true))
                     {
                         DestroyItem();

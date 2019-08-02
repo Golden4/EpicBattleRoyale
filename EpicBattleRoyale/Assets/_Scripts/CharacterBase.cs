@@ -18,7 +18,7 @@ public class CharacterBase : MonoBehaviour
     bool isJumping;
     Animator anim;
     Rigidbody2D rb;
-    public Weapon.WeaponType weaponType;
+    public WeaponController.SlotType weaponType;
     public bool isFiring;
     public bool shootingSideRight;
     public float move;
@@ -154,7 +154,7 @@ public class CharacterBase : MonoBehaviour
 
     }
 
-    public void SetWeaponAnimationType(Weapon.WeaponType type)
+    public void SetWeaponAnimationType(WeaponController.SlotType type)
     {
         weaponType = type;
         anim.SetInteger("WeaponType", (int)type);

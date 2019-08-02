@@ -33,7 +33,8 @@ public class GameAssets : ScriptableObject
         Fists,
         MP5,
         Beretta,
-        SniperRiffle
+        SniperRiffle,
+        ShotGun
     }
 
     public Weapon GetWeapon(WeaponsList weapon)

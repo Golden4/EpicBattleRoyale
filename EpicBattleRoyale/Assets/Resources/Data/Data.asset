@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 8042397154463595244, guid: dda5c44a906ed1340aaa7a2ae79f755c, type: 3}
   - {fileID: 8042397154463595244, guid: dd6bba69531770b4abe882926d2718bc, type: 3}
   - {fileID: 8042397154463595244, guid: 7b297bf9744d7c84db585463c026a9fd, type: 3}
+  - {fileID: 1458164135185642534, guid: a6974dc42b0d15544a83d594a743a5be, type: 3}
   characters:
   - {fileID: 3467985088730004138, guid: 3cef86f51334e734690b1983da7f4bf1, type: 3}
   pickUpItems:
@@ -24,6 +25,7 @@ MonoBehaviour:
     - {fileID: 3531299976100205070, guid: a573c762a3a1ff44d8b640b2a8a25152, type: 3}
     - {fileID: 3531299976100205070, guid: 0a322e0317582f64793eb4330532e530, type: 3}
     - {fileID: 3531299976100205070, guid: fd550bef75066b64fbeff7506b6c9fcc, type: 3}
+    - {fileID: 3531299976100205070, guid: c0b0e556559d8e54cbf077c9238ab3e8, type: 3}
     armorPickUpItems:
     - {fileID: 5116918898465032884, guid: 7a3aba71a88baed48ac38e2071590cec, type: 3}
     healthPickUpItems:

@@ -4,23 +4,6 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public GameAssets.WeaponsList weaponName;
-    public WeaponType weaponType;
-    public WeaponController.SlotType slotType;
-
-    public bool isActive;
-    public Vector2 m_damage = new Vector2(30, 50);
-    public float firingRange = 2;
-    public Sprite sprite;
-    protected WeaponController wc;
-    public int damage
-    {
-        get
-        {
-            return (int)Random.Range(m_damage.x, m_damage.y);
-        }
-    }
-
     public enum WeaponType
     {
         Melee,
@@ -30,9 +13,29 @@ public class Weapon : MonoBehaviour
         ShotGun
     }
 
-    public float firingSideInput;
+    public GameAssets.WeaponsList weaponName;
+    public WeaponType weaponType;
+    public WeaponController.SlotType slotType;
+    public Sprite sprite;
+    public Vector2 m_damage = new Vector2(30, 50);
+
+    public float firingRange = 2;
+
+    public int damage
+    {
+        get
+        {
+            return (int)Random.Range(m_damage.x, m_damage.y);
+        }
+    }
 
     public float fireRate = 0.05f;
+
+    [HideInInspector]
+    public bool isActive;
+    [HideInInspector]
+    public float firingSideInput;
+    protected WeaponController wc;
 
     /*	[Header ("Muzzle Flash and Tracer")]
 	//эффект выстрела патронами
@@ -73,7 +76,6 @@ public class Weapon : MonoBehaviour
 
     public virtual void OnWeaponSwitch(object sender, System.EventArgs e)
     {
-
     }
 
     public virtual void OnUpdate()
@@ -104,6 +106,11 @@ public class Weapon : MonoBehaviour
     public WeaponController.SlotType GetSlotType()
     {
         return slotType;
+    }
+
+    public bool WeaponIs(System.Type type)
+    {
+        return (type.IsAssignableFrom(this.GetType()));
     }
 
 }

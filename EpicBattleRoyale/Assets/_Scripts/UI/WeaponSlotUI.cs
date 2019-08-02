@@ -22,10 +22,14 @@ public class WeaponSlotUI : MonoBehaviour
         if (!enabled)
         {
             weaponSpriteImage.sprite = defaultSprite;
+
+            SetSpritesColor(.1f);
+
             if (bulletsText != null)
             {
                 bulletsText.gameObject.SetActive(false);
             }
+
             return;
         }
         else
@@ -57,30 +61,27 @@ public class WeaponSlotUI : MonoBehaviour
 
         if (!isActive)
         {
-            Color color = weaponSpriteImage.color;
-            color.a = .5f;
-            weaponSpriteImage.color = color;
-            if (bulletsText != null)
-            {
-                color = bulletsText.color;
-                color.a = .5f;
-                bulletsText.color = color;
-            }
+            SetSpritesColor(.5f);
 
             btn.onClick.AddListener(() => onClick());
 
         }
         else
         {
-            Color color = weaponSpriteImage.color;
-            color.a = 1;
-            weaponSpriteImage.color = color;
-            if (bulletsText != null)
-            {
-                color = bulletsText.color;
-                color.a = 1;
-                bulletsText.color = color;
-            }
+            SetSpritesColor(1);
+        }
+    }
+
+    void SetSpritesColor(float alpha)
+    {
+        Color color = weaponSpriteImage.color;
+        color.a = alpha;
+        weaponSpriteImage.color = color;
+        if (bulletsText != null)
+        {
+            color = bulletsText.color;
+            color.a = alpha;
+            bulletsText.color = color;
         }
     }
 

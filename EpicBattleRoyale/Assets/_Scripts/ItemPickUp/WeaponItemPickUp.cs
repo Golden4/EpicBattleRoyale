@@ -15,7 +15,7 @@ public class WeaponItemPickUp : ItemPickUp
             Weapon weapon = wc.FindWeaponInInventory(weaponName);
             if (weapon == null)
             {
-                if (wc.InventoryFull())
+                if (wc.InventoryFull(GameAssets.Get.GetWeapon(weaponName).slotType))
                 {
                     if (clickedPickUp)
                     {
@@ -33,11 +33,10 @@ public class WeaponItemPickUp : ItemPickUp
                     wc.GiveWeapon(weaponName);
                     return true;
                 }
-
             }
             else
             {
-                if (weapon.GetType() == typeof(AutomaticWeapon))
+                if (weapon.WeaponIs(typeof(AutomaticWeapon)))
                 {
                     AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
                     /*if (bulletInfo != null)
