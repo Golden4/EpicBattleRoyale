@@ -113,4 +113,8 @@ public class Weapon : MonoBehaviour
         return (type.IsAssignableFrom(this.GetType()));
     }
 
+    public void OnPickUp()
+    {
+
+    }
 }

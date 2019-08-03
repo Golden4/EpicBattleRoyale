@@ -62,7 +62,6 @@ public class ItemPickUp : MonoBehaviour
 		go.transform.position = position;
 		return go.GetComponent<ItemPickUp> ();
 	}*/
-
     public static event EventHandler OnPickUp;
 
     float cantPickUpDelay = 1;
@@ -114,6 +113,7 @@ public class ItemPickUp : MonoBehaviour
             }
 
             textMesh.transform.position = transform.position;
+            textMesh.GetComponentInChildren<MeshRenderer>().sortingOrder = 100;
             iTween.MoveTo(textMesh.gameObject, textMesh.transform.position + Vector3.up * 2, .8f);
             iTween.FadeTo(textMesh.gameObject, 0f, .8f);
             Destroy(textMesh.gameObject, 1f);
@@ -137,20 +137,29 @@ public class ItemPickUp : MonoBehaviour
         {
             if (!PickUp(cb))
             {
-                ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn(() =>
+                if (cb == World.Ins.player.characterBase)
                 {
-                    Debug.Log("ShowPickUpBtn");
-                    if (cb.CanPickUp() && PickUp(cb, true))
+                    ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn(() =>
                     {
-                        DestroyItem();
-                    }
-                });
+                        Debug.Log("ShowPickUpBtn");
+                        if (cb.CanPickUp() && PickUp(cb, true))
+                        {
+                            DestroyItem();
+                        }
+                    });
+                }
             }
             else
             {
                 DestroyItem();
             }
         }
+    }
+
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if (cb == null)
+            cb = col.transform.GetComponent<CharacterBase>();
     }
 
     void OnTriggerExit2D(Collider2D col)

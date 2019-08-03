@@ -45,13 +45,12 @@ public class MobileInputsUI : MonoBehaviour
     public void SetReloadTimeProgress(float progress)
     {
         reloadImageProgress.gameObject.SetActive(true);
-        reloadImageProgress.fillAmount = progress / reloadTime;
+        reloadImageProgress.fillAmount = progress / aw.reloadTime;
     }
 
     public void HideReloadTimeProgress()
     {
         reloadImageProgress.gameObject.SetActive(false);
-        reloadProgress = 0;
     }
 
     public void Setup(WeaponController wc)
@@ -65,8 +64,8 @@ public class MobileInputsUI : MonoBehaviour
     }
 
     AutomaticWeapon aw;
-    float reloadProgress;
-    float reloadTime;
+    // float reloadProgress;
+    // float reloadTime;
 
     void Update()
     {
@@ -77,12 +76,11 @@ public class MobileInputsUI : MonoBehaviour
                 ShowReloadBtn(() => aw.Reload());
                 HideReloadTimeProgress();
             }
-            else if (reloadProgress > 0)
+            else if (aw.reloadingProgress > 0)
             {
                 if (aw.curState == AutomaticWeapon.State.Reloading)
                 {
-                    reloadProgress -= Time.deltaTime;
-                    SetReloadTimeProgress(reloadProgress);
+                    SetReloadTimeProgress(aw.reloadingProgress);
                     ShowReloadBtn(null);
                 }
                 else
@@ -91,7 +89,12 @@ public class MobileInputsUI : MonoBehaviour
                     HideReloadTimeProgress();
                 }
             }
-            else if (reloadProgress < 0)
+            else if (aw.reloadingProgress < 0)
+            {
+                HideReloadTimeProgress();
+                HideReloadBtn();
+            }
+            else
             {
                 HideReloadTimeProgress();
                 HideReloadBtn();
@@ -118,14 +121,11 @@ public class MobileInputsUI : MonoBehaviour
             aw = null;
         }
 
-        reloadProgress = -1;
     }
 
     void Aw_OnReload(float reloadTime)
     {
         reloadImageProgress.gameObject.SetActive(true);
-        reloadProgress = reloadTime;
-        this.reloadTime = reloadTime;
     }
 
 }

@@ -43,16 +43,60 @@ public class CharacterBase : MonoBehaviour
         healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
         groundCheck = transform.Find("GroundCheck");
         anim = GetComponentInChildren<Animator>();
-        Debug.Log(anim);
         rb = GetComponent<Rigidbody2D>();
+        srs = GetComponentsInChildren<SpriteRenderer>();
+        Material mat = Resources.Load<Material>("Materials/FillableMaterial");
+
+        foreach (var item in srs)
+        {
+            item.sharedMaterial = mat;
+        }
+
         isInit = true;
     }
 
     float jumpDelay;
+    float t;
+    float lerpSpeed = .1f;
 
     void Update()
     {
         jumpDelay -= Time.deltaTime;
+        hitCooldown -= Time.deltaTime;
+        if (t > 0)
+        {
+            t -= Time.deltaTime / lerpSpeed;
+
+            Timer();
+
+        }
+        else if (t <= -0.01f)
+        {
+            t = 0;
+
+            TimerEnd();
+        }
+
+    }
+
+    public void Timer()
+    {
+        LerpCharacter(t, Color.red, Color.white);
+    }
+
+    public void TimerEnd()
+    {
+        LerpCharacter(1, Color.red, Color.white);
+    }
+
+    public void LerpCharacter(float persent, Color fadeColor = default, Color origColor = default)
+    {
+        foreach (SpriteRenderer item in srs)
+        {
+            //Color color = Color.Lerp(origColor, fadeColor, persent);
+            item.material.SetFloat("_FillAlpha", t);
+            // item.color = color;
+        }
     }
 
     private void FixedUpdate()
@@ -109,48 +153,53 @@ public class CharacterBase : MonoBehaviour
         collider.offset = new Vector2(.89f, .34f);
         collider.size = new Vector2(1.8f, .8f);
         collider.direction = CapsuleDirection2D.Horizontal;
-
-        StartCoroutine(FadeOutCharacter(2, 3, delegate
-        {
-            World.Ins.allCharacters.Remove(this);
-            Destroy(gameObject);
-        }));
+        StartCoroutine(FadeCharacter(2, 3, Color.clear, delegate
+                 {
+                     World.Ins.allCharacters.Remove(this);
+                     Destroy(gameObject);
+                 }));
+        // Utility.LerpSprite(this, srs, 2, 3, Color.clear, delegate
+        //  {
+        //      World.Ins.allCharacters.Remove(this);
+        //      Destroy(gameObject);
+        //  });
 
         if (OnDie != null)
             OnDie(this, EventArgs.Empty);
     }
 
-    IEnumerator FadeOutCharacter(float delay = 2, float fadeOutTime = 2, Action OnEndFadeOut = null)
+    SpriteRenderer[] srs;
+    IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
     {
         yield return new WaitForSeconds(delay);
-
-        float curFadeTime = fadeOutTime;
-        SpriteRenderer[] srs = GetComponentsInChildren<SpriteRenderer>();
+        float curFadeTime = fadeTime;
 
         while (curFadeTime > 0)
         {
             curFadeTime -= Time.deltaTime;
+
             foreach (SpriteRenderer item in srs)
             {
-                Color color = item.color;
+                Color color = Color.Lerp(Color.white, Color.clear, curFadeTime / fadeTime);
 
                 if (curFadeTime <= 0.05f)
                 {
-                    color.a = 0;
+                    color = Color.clear;
                     curFadeTime = 0;
                 }
                 else
                 {
-                    color.a = curFadeTime / fadeOutTime;
+                    color.a = curFadeTime / fadeTime;
                 }
 
-                item.color = color;
+                item.material.SetColor("_FillColor", color);
+
             }
 
             yield return null;
         }
-        if (OnEndFadeOut != null)
-            OnEndFadeOut();
+        if (OnEndFade != null)
+            OnEndFade();
 
     }
 
@@ -262,9 +311,14 @@ public class CharacterBase : MonoBehaviour
         return !IsDead();
     }
 
+    float hitCooldown;
     public void OnCharacterHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
     {
         healthSystem.Damage(damage);
+
+        t = 1;
+
+        hitCooldown = .3f;
 
         if (OnHitted != null)
             OnHitted(hitCharacter, hitWeapon, damage);

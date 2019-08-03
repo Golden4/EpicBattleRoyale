@@ -5,6 +5,8 @@ using UnityEngine;
 public class WeaponItemPickUp : ItemPickUp
 {
     public GameAssets.WeaponsList weaponName;
+
+    WeaponItemPickUpData data = null;
     //public BulletSystem bulletInfo;
 
     public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
@@ -19,7 +21,7 @@ public class WeaponItemPickUp : ItemPickUp
                 {
                     if (clickedPickUp)
                     {
-                        wc.GiveWeapon(weaponName);
+                        SetPickUpData(wc.GiveWeapon(weaponName)); ;
                         ShowPopUp(weaponName.ToString());
                         return true;
                     }
@@ -30,7 +32,7 @@ public class WeaponItemPickUp : ItemPickUp
                 }
                 else
                 {
-                    wc.GiveWeapon(weaponName);
+                    SetPickUpData(wc.GiveWeapon(weaponName));
                     return true;
                 }
             }
@@ -50,6 +52,36 @@ public class WeaponItemPickUp : ItemPickUp
             }
         }
         return false;
+    }
+
+    public void AddWeaponData(AutomaticWeapon weapon)
+    {
+        data = new WeaponItemPickUpData(weapon.bulletSystem);
+        Debug.Log("AddWeaponData " + data.bulletSystem.GetCurrentBullets());
+    }
+
+    public void SetPickUpData(Weapon weapon)
+    {
+        if (data != null)
+        {
+            if (weapon.WeaponIs(typeof(AutomaticWeapon)))
+            {
+                AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
+                automaticWeapon.bulletSystem.SetBullets(data.bulletSystem.curBullets);
+                automaticWeapon.bulletSystem.SetBulletsStock(data.bulletSystem.curBulletsStock);
+                Debug.Log("SetPickUpData " + data.bulletSystem.GetCurrentBullets());
+            }
+        }
+    }
+
+    [System.Serializable]
+    public class WeaponItemPickUpData
+    {
+        public BulletSystem bulletSystem;
+        public WeaponItemPickUpData(BulletSystem bulletSystem)
+        {
+            this.bulletSystem = bulletSystem;
+        }
     }
 
     /*	public void AddBulletInfo (BulletSystem bulletInfo)

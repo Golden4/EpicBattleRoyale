@@ -37,12 +37,12 @@ public class AutomaticWeapon : Weapon
     }
 
     public BulletSystem bulletSystem;
-
     public ShootMode mode;
     public State curState;
     public float reloadTime = 2;
     public float shootAnimationTime = .2f;
     public Transform muzzlePoint;
+    public float reloadingProgress;
     public event Action<float> OnReload;
     public event Action OnReloadComplete;
     public event Action<int> OnShot;
@@ -52,6 +52,13 @@ public class AutomaticWeapon : Weapon
         base.Setup(wc);
         bulletSystem.GiveBullets(10);
         bulletSystem.GiveBulletsStock(20);
+    }
+
+    public void Setup(WeaponItemPickUp.WeaponItemPickUpData data)
+    {
+        base.Setup(wc);
+        bulletSystem.GiveBullets(data.bulletSystem.curBullets);
+        bulletSystem.GiveBulletsStock(data.bulletSystem.curBulletsStock);
     }
 
     public override void OnUpdate()
@@ -81,6 +88,21 @@ public class AutomaticWeapon : Weapon
                 }
 
                 break;
+            case State.Reloading:
+
+                reloadingProgress -= Time.deltaTime;
+
+                if (reloadingProgress < 0)
+                {
+                    bulletSystem.ReloadBullets();
+                    curState = State.Normal;
+                    wc.cb.StopReloadAnimation();
+                    if (OnReloadComplete != null)
+                        OnReloadComplete();
+                    Debug.Log("Reload was done");
+                }
+
+                break;
             default:
                 break;
         }
@@ -91,7 +113,13 @@ public class AutomaticWeapon : Weapon
         if (CanReload())
         {
             curState = State.Reloading;
-            StartCoroutine("ReloadCoroutine");
+            // StartCoroutine("ReloadCoroutine");
+            wc.cb.PlayReloadAnimation(reloadTime);
+
+            if (OnReload != null)
+                OnReload(reloadTime);
+            reloadingProgress = reloadTime;
+            Debug.Log("Reloading " + reloadTime + "s.");
             return true;
         }
         else
@@ -147,7 +175,7 @@ public class AutomaticWeapon : Weapon
         }
 
         if (!hittedWithRaycast)
-            SpawnBullet(isFacingRight);
+            SpawnBullet(isFacingRight, Vector2.right + Vector2.up * UnityEngine.Random.Range(-.2f, .05f));
 
         bulletSystem.ShotBullet(1);
     }
@@ -215,14 +243,17 @@ public class AutomaticWeapon : Weapon
     public override void OnWeaponSwitch(object sender, System.EventArgs e)
     {
         base.OnWeaponSwitch(sender, e);
-        if (curState == State.Reloading)
-        {
-            StopCoroutine("ReloadCoroutine");
-        }
+
+        // if (curState == State.Reloading)
+        // {
+        //     StopCoroutine("ReloadCoroutine");
+        // }
+
         if (curState == State.Shooting)
         {
             StopCoroutine("ShootCoroutine");
         }
+
         curState = State.Normal;
         wc.cb.StopReloadAnimation();
         wc.cb.StopFireAnimation();

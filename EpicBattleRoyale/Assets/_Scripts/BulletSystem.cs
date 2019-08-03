@@ -56,6 +56,28 @@ public class BulletSystem
         return true;
     }
 
+    public void SetBullets(int bulletsAmount)
+    {
+
+        curBullets = bulletsAmount;
+
+        curBullets = Mathf.Clamp(curBullets, 0, maxBullets);
+
+        if (OnBulletsChange != null)
+            OnBulletsChange(this, EventArgs.Empty);
+    }
+
+    public void SetBulletsStock(int stockBulletsAmount)
+    {
+
+        curBulletsStock = stockBulletsAmount;
+
+        curBulletsStock = Mathf.Clamp(curBulletsStock, 0, maxBulletsStock);
+
+        if (OnBulletsChange != null)
+            OnBulletsChange(this, EventArgs.Empty);
+    }
+
     public bool ShotBullet(int bulletCount)
     {
         if (curBullets > 0)

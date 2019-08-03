@@ -27,13 +27,14 @@ public class BulletHandler : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2);
 
-        if (hit.collider == null)
-            return;
+        if (hit.collider != null)
+        {
+            CharacterBase damagable = hit.transform.GetComponent<CharacterBase>();
 
-        CharacterBase damagable = hit.transform.GetComponent<CharacterBase>();
-
-        if (damagable != null)
-            OnHit(hit, damagable);
+            if (damagable != null)
+                OnHit(hit, damagable);
+            else DestroyBullet();
+        }
     }
 
     public void Setup(CharacterBase cb, Vector2 dir, int damage, float destroyDistance, Weapon weapon)

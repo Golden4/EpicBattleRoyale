@@ -98,7 +98,6 @@ public class WeaponController : MonoBehaviour
         return weaponsInInventory[indexInInventory];
     }
 
-
     public void DropWeaponFromInventory(int index)
     {
         if (weaponsInInventory[index] != null)
@@ -107,6 +106,12 @@ public class WeaponController : MonoBehaviour
             {
                 WeaponItemPickUp weaponItemPickUp = World.Ins.SpawnItemPickUpWeapon(weaponsInInventory[index].weaponName,
                                                         transform.position + ((cb.isFacingRight) ? 2 : -2) * Vector3.right);
+
+                if (weaponsInInventory[index].WeaponIs(typeof(AutomaticWeapon)))
+                {
+                    AutomaticWeapon automaticWeapon = (AutomaticWeapon)weaponsInInventory[index];
+                    weaponItemPickUp.AddWeaponData(automaticWeapon);
+                }
                 //weaponItemPickUp.AddForce (new Vector3 (((cb.isFacingRight) ? 50 : -50), -50));
 
 

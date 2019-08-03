@@ -29,7 +29,13 @@ public class World : MonoBehaviour
         SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.automaticWeapon, new Vector3(-8, -3f));
         SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
         SpawnCharacterPlayer(GameAssets.CharacterList.Swat, new Vector3(0, -3f));
-        Enemy enemy = SpawnCharacterEnemy(GameAssets.CharacterList.Swat, new Vector3(-10, -3));
+
+        for (int i = -2; i < 2; i++)
+        {
+            if (i != 0)
+                SpawnCharacterEnemy(GameAssets.CharacterList.Swat, new Vector3(i * 4, -3));
+        }
+
         // enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.SniperRiffle);
         //   enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.MP5);
         //SpawnItemPickUp (ItemPickUp.ItemPickUpType.Weapon, );
@@ -154,7 +160,7 @@ public class World : MonoBehaviour
 
         for (int i = 0; i < allCharacters.Count; i++)
         {
-            if (cbExclude == allCharacters[i])
+            if (cbExclude == allCharacters[i] || allCharacters[i].IsDead())
                 continue;
 
             float distance = Vector3.Distance(allCharacters[i].transform.position, position);
