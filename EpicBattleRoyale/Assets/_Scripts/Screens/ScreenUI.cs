@@ -15,10 +15,11 @@ public class ScreenUI : ScreenBase
         World.OnPlayerSpawn += World_OnPlayerSpawn;
 
     }
+
     void World_OnPlayerSpawn(Player player)
     {
         healthArmorUI.Setup(player.characterBase.healthSystem);
         weaponsUI.Setup(player.weaponController);
-        mobileInputsUI.Setup(player.weaponController);
+        mobileInputsUI.Setup(player.weaponController, player.characterBase);
     }
 }

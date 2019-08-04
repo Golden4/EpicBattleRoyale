@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 935630908014738956}
   - component: {fileID: 935630908014738957}
   - component: {fileID: 3531299976100205070}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: MP5PickUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 935630908738973548}
   - component: {fileID: 935630908738973551}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,7 +184,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6971550786378790737}
   - component: {fileID: 5481023060326866243}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

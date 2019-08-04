@@ -118,6 +118,14 @@ public class Weapon : MonoBehaviour
         return (type.IsAssignableFrom(this.GetType()));
     }
 
+    public T GetWeaponWithType<T>() where T : Weapon
+    {
+        if (WeaponIs(typeof(T)))
+            return (T)this;
+
+        return null;
+    }
+
     public void OnPickUp()
     {
 

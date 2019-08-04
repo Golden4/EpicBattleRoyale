@@ -6,11 +6,30 @@ using UnityEngine.UI;
 
 public class MobileInputsUI : MonoBehaviour
 {
-
     public Button pickUpBtn;
     public Button reloadRtn;
+    public Button enterDoorBtn;
     public Image reloadImageProgress;
+    AutomaticWeapon aw;
     WeaponController wc;
+    CharacterBase characterBase;
+
+    public void Setup(WeaponController wc, CharacterBase cb)
+    {
+        this.wc = wc;
+        characterBase = cb;
+        HidePickUpBtn();
+        HideReloadBtn();
+        HideReloadTimeProgress();
+        wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
+        cb.inventorySystem.OnCanPickUp += CharacterBase_CanPickUpItem;
+        cb.inventorySystem.OnCantPickUp += CharacterBase_CantPickUpItem;
+    }
+
+    void Update()
+    {
+        HandlerReloadProgressAndBtn();
+    }
 
     public void ShowPickUpBtn(Action onClick)
     {
@@ -41,7 +60,6 @@ public class MobileInputsUI : MonoBehaviour
         reloadRtn.gameObject.SetActive(false);
     }
 
-
     public void SetReloadTimeProgress(float progress)
     {
         reloadImageProgress.gameObject.SetActive(true);
@@ -53,21 +71,31 @@ public class MobileInputsUI : MonoBehaviour
         reloadImageProgress.gameObject.SetActive(false);
     }
 
-    public void Setup(WeaponController wc)
+    public void ShowEnterDoorBtn()
     {
-        this.wc = wc;
-        HidePickUpBtn();
-        HideReloadBtn();
-        HideReloadTimeProgress();
-        wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
-
+        enterDoorBtn.gameObject.SetActive(true);
     }
 
-    AutomaticWeapon aw;
-    // float reloadProgress;
-    // float reloadTime;
+    public void HideEnterDoorBtn()
+    {
+        enterDoorBtn.gameObject.SetActive(false);
+    }
 
-    void Update()
+    void CharacterBase_CanPickUpItem(object obj, EventArgs args)
+    {
+        ShowPickUpBtn(() =>
+        {
+            Debug.Log("ShowPickUpBtn");
+            characterBase.inventorySystem.PickUp();
+        });
+    }
+
+    void CharacterBase_CantPickUpItem(object obj, EventArgs args)
+    {
+        HidePickUpBtn();
+    }
+
+    void HandlerReloadProgressAndBtn()
     {
         if (aw != null)
         {

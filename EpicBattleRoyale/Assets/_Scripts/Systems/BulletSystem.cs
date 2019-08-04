@@ -58,7 +58,6 @@ public class BulletSystem
 
     public void SetBullets(int bulletsAmount)
     {
-
         curBullets = bulletsAmount;
 
         curBullets = Mathf.Clamp(curBullets, 0, maxBullets);

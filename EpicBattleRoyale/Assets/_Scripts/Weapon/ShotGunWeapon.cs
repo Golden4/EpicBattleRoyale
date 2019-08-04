@@ -43,5 +43,7 @@ public class ShotGunWeapon : AutomaticWeapon
 
 
         bulletSystem.ShotBullet(1);
+        Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
+        muzzleFlash.Emit(1);
     }
 }

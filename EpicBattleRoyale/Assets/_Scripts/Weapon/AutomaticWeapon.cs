@@ -42,7 +42,11 @@ public class AutomaticWeapon : Weapon
     public float reloadTime = 2;
     public float shootAnimationTime = .2f;
     public Transform muzzlePoint;
+    protected ParticleSystem muzzleFlash;
+    protected Transform shellPoint;
     public float reloadingProgress;
+
+
     public event Action<float> OnReload;
     public event Action OnReloadComplete;
     public event Action<int> OnShot;
@@ -50,15 +54,15 @@ public class AutomaticWeapon : Weapon
     public override void Setup(WeaponController wc)
     {
         base.Setup(wc);
+        shellPoint = transform.Find("ShellPoint");
+
+        GameObject go = Instantiate(GameAssets.Get.pfMuzzleFlash.gameObject);
+        muzzleFlash = go.GetComponent<ParticleSystem>();
+        muzzleFlash.transform.SetParent(muzzlePoint, false);
+        muzzleFlash.transform.localPosition = Vector3.right * .2f;
+
         bulletSystem.GiveBullets(10);
         bulletSystem.GiveBulletsStock(20);
-    }
-
-    public void Setup(WeaponItemPickUp.WeaponItemPickUpData data)
-    {
-        base.Setup(wc);
-        bulletSystem.GiveBullets(data.bulletSystem.curBullets);
-        bulletSystem.GiveBulletsStock(data.bulletSystem.curBulletsStock);
     }
 
     public override void OnUpdate()
@@ -98,7 +102,6 @@ public class AutomaticWeapon : Weapon
         switch (curState)
         {
             case State.Reloading:
-                Debug.Log(reloadingProgress);
                 reloadingProgress -= Time.fixedDeltaTime;
 
                 if (reloadingProgress < 0)
@@ -190,6 +193,9 @@ public class AutomaticWeapon : Weapon
             SpawnBullet(isFacingRight, Vector2.right + Vector2.up * UnityEngine.Random.Range(-.05f, .05f));
 
         bulletSystem.ShotBullet(1);
+
+        Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
+        muzzleFlash.Emit(1);
     }
 
     protected void SpawnBullet(bool isFacingRight, Vector2 direction = default, int bulletDamage = -1)

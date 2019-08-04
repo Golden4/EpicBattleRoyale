@@ -124,6 +124,8 @@ public class GameAssets : ScriptableObject
     }
 
     public BulletHandler pfBullet;
+    public Shell pfShell;
+    public ParticleSystem pfMuzzleFlash;
 
     /*	void OnValidate ()
 	{

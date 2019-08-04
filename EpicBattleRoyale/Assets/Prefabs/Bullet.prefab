@@ -69,12 +69,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 15
-  m_Sprite: {fileID: 21300000, guid: bda0fcc9f159b7c4ca695de3dc5d40bd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0debaec18543df34d92bb1e73b083ae6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 1
-  m_Size: {x: 0.42, y: 0.168}
+  m_Size: {x: 0.4, y: 0.18}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -97,3 +97,6 @@ MonoBehaviour:
   speed: 18
   cb: {fileID: 0}
   weapon: {fileID: 0}
+  hitLayers:
+    serializedVersion: 2
+    m_Bits: 513

@@ -328,8 +328,8 @@ public class Enemy : MonoBehaviour
             weaponController.SwitchWeapon(index, true);
         else
         {
-            characterBase.OnPickUp -= OnPickUp;
-            characterBase.OnPickUp += OnPickUp;
+            characterBase.inventorySystem.OnPickUp -= OnPickUp;
+            characterBase.inventorySystem.OnPickUp += OnPickUp;
             weaponController.SwitchWeapon(3, true);
         }
     }

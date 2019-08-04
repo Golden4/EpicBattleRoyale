@@ -11,6 +11,7 @@ public class BulletHandler : MonoBehaviour
     Vector3 direction;
     public CharacterBase cb;
     public Weapon weapon;
+    public LayerMask hitLayers;
 
     void FixedUpdate()
     {
@@ -25,7 +26,7 @@ public class BulletHandler : MonoBehaviour
 
         Debug.DrawRay(transform.position - direction * bulletSize, direction * (bulletSize * 2 + .02f));
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2, hitLayers);
 
         if (hit.collider != null)
         {
@@ -33,7 +34,7 @@ public class BulletHandler : MonoBehaviour
 
             if (damagable != null)
                 OnHit(hit, damagable);
-            else DestroyBullet();
+            else if (!hit.collider.isTrigger) DestroyBullet();
         }
     }
 

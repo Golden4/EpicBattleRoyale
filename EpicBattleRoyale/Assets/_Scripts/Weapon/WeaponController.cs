@@ -89,7 +89,8 @@ public class WeaponController : MonoBehaviour
         {
             // if (GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
             // {
-            //     AutomaticWeapon automaticWeapon = (AutomaticWeapon)GetCurrentWeapon();
+            //     AutomaticWeapon automaticWeapon = GetCurrentWeapon().GetWeapon<AutomaticWeapon>();
+
             //     if (automaticWeapon.curState == AutomaticWeapon.State.Reloading)
             //     {
             //         indexWeapon = currentWeaponInHandIndex;

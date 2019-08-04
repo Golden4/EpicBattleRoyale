@@ -63,7 +63,7 @@ public class ItemPickUp : MonoBehaviour
 		return go.GetComponent<ItemPickUp> ();
 	}*/
     public static event EventHandler OnPickUp;
-    bool autoPickUp = false;
+    bool autoPickUp = true;
     float cantPickUpDelay = 1;
 
     public virtual void Setup(Vector3 position)
@@ -90,9 +90,8 @@ public class ItemPickUp : MonoBehaviour
 
     public void DestroyItem()
     {
-        ScreenUI.Ins.mobileInputsUI.HidePickUpBtn();
         World.Ins.itemsPickUp.Remove(this);
-        cb.OnCharacterPickUp(this);
+        cb.inventorySystem.OnCharacterPickUp(this);
         Destroy(gameObject);
     }
 
@@ -137,17 +136,7 @@ public class ItemPickUp : MonoBehaviour
         {
             if (!autoPickUp || !PickUp(cb))
             {
-                if (cb == World.Ins.player.characterBase)
-                {
-                    ScreenUI.Ins.mobileInputsUI.ShowPickUpBtn(() =>
-                    {
-                        Debug.Log("ShowPickUpBtn");
-                        if (cb.CanPickUp() && PickUp(cb, true))
-                        {
-                            DestroyItem();
-                        }
-                    });
-                }
+                cb.inventorySystem.CAN_PickUpItem(this);
             }
             else
             {
@@ -168,7 +157,7 @@ public class ItemPickUp : MonoBehaviour
 
         if (cb != null)
         {
-            ScreenUI.Ins.mobileInputsUI.HidePickUpBtn();
+            cb.inventorySystem.CANT_PickUpItem(this);
             cb = null;
         }
     }

@@ -49,6 +49,11 @@ public class Camera2DFollow : MonoBehaviour
         Vector3 newPos = Vector3.SmoothDamp(transform.position, aheadTargetPos, ref m_CurrentVelocity, damping);
 
         newPos.y = 0;
+        Vector2 cameraCenter = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width / 2, 0));
+
+        float screenSizex = Vector2.Distance(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)), Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0))) * 0.5f;
+
+        newPos.x = Mathf.Clamp(newPos.x, World.Ins.worldEndPoints.x + screenSizex, World.Ins.worldEndPoints.y - screenSizex);
         transform.position = newPos;
 
         //m_LastTargetPosition = target.transform.position;

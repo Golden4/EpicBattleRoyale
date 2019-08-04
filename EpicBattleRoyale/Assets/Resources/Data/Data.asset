@@ -37,3 +37,6 @@ MonoBehaviour:
     - {fileID: 1303756653334380520, guid: 542d27191e8ab40449df6a406543af88, type: 3}
   pfBullet: {fileID: 6231314855719747549, guid: 661b3c7bbb2462148bf6266985f79c6e,
     type: 3}
+  pfShell: {fileID: 5995582103948625971, guid: dd88487e15616a847a9b1988b0bbe490, type: 3}
+  pfMuzzleFlash: {fileID: 8991777449462202936, guid: 9753acc767aef684dbb6c0bfa4852a57,
+    type: 3}

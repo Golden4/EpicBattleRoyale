@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterBase : MonoBehaviour
@@ -24,7 +25,9 @@ public class CharacterBase : MonoBehaviour
     public float move;
     bool isDead;
     public HealthSystem healthSystem;
-    public event EventHandler OnPickUp;
+    public InventorySystem inventorySystem;
+
+    public event EventHandler OnCanEnterDoor;
     public event Action<CharacterBase, Weapon, int> OnHitted;
     public event EventHandler OnDie;
 
@@ -46,7 +49,7 @@ public class CharacterBase : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         srs = GetComponentsInChildren<SpriteRenderer>();
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
-
+        inventorySystem = new InventorySystem(this);
         foreach (var item in srs)
         {
             item.sharedMaterial = mat;
@@ -295,15 +298,19 @@ public class CharacterBase : MonoBehaviour
         return transform.position + Vector3.up;
     }
 
-    public void OnCharacterPickUp(ItemPickUp item)
-    {
-        if (OnPickUp != null)
-            OnPickUp(item, EventArgs.Empty);
-    }
-
     public bool CanPickUp()
     {
         return !IsDead();
+    }
+
+    public void CanEnterDoor()
+    {
+
+    }
+
+    public void EnterDoor()
+    {
+
     }
 
     public bool CanHit()
