@@ -78,7 +78,6 @@ public class AutomaticWeapon : Weapon
                         StartCoroutine("ShootCoroutine");
                     }
                 }
-
                 break;
             case State.Shooting:
 
@@ -88,12 +87,23 @@ public class AutomaticWeapon : Weapon
                 }
 
                 break;
-            case State.Reloading:
 
-                reloadingProgress -= Time.deltaTime;
+            default:
+                break;
+        }
+    }
+
+    public override void OnFixedUpdate()
+    {
+        switch (curState)
+        {
+            case State.Reloading:
+                Debug.Log(reloadingProgress);
+                reloadingProgress -= Time.fixedDeltaTime;
 
                 if (reloadingProgress < 0)
                 {
+                    reloadingProgress = 0;
                     bulletSystem.ReloadBullets();
                     curState = State.Normal;
                     wc.cb.StopReloadAnimation();
@@ -112,13 +122,15 @@ public class AutomaticWeapon : Weapon
     {
         if (CanReload())
         {
+            reloadingProgress = reloadTime;
             curState = State.Reloading;
             // StartCoroutine("ReloadCoroutine");
             wc.cb.PlayReloadAnimation(reloadTime);
 
             if (OnReload != null)
                 OnReload(reloadTime);
-            reloadingProgress = reloadTime;
+
+
             Debug.Log("Reloading " + reloadTime + "s.");
             return true;
         }
@@ -130,7 +142,7 @@ public class AutomaticWeapon : Weapon
 
     public bool CanReload()
     {
-        return curState != State.Reloading && bulletSystem.CanReload();
+        return curState != State.Reloading && bulletSystem.CanReload() && reloadingProgress == 0;
     }
 
     public override bool isFiring()
@@ -175,7 +187,7 @@ public class AutomaticWeapon : Weapon
         }
 
         if (!hittedWithRaycast)
-            SpawnBullet(isFacingRight, Vector2.right + Vector2.up * UnityEngine.Random.Range(-.2f, .05f));
+            SpawnBullet(isFacingRight, Vector2.right + Vector2.up * UnityEngine.Random.Range(-.05f, .05f));
 
         bulletSystem.ShotBullet(1);
     }
@@ -183,7 +195,7 @@ public class AutomaticWeapon : Weapon
     protected void SpawnBullet(bool isFacingRight, Vector2 direction = default, int bulletDamage = -1)
     {
         GameObject bullet = Instantiate(GameAssets.Get.pfBullet.gameObject);
-        bullet.transform.position = muzzlePoint.transform.position;
+        bullet.transform.position = muzzlePoint.transform.position + Vector3.right * (isFacingRight ? 1 : -1) * .3f;
         int curBulletDamage = damage;
 
         if (bulletDamage != -1)
@@ -215,7 +227,9 @@ public class AutomaticWeapon : Weapon
             wc.cb.StopFireAnimation();
             yield return new WaitForSeconds(fireRate - shootAnimationTime);
         }
-        curState = State.Normal;
+
+        if (curState == State.Shooting)
+            curState = State.Normal;
     }
 
     IEnumerator ReloadCoroutine()
@@ -253,7 +267,7 @@ public class AutomaticWeapon : Weapon
         {
             StopCoroutine("ShootCoroutine");
         }
-
+        reloadingProgress = 0;
         curState = State.Normal;
         wc.cb.StopReloadAnimation();
         wc.cb.StopFireAnimation();

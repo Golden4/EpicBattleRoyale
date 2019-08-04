@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace UnityStandardAssets.CrossPlatformInput
 {
@@ -29,10 +30,12 @@ namespace UnityStandardAssets.CrossPlatformInput
         {
             CreateVirtualAxes();
         }
-
+        RectTransform rectTransform;
         void Start()
         {
-            m_StartPos = transform.position;
+            scaler = GetComponentInParent<CanvasScaler>();
+            rectTransform = GetComponent<RectTransform>();
+            m_StartPos = rectTransform.anchoredPosition;// transform.position;
         }
 
         void UpdateVirtualAxes(Vector3 value)
@@ -40,6 +43,7 @@ namespace UnityStandardAssets.CrossPlatformInput
             var delta = m_StartPos - value;
             delta.y = -delta.y;
             delta /= MovementRange;
+
             if (m_UseX)
             {
                 m_HorizontalVirtualAxis.Update(-delta.x);
@@ -70,31 +74,36 @@ namespace UnityStandardAssets.CrossPlatformInput
             }
         }
 
-
+        CanvasScaler scaler;
         public void OnDrag(PointerEventData data)
         {
             Vector3 newPos = Vector3.zero;
+            Vector2 pos = new Vector2(Input.mousePosition.x * scaler.referenceResolution.x / Screen.width, Input.mousePosition.y * scaler.referenceResolution.y / Screen.height);
 
             if (m_UseX)
             {
-                int delta = (int)(data.position.x - m_StartPos.x);
+                int delta = (int)(pos.x - m_StartPos.x);
                 delta = Mathf.Clamp(delta, -MovementRange, MovementRange);
                 newPos.x = delta;
             }
 
             if (m_UseY)
             {
-                int delta = (int)(data.position.y - m_StartPos.y);
+                int delta = (int)(pos.y - m_StartPos.y);
                 delta = Mathf.Clamp(delta, -MovementRange, MovementRange);
                 newPos.y = delta;
             }
-            transform.position = new Vector3(m_StartPos.x + newPos.x, m_StartPos.y + newPos.y, m_StartPos.z + newPos.z);
-            UpdateVirtualAxes(transform.position);
+
+            rectTransform.anchoredPosition = new Vector3(m_StartPos.x + newPos.x, m_StartPos.y + newPos.y, m_StartPos.z + newPos.z);
+
+            //transform.position = new Vector3(m_StartPos.x + newPos.x, m_StartPos.y + newPos.y, m_StartPos.z + newPos.z);
+            UpdateVirtualAxes(rectTransform.anchoredPosition);
         }
 
         public void OnPointerUp(PointerEventData data)
         {
-            transform.position = m_StartPos;
+            rectTransform.anchoredPosition = m_StartPos;
+            //transform.position = m_StartPos;
             UpdateVirtualAxes(m_StartPos);
         }
 

@@ -57,7 +57,6 @@ public class WeaponItemPickUp : ItemPickUp
     public void AddWeaponData(AutomaticWeapon weapon)
     {
         data = new WeaponItemPickUpData(weapon.bulletSystem);
-        Debug.Log("AddWeaponData " + data.bulletSystem.GetCurrentBullets());
     }
 
     public void SetPickUpData(Weapon weapon)
@@ -69,7 +68,6 @@ public class WeaponItemPickUp : ItemPickUp
                 AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
                 automaticWeapon.bulletSystem.SetBullets(data.bulletSystem.curBullets);
                 automaticWeapon.bulletSystem.SetBulletsStock(data.bulletSystem.curBulletsStock);
-                Debug.Log("SetPickUpData " + data.bulletSystem.GetCurrentBullets());
             }
         }
     }

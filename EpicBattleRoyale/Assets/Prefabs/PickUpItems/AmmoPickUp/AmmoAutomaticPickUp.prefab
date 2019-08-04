@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 935630908014738959}
   - component: {fileID: 935630908014738956}
   - component: {fileID: 935630908014738957}
-  - component: {fileID: 5116918898465032884}
+  - component: {fileID: 1303756653334380520}
   m_Layer: 0
-  m_Name: ArmorPickUp
+  m_Name: AmmoAutomaticPickUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.3
+  m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
@@ -69,7 +69,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.005944103}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -80,9 +80,9 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.071159, y: 0.4990178}
+  m_Size: {x: 0.88704145, y: 0.33258235}
   m_EdgeRadius: 0
---- !u!114 &5116918898465032884
+--- !u!114 &1303756653334380520
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -91,11 +91,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 935630908014738955}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 327945031320d5d49b89b39a68e9566a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0379185ba5adffd4c8b7db1a2015ef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armorPickUpType: 1
-  armorAmount: 50
+  ammoPickUpType: 0
+  bulletType: 2
+  ammoAmount: 15
 --- !u!1 &935630908738973549
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,8 +122,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 935630908738973549}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.005, y: 0.196, z: 0}
-  m_LocalScale: {x: 1.3, y: 1.3, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 935630908014738959}
   m_RootOrder: 0
@@ -164,7 +165,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300002, guid: 65f69d3420eaaa245bfc79c6666206d1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1bfcd90e73bc0c344b10ad649498d688, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -219,7 +220,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.005944103}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -230,5 +231,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.071159, y: 0.4990178}
+  m_Size: {x: 0.88704145, y: 0.33258235}
   m_EdgeRadius: 0

@@ -83,14 +83,24 @@ public class WeaponController : MonoBehaviour
         weaponsInInventory[indexInInventory] = go.GetComponent<Weapon>();
         weaponsInInventory[indexInInventory].Setup(this);
 
-        if (GetCurrentWeapon() != null && GetCurrentWeapon().isFiring())
+        int indexWeapon = indexInInventory;
+
+        if (GetCurrentWeapon() != null)
         {
-            SwitchWeapon(currentWeaponInHandIndex);
+            // if (GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
+            // {
+            //     AutomaticWeapon automaticWeapon = (AutomaticWeapon)GetCurrentWeapon();
+            //     if (automaticWeapon.curState == AutomaticWeapon.State.Reloading)
+            //     {
+            //         indexWeapon = currentWeaponInHandIndex;
+            //     }
+            // }
+
+            if (GetCurrentWeapon().isFiring())
+                indexWeapon = currentWeaponInHandIndex;
         }
-        else
-        {
-            SwitchWeapon(indexInInventory);
-        }
+
+        SwitchWeapon(indexWeapon);
 
         if (OnGiveWeapon != null)
             OnGiveWeapon(weapon, EventArgs.Empty);
@@ -193,6 +203,24 @@ public class WeaponController : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    void FixedUpdate()
+    {
+        if (cb.IsDead())
+            return;
+
+
+        switch (curState)
+        {
+            case State.Normal:
+                if (weaponsInInventory[currentWeaponInHandIndex] != null)
+                    weaponsInInventory[currentWeaponInHandIndex].OnFixedUpdate();
+                break;
+            default:
+                break;
+        }
+
     }
 
     public void SwitchWeapon(int weaponIndex, bool checkCanSwitch = false)

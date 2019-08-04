@@ -32,5 +32,8 @@ MonoBehaviour:
     - {fileID: 3137203285612021175, guid: 294758e4690052e4c8183927bb483d9e, type: 3}
     ammoPickUpItems:
     - {fileID: 1303756653334380520, guid: efae1b153d970db448a4671db0ecca1b, type: 3}
+    - {fileID: 1303756653334380520, guid: b57da03161d6fc046b697355104cc2ff, type: 3}
+    - {fileID: 1303756653334380520, guid: f810d834b30118743841dc9914031185, type: 3}
+    - {fileID: 1303756653334380520, guid: 542d27191e8ab40449df6a406543af88, type: 3}
   pfBullet: {fileID: 6231314855719747549, guid: 661b3c7bbb2462148bf6266985f79c6e,
     type: 3}

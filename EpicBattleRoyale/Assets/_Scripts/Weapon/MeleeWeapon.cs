@@ -43,7 +43,6 @@ public class MeleeWeapon : Weapon
             yield return new WaitForSeconds(fireRate / 2f);
         }
         wc.cb.StopFireAnimation();
-        Debug.Log("Beat animation end" + Time.time);
         curState = State.Normal;
     }
 
@@ -51,7 +50,6 @@ public class MeleeWeapon : Weapon
     {
         RaycastHit2D[] hit = Physics2D.RaycastAll(wc.cb.GetCharacterCenter(), Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), firingRange);
         Debug.DrawRay(wc.cb.GetCharacterCenter(), Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), Color.red, firingRange);
-        Debug.Log("Beat " + Time.time);
 
         for (int i = 0; i < hit.Length; i++)
         {

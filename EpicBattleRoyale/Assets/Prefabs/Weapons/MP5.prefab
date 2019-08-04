@@ -64,6 +64,7 @@ MonoBehaviour:
   reloadTime: 2
   shootAnimationTime: 0.15
   muzzlePoint: {fileID: 4307691173345453201}
+  reloadingProgress: 0
 --- !u!1 &2450762844211826764
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +168,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5413451947992907903}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.742, y: 0.142, z: 0}
+  m_LocalPosition: {x: 0.783, y: 0.127, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4246920094108635489}

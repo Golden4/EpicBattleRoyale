@@ -84,9 +84,10 @@ public class GameAssets : ScriptableObject
 
         public enum AmmoPickUpList
         {
-            automaticWeapon,
-            sniperWeapon,
-            pistolWeapon
+            AutomaticWeapon,
+            SniperWeapon,
+            PistolWeapon,
+            ShotGunWeapon,
         }
 
         public ItemPickUp GetPickUpItem(WeaponsList item)

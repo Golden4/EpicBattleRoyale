@@ -26,15 +26,21 @@ public class World : MonoBehaviour
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
         SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
-        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.automaticWeapon, new Vector3(-8, -3f));
+
         SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
         SpawnCharacterPlayer(GameAssets.CharacterList.Swat, new Vector3(0, -3f));
 
-        for (int i = -2; i < 2; i++)
-        {
-            if (i != 0)
-                SpawnCharacterEnemy(GameAssets.CharacterList.Swat, new Vector3(i * 4, -3));
-        }
+        // for (int i = -2; i <= 2; i++)
+        // {
+        //     if (i != 0)
+        //         SpawnCharacterEnemy(GameAssets.CharacterList.Swat, new Vector3(i * 5, -3));
+        // }
+
+        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.AutomaticWeapon, new Vector3(1 * 3, -3f));
+        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.PistolWeapon, new Vector3(2 * 3, -3f));
+        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.ShotGunWeapon, new Vector3(3 * 3, -3f));
+        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.SniperWeapon, new Vector3(4 * 3, -3f));
+
 
         // enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.SniperRiffle);
         //   enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.MP5);

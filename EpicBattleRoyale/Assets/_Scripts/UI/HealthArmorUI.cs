@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthArmorUI : MonoBehaviour {
+public class HealthArmorUI : MonoBehaviour
+{
 
-	public Text healthText;
-	HealthSystem healthSystem;
+    public Text healthText;
+    public Text armorText;
+    HealthSystem healthSystem;
 
-	public void Setup (HealthSystem hs)
-	{
-		healthSystem = hs;
-		SetHealth (hs.GetHealth (), hs.GetArmor ());
-		healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
-	}
+    public void Setup(HealthSystem hs)
+    {
+        healthSystem = hs;
+        SetHealth(hs.GetHealth(), hs.GetArmor());
+        healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
+    }
 
-	void HealthSystem_OnHealthChanged (object sender, System.EventArgs e)
-	{
-		SetHealth (healthSystem.GetHealth (), healthSystem.GetArmor ());
-	}
+    void HealthSystem_OnHealthChanged(object sender, System.EventArgs e)
+    {
+        SetHealth(healthSystem.GetHealth(), healthSystem.GetArmor());
+    }
 
-	void SetHealth (int health, int armor)
-	{
-		healthText.text = "Health: " + health + "\nArmor: " + armor;
-	}
+    void SetHealth(int health, int armor)
+    {
+        healthText.text = health.ToString();
+        armorText.text = armor.ToString();
+    }
 
-	/*	void Update ()
+    /*	void Update ()
 	{
 		if (Input.GetKeyDown (KeyCode.O)) {
 			healthSystem.Damage (Random.Range (5, 100));

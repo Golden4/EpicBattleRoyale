@@ -83,6 +83,11 @@ public class Weapon : MonoBehaviour
 
     }
 
+    public virtual void OnFixedUpdate()
+    {
+
+    }
+
     public virtual bool isFiring()
     {
         return false;

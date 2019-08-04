@@ -63,7 +63,7 @@ public class ItemPickUp : MonoBehaviour
 		return go.GetComponent<ItemPickUp> ();
 	}*/
     public static event EventHandler OnPickUp;
-
+    bool autoPickUp = false;
     float cantPickUpDelay = 1;
 
     public virtual void Setup(Vector3 position)
@@ -135,7 +135,7 @@ public class ItemPickUp : MonoBehaviour
     {
         if (cb != null && cb.CanPickUp())
         {
-            if (!PickUp(cb))
+            if (!autoPickUp || !PickUp(cb))
             {
                 if (cb == World.Ins.player.characterBase)
                 {

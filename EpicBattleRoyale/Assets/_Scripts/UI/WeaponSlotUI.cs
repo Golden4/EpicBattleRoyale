@@ -77,6 +77,7 @@ public class WeaponSlotUI : MonoBehaviour
         Color color = weaponSpriteImage.color;
         color.a = alpha;
         weaponSpriteImage.color = color;
+
         if (bulletsText != null)
         {
             color = bulletsText.color;
@@ -88,7 +89,11 @@ public class WeaponSlotUI : MonoBehaviour
     public void UpdateBullets(int bullets = -1, int bulletsStock = -1)
     {
         bulletsText.gameObject.SetActive(true);
-        bulletsText.text = bullets + "/" + bulletsStock;
+        if ((bullets + bulletsStock) == 0)
+            bulletsText.color = Color.red;
+        else
+            bulletsText.color = Color.white;
+        bulletsText.text = "<size=10>" + bullets + "</size>/" + bulletsStock;
     }
 
 }
