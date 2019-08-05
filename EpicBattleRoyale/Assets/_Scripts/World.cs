@@ -28,7 +28,8 @@ public class World : MonoBehaviour
         SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
 
         SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
-        SpawnCharacterPlayer(GameAssets.CharacterList.Swat, new Vector3(0, -3f));
+        SpawnCharacterPlayer(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
+        SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
 
         // for (int i = -2; i <= 2; i++)
         // {

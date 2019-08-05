@@ -38,7 +38,7 @@ public class WeaponController : MonoBehaviour
 
     public event EventHandler OnWeaponSwitch;
     public event EventHandler OnGiveWeapon;
-
+    [HideInInspector]
     public CharacterBase cb;
 
     void Awake()

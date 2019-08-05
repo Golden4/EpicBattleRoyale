@@ -13,15 +13,21 @@ public class CharacterBase : MonoBehaviour
     public float jumpForce = 500;
     public bool airControl = true;
     public LayerMask whatIsGround;
+    [HideInInspector]
     public bool isFacingRight = true;
     Transform groundCheck;
     bool isGrounded;
     bool isJumping;
     Animator anim;
     Rigidbody2D rb;
+
+    [HideInInspector]
     public WeaponController.SlotType weaponType;
+    [HideInInspector]
     public bool isFiring;
+    [HideInInspector]
     public bool shootingSideRight;
+    [HideInInspector]
     public float move;
     bool isDead;
     public HealthSystem healthSystem;
@@ -108,15 +114,6 @@ public class CharacterBase : MonoBehaviour
             return;
 
         isGrounded = false;
-
-        Debug.DrawRay(groundCheck.position, Vector3.down * .2f);
-
-        //Debug.Log (hit.collider.name);
-        /*		Collider2D[] colliders = Physics2D.OverlapCircleAll (groundCheck.position, k_GroundedRadius, whatIsGround);
-                for (int i = 0; i < colliders.Length; i++) {
-                    if (colliders [i].gameObject != gameObject)
-                        isGrounded = true;
-                }*/
 
         RaycastHit2D[] hit = Physics2D.RaycastAll(groundCheck.position, Vector3.down, .2f);
         for (int i = 0; i < hit.Length; i++)

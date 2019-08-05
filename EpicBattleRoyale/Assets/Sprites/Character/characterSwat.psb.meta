@@ -9,7 +9,6 @@ ScriptedImporter:
     100008: characterSwat_GO/characterSwat_GO/l_arm2
     100010: characterSwat_GO/characterSwat_GO/l_arm3
     100012: characterSwat_GO/characterSwat_GO/l_arm3_1
-    100014: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4
     100016: characterSwat_GO/characterSwat_GO/l_leg1
     100018: characterSwat_GO/characterSwat_GO/l_leg2
     100020: characterSwat_GO/characterSwat_GO/l_leg3
@@ -21,11 +20,12 @@ ScriptedImporter:
     100032: characterSwat_GO/characterSwat_GO/r_leg3
     100034: characterSwat_GO/characterSwat_GO/root
     100036: characterSwat_GO/characterSwat_GO/root/bone_1
-    100038: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4/bone_5
-    100040: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4/bone_5/bone_6
-    100042: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7
-    100044: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7/bone_8
-    100046: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7/bone_8/bone_9
+    100048: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4
+    100050: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4/bone_5
+    100052: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4/bone_5/bone_6
+    100054: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7
+    100056: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7/bone_8
+    100058: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7/bone_8/bone_9
     100066: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3
     100080: characterSwat_GO/characterSwat_GO/root/bone_10
     100082: characterSwat_GO/characterSwat_GO/root/bone_10/bone_11
@@ -40,7 +40,6 @@ ScriptedImporter:
     400008: characterSwat_GO/characterSwat_GO/l_arm2/Transform
     400010: characterSwat_GO/characterSwat_GO/l_arm3/Transform
     400012: characterSwat_GO/characterSwat_GO/l_arm3_1/Transform
-    400014: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4/Transform
     400016: characterSwat_GO/characterSwat_GO/l_leg1/Transform
     400018: characterSwat_GO/characterSwat_GO/l_leg2/Transform
     400020: characterSwat_GO/characterSwat_GO/l_leg3/Transform
@@ -52,11 +51,12 @@ ScriptedImporter:
     400032: characterSwat_GO/characterSwat_GO/r_leg3/Transform
     400034: characterSwat_GO/characterSwat_GO/root/Transform
     400036: characterSwat_GO/characterSwat_GO/root/bone_1/Transform
-    400038: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4/bone_5/Transform
-    400040: characterSwat_GO/characterSwat_GO/root/bone_1/bone_4/bone_5/bone_6/Transform
-    400042: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7/Transform
-    400044: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7/bone_8/Transform
-    400046: characterSwat_GO/characterSwat_GO/root/bone_1/bone_7/bone_8/bone_9/Transform
+    400048: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4/Transform
+    400050: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4/bone_5/Transform
+    400052: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_4/bone_5/bone_6/Transform
+    400054: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7/Transform
+    400056: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7/bone_8/Transform
+    400058: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/bone_7/bone_8/bone_9/Transform
     400066: characterSwat_GO/characterSwat_GO/root/bone_1/bone_3/Transform
     400080: characterSwat_GO/characterSwat_GO/root/bone_10/Transform
     400082: characterSwat_GO/characterSwat_GO/root/bone_10/bone_11/Transform
@@ -544,7 +544,7 @@ ScriptedImporter:
     spriteBone:
     - name: bone_9
       position: {x: 43.152786, y: 15.525009, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9994441, w: 0.033339053}
+      rotation: {x: 0, y: 0, z: 0.9994441, w: 0.033339094}
       length: 33.06242
       parentId: -1
     spriteOutline: []
@@ -610,7 +610,7 @@ ScriptedImporter:
     spriteBone:
     - name: bone_8
       position: {x: 55.736397, y: 18.391113, z: 0}
-      rotation: {x: 0, y: 0, z: 0.999926, w: 0.012167345}
+      rotation: {x: 0, y: 0, z: 0.999926, w: 0.012167471}
       length: 46.59741
       parentId: -1
     spriteOutline: []
@@ -680,8 +680,8 @@ ScriptedImporter:
     spriteBone:
     - name: bone_7
       position: {x: 52.64348, y: 17.693512, z: 0}
-      rotation: {x: 0, y: 0, z: 0.9995294, w: 0.030675951}
-      length: 43.989864
+      rotation: {x: 0, y: 0, z: 0.9995294, w: 0.030676033}
+      length: 43.98987
       parentId: -1
     spriteOutline: []
     vertices:
@@ -745,7 +745,7 @@ ScriptedImporter:
     spriteID: e325436621840bf41932787189f27755
     spriteBone:
     - name: bone_6
-      position: {x: 7.995117, y: 15.432495, z: 0}
+      position: {x: 7.9950867, y: 15.432495, z: 0}
       rotation: {x: 0, y: 0, z: -0.038007487, w: 0.99927753}
       length: 27.595171
       parentId: -1
@@ -811,7 +811,7 @@ ScriptedImporter:
     spriteID: f091e379e909e724fa23a1ff313cd3dd
     spriteBone:
     - name: bone_6
-      position: {x: 7.995117, y: 18.43248, z: 0}
+      position: {x: 7.9950867, y: 18.43248, z: 0}
       rotation: {x: 0, y: 0, z: -0.038007487, w: 0.99927753}
       length: 27.595171
       parentId: -1
@@ -944,8 +944,8 @@ ScriptedImporter:
     spriteBone:
     - name: bone_11
       position: {x: 20.15036, y: 41.936737, z: 0}
-      rotation: {x: 0, y: 0, z: -0.74622947, w: 0.6656889}
-      length: 38.25368
+      rotation: {x: 0, y: 0, z: -0.7462295, w: 0.66568875}
+      length: 38.253693
       parentId: -1
     spriteOutline: []
     vertices:
@@ -1011,7 +1011,7 @@ ScriptedImporter:
     - name: bone_10
       position: {x: 24.432129, y: 38.96747, z: 0}
       rotation: {x: 0, y: 0, z: -0.6517965, w: 0.7583939}
-      length: 31.387373
+      length: 31.38737
       parentId: -1
     spriteOutline: []
     vertices:
@@ -1076,8 +1076,8 @@ ScriptedImporter:
     spriteBone:
     - name: bone_12
       position: {x: 17.800262, y: 25.931198, z: 0}
-      rotation: {x: 0, y: 0, z: -0.20787667, w: 0.9781551}
-      length: 37.065216
+      rotation: {x: 0, y: 0, z: -0.20787664, w: 0.97815514}
+      length: 37.06522
       parentId: -1
     spriteOutline: []
     vertices:
@@ -1141,8 +1141,8 @@ ScriptedImporter:
     spriteID: 5c148b1f12df83843ab674b2806fb19d
     spriteBone:
     - name: bone_14
-      position: {x: 22.383774, y: 41.11667, z: 0}
-      rotation: {x: 0, y: 0, z: -0.7329583, w: 0.68027353}
+      position: {x: 22.383774, y: 41.11664, z: 0}
+      rotation: {x: 0, y: 0, z: -0.7329583, w: 0.6802736}
       length: 36.41643
       parentId: -1
     spriteOutline: []
@@ -1273,8 +1273,8 @@ ScriptedImporter:
     spriteID: dedcbcab26d8dca4cb7333e55485116c
     spriteBone:
     - name: bone_15
-      position: {x: 16.672348, y: 24.801306, z: 0}
-      rotation: {x: 0, y: 0, z: -0.17688131, w: 0.98423225}
+      position: {x: 16.672363, y: 24.801298, z: 0}
+      rotation: {x: 0, y: 0, z: -0.1768813, w: 0.9842322}
       length: 38.831104
       parentId: -1
     spriteOutline: []
@@ -1678,8 +1678,8 @@ ScriptedImporter:
     spriteID: 4edb3e4dc6c3a1448a0abdda0cc5c113
     spriteBone:
     - name: bone_5
-      position: {x: 16.343323, y: 25.320404, z: 0}
-      rotation: {x: 0, y: 0, z: 0.0011766359, w: 0.99999934}
+      position: {x: 16.343307, y: 25.320404, z: 0}
+      rotation: {x: 0, y: 0, z: 0.0011754957, w: 0.99999934}
       length: 47.651924
       parentId: -1
     spriteOutline: []
@@ -1745,8 +1745,8 @@ ScriptedImporter:
     spriteBone:
     - name: bone_4
       position: {x: 13.266663, y: 13.875061, z: 0}
-      rotation: {x: 0, y: 0, z: 0.029725978, w: 0.99955815}
-      length: 41.14938
+      rotation: {x: 0, y: 0, z: 0.029725846, w: 0.99955815}
+      length: 41.149384
       parentId: -1
     spriteOutline: []
     vertices:
@@ -2041,63 +2041,63 @@ ScriptedImporter:
       length: 95.35659
       parentId: 0
     - name: bone_4
-      position: {x: 35.267483, y: -30.219648, z: 0}
-      rotation: {x: 0, y: 0, z: -0.68814206, w: 0.72557604}
-      length: 41.149376
-      parentId: 0
+      position: {x: -14.183275, y: -30.311922, z: 0}
+      rotation: {x: 0, y: 0, z: -0.6857959, w: 0.727794}
+      length: 41.14938
+      parentId: 1
     - name: bone_5
-      position: {x: 41.149376, y: -0.0000005439299, z: 0}
-      rotation: {x: 0, y: 0, z: -0.028549844, w: 0.99959236}
-      length: 47.65192
+      position: {x: 41.149364, y: 0.000018139901, z: 0}
+      rotation: {x: 0, y: 0, z: -0.02855089, w: 0.99959236}
+      length: 47.651917
       parentId: 2
     - name: bone_6
-      position: {x: 47.651913, y: -0.000060373466, z: 0}
-      rotation: {x: 0, y: 0, z: -0.03918326, w: 0.99923205}
+      position: {x: 47.651913, y: 0.0000478025, z: 0}
+      rotation: {x: 0, y: 0, z: -0.039182097, w: 0.9992321}
       length: 27.595167
       parentId: 3
     - name: bone_7
-      position: {x: 37.51992, y: 36.390274, z: 0}
-      rotation: {x: 0, y: 0, z: 0.6827063, w: 0.730693}
-      length: 43.98986
-      parentId: 0
+      position: {x: -12.361008, y: 36.311157, z: 0}
+      rotation: {x: 0, y: 0, z: 0.6850619, w: 0.728485}
+      length: 43.989864
+      parentId: 1
     - name: bone_8
-      position: {x: 43.98987, y: -0.0000078639405, z: 0}
+      position: {x: 43.98987, y: -0.000013169517, z: 0}
       rotation: {x: 0, y: 0, z: 0.018512076, w: 0.99982864}
       length: 46.597397
       parentId: 5
     - name: bone_9
-      position: {x: 46.597397, y: -0.00005622779, z: 0}
-      rotation: {x: 0, y: 0, z: -0.021176007, w: 0.9997758}
+      position: {x: 46.5974, y: -0.00004351817, z: 0}
+      rotation: {x: 0, y: 0, z: -0.021175912, w: 0.99977577}
       length: 33.062412
       parentId: 6
     - name: bone_10
       position: {x: 3.561675, y: 20.59504, z: 0}
       rotation: {x: 0, y: -0, z: -0.9956879, w: 0.092766546}
-      length: 31.387367
+      length: 31.387363
       parentId: 14
     - name: bone_11
-      position: {x: 31.387362, y: -0.0000035733065, z: 0}
-      rotation: {x: 0, y: 0, z: -0.13204217, w: 0.99124414}
-      length: 38.253677
+      position: {x: 31.387358, y: -0.0000029998714, z: 0}
+      rotation: {x: 0, y: 0, z: -0.13204227, w: 0.9912441}
+      length: 38.253693
       parentId: 8
     - name: bone_12
-      position: {x: 38.25369, y: -0.0000052594737, z: 0}
-      rotation: {x: 0, y: 0, z: 0.59154695, w: 0.8062706}
+      position: {x: 38.253693, y: -0.000009990556, z: 0}
+      rotation: {x: 0, y: 0, z: 0.5915471, w: 0.80627054}
       length: 37.065212
       parentId: 9
     - name: bone_13
       position: {x: 5.9897428, y: -20.911182, z: 0}
       rotation: {x: 0, y: -0, z: -0.99137145, w: 0.13108265}
-      length: 32.6746
+      length: 32.674603
       parentId: 14
     - name: bone_14
-      position: {x: 32.6746, y: 0.000019217518, z: 0}
-      rotation: {x: 0, y: 0, z: -0.15069431, w: 0.9885804}
+      position: {x: 32.674606, y: 0.000017492926, z: 0}
+      rotation: {x: 0, y: 0, z: -0.15069422, w: 0.98858047}
       length: 36.41643
       parentId: 11
     - name: bone_15
-      position: {x: 36.416435, y: -0.0000018674612, z: 0}
-      rotation: {x: 0, y: 0, z: 0.60107356, w: 0.79919374}
+      position: {x: 36.416435, y: 0.0000041857834, z: 0}
+      rotation: {x: 0, y: 0, z: 0.6010735, w: 0.7991938}
       length: 38.8311
       parentId: 12
     - name: root
@@ -2217,17 +2217,17 @@ ScriptedImporter:
     index: 0
   - go: {fileID: 100066, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 1
-  - go: {fileID: 100014, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100048, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 2
-  - go: {fileID: 100038, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100050, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 3
-  - go: {fileID: 100040, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100052, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 4
-  - go: {fileID: 100042, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100054, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 5
-  - go: {fileID: 100044, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100056, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 6
-  - go: {fileID: 100046, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
+  - go: {fileID: 100058, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 7
   - go: {fileID: 100080, guid: aeff6970b797b1f4298dedf1cdaf9ba5, type: 3}
     index: 8

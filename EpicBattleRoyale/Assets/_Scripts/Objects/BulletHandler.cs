@@ -24,8 +24,6 @@ public class BulletHandler : MonoBehaviour
 
         transform.position += direction * Time.fixedDeltaTime * speed;
 
-        Debug.DrawRay(transform.position - direction * bulletSize, direction * (bulletSize * 2 + .02f));
-
         RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2, hitLayers);
 
         if (hit.collider != null)

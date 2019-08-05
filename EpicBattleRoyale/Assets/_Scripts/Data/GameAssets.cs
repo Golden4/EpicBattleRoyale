@@ -34,7 +34,8 @@ public class GameAssets : ScriptableObject
         MP5,
         Beretta,
         SniperRiffle,
-        ShotGun
+        ShotGun,
+        AK12
     }
 
     public Weapon GetWeapon(WeaponsList weapon)
@@ -49,7 +50,8 @@ public class GameAssets : ScriptableObject
 
     public enum CharacterList
     {
-        Swat
+        Swat,
+        Soldier
     }
 
     public CharacterBase GetCharacter(CharacterList character)

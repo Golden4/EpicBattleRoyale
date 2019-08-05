@@ -20,6 +20,7 @@ MonoBehaviour:
   - {fileID: 1458164135185642534, guid: a6974dc42b0d15544a83d594a743a5be, type: 3}
   characters:
   - {fileID: 3467985088730004138, guid: 3cef86f51334e734690b1983da7f4bf1, type: 3}
+  - {fileID: 1702081579081645956, guid: 96c9b75018637df4ead3389bd4dba493, type: 3}
   pickUpItems:
     weaponsPickUpItems:
     - {fileID: 3531299976100205070, guid: a573c762a3a1ff44d8b640b2a8a25152, type: 3}
