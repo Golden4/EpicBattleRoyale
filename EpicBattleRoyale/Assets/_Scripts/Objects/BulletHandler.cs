@@ -32,6 +32,7 @@ public class BulletHandler : MonoBehaviour
 
             if (damagable != null)
                 OnHit(hit, damagable);
+
             else if (!hit.collider.isTrigger) DestroyBullet();
         }
     }

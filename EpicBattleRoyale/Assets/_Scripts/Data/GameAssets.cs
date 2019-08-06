@@ -128,6 +128,32 @@ public class GameAssets : ScriptableObject
     public BulletHandler pfBullet;
     public Shell pfShell;
     public ParticleSystem pfMuzzleFlash;
+    public TMPro.TextMeshPro pfPopUpDamage;
+
+    public GameObject pfMap;
+
+    public enum HouseType
+    {
+        highRiseBuilding,
+    }
+
+    [System.Serializable]
+    public class HouseData
+    {
+        public HouseType houseType;
+        public GameObject pfOuterHouse;
+        public GameObject pfInnerHouse;
+    }
+
+    public List<HouseData> houses;
+
+    public HouseData GetHouseData(HouseType type)
+    {
+        return houses.Find(x =>
+        {
+            return x.houseType == type;
+        });
+    }
 
     /*	void OnValidate ()
 	{

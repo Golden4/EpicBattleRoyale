@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     {
         if (isInit)
             return;
-        MapsController.OnChangingMap += OnChangingMap;
+
         Setup(GetComponent<CharacterBase>(), GetComponent<WeaponController>(), position);
     }
 
@@ -35,12 +35,6 @@ public class Player : MonoBehaviour
         transform.position = position;
         isInit = true;
     }
-
-    Vector3[] positionsToMove = new Vector3[3] {
-        Vector3.right * -22,
-        Vector3.right * 22,
-        Vector3.zero
-    };
 
     void Update()
     {
@@ -73,38 +67,4 @@ public class Player : MonoBehaviour
 
     }
 
-    void OnChangingMap(MapsController.MapInfo arg1, Direction arg2)
-    {
-        int index = -1;
-
-        Direction[] dir1 = new Direction[] {
-            Direction.Bottom, Direction.Left, Direction.Right, Direction.Top
-        };
-
-        Direction[] dir2 = new Direction[] {
-            Direction.Top, Direction.Right, Direction.Left, Direction.Bottom
-        };
-
-        for (int i = 0; i < dir1.Length; i++)
-        {
-            if (arg2 == dir1[i])
-            {
-                for (int j = 0; j < arg1.roads.Length; j++)
-                {
-                    if (arg1.roads[j] == dir2[i])
-                    {
-                        index = j;
-                        break;
-                    }
-                }
-            }
-        }
-        if (index != -1)
-            transform.position = positionsToMove[index];
-
-    }
-    void OnDestroy()
-    {
-        MapsController.OnChangingMap -= OnChangingMap;
-    }
 }

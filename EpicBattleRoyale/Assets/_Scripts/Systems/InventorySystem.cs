@@ -6,12 +6,12 @@ using UnityEngine;
 public class InventorySystem
 {
     public CharacterBase characterBase;
+    public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
+    public List<ItemPickUp> pickedUpItems = new List<ItemPickUp>();
+    public List<Bullets> bullets = new List<Bullets>();
     public event EventHandler OnCanPickUp;
     public event EventHandler OnCantPickUp;
     public event EventHandler OnPickUp;
-
-    public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
-    public List<ItemPickUp> pickedUpItems = new List<ItemPickUp>();
 
     public void OnCharacterPickUp(ItemPickUp item)
     {
@@ -32,8 +32,6 @@ public class InventorySystem
     public void CANT_PickUpItem(ItemPickUp item)
     {
         canPickUpItems.Remove(item);
-
-        Debug.Log("CANT_PickUpItem" + item.name);
         if (canPickUpItems.Count == 0)
         {
             if (OnCantPickUp != null)
@@ -58,5 +56,26 @@ public class InventorySystem
     public InventorySystem(CharacterBase characterBase)
     {
         this.characterBase = characterBase;
+
+        for (int i = 0; i < Enum.GetNames(typeof(Weapon.WeaponType)).Length; i++)
+        {
+
+            bullets.Add(new Bullets((Weapon.WeaponType)i, 0));
+        }
+
     }
+
+    public class Bullets
+    {
+        public Weapon.WeaponType bulletType;
+        public int count;
+
+        public Bullets(Weapon.WeaponType bulletType, int count)
+        {
+            this.bulletType = bulletType;
+            this.count = count;
+
+        }
+    }
+
 }

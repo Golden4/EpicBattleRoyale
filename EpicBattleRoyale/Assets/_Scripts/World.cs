@@ -9,7 +9,8 @@ public class World : MonoBehaviour
     public List<ItemPickUp> itemsPickUp = new List<ItemPickUp>();
     public Player player;
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
-    public Vector2 worldEndPoints = new Vector2(-26, 26);
+    public Vector2 worldEndPoints = new Vector2(-37, 37);
+    GameObject itemsHolder;
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
 
@@ -20,21 +21,24 @@ public class World : MonoBehaviour
 
     void Start()
     {
+        if (itemsHolder == null)
+            itemsHolder = new GameObject("ItemsHolder");
+
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.MP5, new Vector3(-5, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.Beretta, new Vector3(5, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(3, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
         SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
         SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
-
+        SpawnItemPickUpWeapon(GameAssets.WeaponsList.AK12, new Vector3(-12, -3f));
         SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
         SpawnCharacterPlayer(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-        SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
+        // SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
 
         // for (int i = -2; i <= 2; i++)
         // {
         //     if (i != 0)
-        //         SpawnCharacterEnemy(GameAssets.CharacterList.Swat, new Vector3(i * 5, -3));
+        //         SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(i * 5, -3));
         // }
 
         SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.AutomaticWeapon, new Vector3(1 * 3, -3f));
@@ -107,6 +111,8 @@ public class World : MonoBehaviour
         ArmorItemPickUp armorItemPickUp = go.GetComponent<ArmorItemPickUp>();
         armorItemPickUp.Setup(position);
         itemsPickUp.Add(armorItemPickUp);
+        armorItemPickUp.transform.SetParent(itemsHolder.transform, false);
+
         return armorItemPickUp;
     }
 
@@ -116,16 +122,20 @@ public class World : MonoBehaviour
         HealthItemPickUp healthItemPickUp = go.GetComponent<HealthItemPickUp>();
         healthItemPickUp.Setup(position);
         itemsPickUp.Add(healthItemPickUp);
+        healthItemPickUp.transform.SetParent(itemsHolder.transform, false);
+
         return healthItemPickUp;
 
     }
 
     public WeaponItemPickUp SpawnItemPickUpWeapon(GameAssets.WeaponsList item, Vector3 position)
     {
+
         GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
         WeaponItemPickUp weaponItemPickUp = go.GetComponent<WeaponItemPickUp>();
         weaponItemPickUp.Setup(position);
         itemsPickUp.Add(weaponItemPickUp);
+        weaponItemPickUp.transform.SetParent(itemsHolder.transform, false);
         return weaponItemPickUp;
     }
 
@@ -135,6 +145,8 @@ public class World : MonoBehaviour
         AmmoItemPickUp ammoItemPickUp = go.GetComponent<AmmoItemPickUp>();
         ammoItemPickUp.Setup(position);
         itemsPickUp.Add(ammoItemPickUp);
+        ammoItemPickUp.transform.SetParent(itemsHolder.transform, false);
+
         return ammoItemPickUp;
     }
 

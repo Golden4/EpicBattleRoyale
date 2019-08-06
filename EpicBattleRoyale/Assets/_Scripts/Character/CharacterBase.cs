@@ -53,9 +53,11 @@ public class CharacterBase : MonoBehaviour
         groundCheck = transform.Find("GroundCheck");
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        srs = GetComponentsInChildren<SpriteRenderer>();
+        srs = GetComponentsInChildren<SkinnedMeshRenderer>();
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
         inventorySystem = new InventorySystem(this);
+        MapsController.Ins.OnChangingMap += OnChangingMap;
+
         foreach (var item in srs)
         {
             item.sharedMaterial = mat;
@@ -85,7 +87,6 @@ public class CharacterBase : MonoBehaviour
 
             TimerEnd();
         }
-
     }
 
     public void Timer()
@@ -100,7 +101,7 @@ public class CharacterBase : MonoBehaviour
 
     public void LerpCharacter(float persent, Color fadeColor = default, Color origColor = default)
     {
-        foreach (SpriteRenderer item in srs)
+        foreach (SkinnedMeshRenderer item in srs)
         {
             //Color color = Color.Lerp(origColor, fadeColor, persent);
             item.material.SetFloat("_FillAlpha", t);
@@ -118,7 +119,7 @@ public class CharacterBase : MonoBehaviour
         RaycastHit2D[] hit = Physics2D.RaycastAll(groundCheck.position, Vector3.down, .2f);
         for (int i = 0; i < hit.Length; i++)
         {
-            if (hit[i].collider != null && hit[i].collider.gameObject != gameObject)
+            if (hit[i].collider != null && hit[i].collider.gameObject != gameObject && !hit[i].collider.isTrigger)
             {
                 isGrounded = true;
                 isJumping = false;
@@ -150,9 +151,9 @@ public class CharacterBase : MonoBehaviour
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
         //collider.enabled = false;
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
-        collider.offset = new Vector2(.89f, .34f);
-        collider.size = new Vector2(1.8f, .8f);
-        collider.direction = CapsuleDirection2D.Horizontal;
+        // collider.offset = new Vector2(.89f, .34f);
+        // collider.size = new Vector2(1.8f, .8f);
+        // collider.direction = CapsuleDirection2D.Horizontal;
         StartCoroutine(FadeCharacter(2, 3, Color.clear, delegate
                  {
                      World.Ins.allCharacters.Remove(this);
@@ -168,7 +169,7 @@ public class CharacterBase : MonoBehaviour
             OnDie(this, EventArgs.Empty);
     }
 
-    SpriteRenderer[] srs;
+    SkinnedMeshRenderer[] srs;
     IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
     {
         yield return new WaitForSeconds(delay);
@@ -178,7 +179,7 @@ public class CharacterBase : MonoBehaviour
         {
             curFadeTime -= Time.deltaTime;
 
-            foreach (SpriteRenderer item in srs)
+            foreach (SkinnedMeshRenderer item in srs)
             {
                 Color color = Color.Lerp(Color.white, Color.clear, curFadeTime / fadeTime);
 
@@ -292,7 +293,7 @@ public class CharacterBase : MonoBehaviour
 
     public Vector3 GetCharacterCenter()
     {
-        return transform.position + Vector3.up;
+        return transform.position;
     }
 
     public bool CanPickUp()
@@ -324,7 +325,68 @@ public class CharacterBase : MonoBehaviour
 
         hitCooldown = .3f;
 
+        SpawnDamagePopUpText(hitCharacter, hitWeapon, damage);
+
         if (OnHitted != null)
             OnHitted(hitCharacter, hitWeapon, damage);
+    }
+
+    void SpawnDamagePopUpText(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
+    {
+        GameObject damagePopUp = Instantiate(GameAssets.Get.pfPopUpDamage.gameObject);
+        TMPro.TextMeshPro tmp = damagePopUp.GetComponent<TMPro.TextMeshPro>();
+        tmp.text = "-" + damage.ToString();
+        tmp.fontSize = Mathf.Clamp(6 + damage / 10, 6, 10);
+        tmp.transform.position = transform.position;
+        iTween.MoveTo(tmp.gameObject, transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
+        Utility.Invoke(this, .2f, delegate { iTween.ScaleTo(tmp.gameObject, Vector3.zero, .3f); });
+        Destroy(tmp.gameObject, .5f);
+    }
+
+    void OnChangingMap(MapsController.MapInfo arg1, Direction arg2)
+    {
+        int index = -1;
+
+        Direction[] dir1 = new Direction[] {
+            Direction.Bottom, Direction.Left, Direction.Right, Direction.Top
+        };
+
+        Direction[] dir2 = new Direction[] {
+            Direction.Top, Direction.Right, Direction.Left, Direction.Bottom
+        };
+
+        for (int i = 0; i < dir1.Length; i++)
+        {
+            if (arg2 == dir1[i])
+            {
+                for (int j = 0; j < arg1.roads.Length; j++)
+                {
+                    if (arg1.roads[j] == dir2[i])
+                    {
+                        index = j;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (index != -1)
+        {
+            bool isFacingRight = true;
+            if (index == 1)
+            {
+                isFacingRight = false;
+            }
+            MoveToPosition(MapsController.Ins.characterSpawnPoints[index], isFacingRight);
+        }
+
+    }
+
+    public void MoveToPosition(Vector3 position, bool isFacingRight)
+    {
+        transform.position = position;
+        isJumping = false;
+        rb.velocity = Vector3.zero;
+        Flip(isFacingRight);
     }
 }
