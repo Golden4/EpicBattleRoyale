@@ -62,15 +62,19 @@ public class ItemPickUp : MonoBehaviour
 		go.transform.position = position;
 		return go.GetComponent<ItemPickUp> ();
 	}*/
-    public static event EventHandler OnPickUp;
-    bool autoPickUp = true;
+
+    public int chanceForSpawn = 5;
+    bool autoPickUp = false;
     float cantPickUpDelay = 1;
 
     public virtual void Setup(Vector3 position)
     {
         transform.position = position;
         //AddForce((Vector3.up + Vector3.right) * 150);
+    }
 
+    void Start()
+    {
         Utility.Invoke(this, cantPickUpDelay, delegate
         {
             cantPickUpDelay = 0;
@@ -124,7 +128,6 @@ public class ItemPickUp : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         cb = col.transform.GetComponent<CharacterBase>();
-
         if (cantPickUpDelay == 0)
             TryPickUp();
 
@@ -136,7 +139,7 @@ public class ItemPickUp : MonoBehaviour
         {
             if (!autoPickUp || !PickUp(cb))
             {
-                cb.inventorySystem.CAN_PickUpItem(this);
+                cb.inventorySystem.CanPickUpItem(this);
             }
             else
             {
@@ -157,7 +160,7 @@ public class ItemPickUp : MonoBehaviour
 
         if (cb != null)
         {
-            cb.inventorySystem.CANT_PickUpItem(this);
+            cb.inventorySystem.CanT_PickUpItem(this);
             cb = null;
         }
     }

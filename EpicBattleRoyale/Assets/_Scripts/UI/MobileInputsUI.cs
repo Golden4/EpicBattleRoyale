@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class MobileInputsUI : MonoBehaviour
 {
@@ -21,9 +22,12 @@ public class MobileInputsUI : MonoBehaviour
         HidePickUpBtn();
         HideReloadBtn();
         HideReloadTimeProgress();
+        HideCanEnterDoorBtn();
         wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
         cb.inventorySystem.OnCanPickUp += CharacterBase_CanPickUpItem;
         cb.inventorySystem.OnCantPickUp += CharacterBase_CantPickUpItem;
+        cb.CanEnterDoorEvent += CharacterBase_CanEnterDoor;
+        cb.AwayDoorEvent += CharacterBase_CantEnterDoor;
     }
 
     void Update()
@@ -33,14 +37,16 @@ public class MobileInputsUI : MonoBehaviour
 
     public void ShowPickUpBtn(Action onClick)
     {
-        pickUpBtn.gameObject.SetActive(true);
+        pickUpBtn.transform.DOScale(Vector3.one, .1f);
+        //pickUpBtn.gameObject.SetActive(true);
         pickUpBtn.onClick.RemoveAllListeners();
         pickUpBtn.onClick.AddListener(() => onClick());
     }
 
     public void HidePickUpBtn()
     {
-        pickUpBtn.gameObject.SetActive(false);
+        pickUpBtn.transform.DOScale(Vector3.zero, .21f);
+        //pickUpBtn.gameObject.SetActive(false);
     }
 
     public void ShowReloadBtn(Action onClick)
@@ -71,16 +77,6 @@ public class MobileInputsUI : MonoBehaviour
         reloadImageProgress.gameObject.SetActive(false);
     }
 
-    public void ShowEnterDoorBtn()
-    {
-        enterDoorBtn.gameObject.SetActive(true);
-    }
-
-    public void HideEnterDoorBtn()
-    {
-        enterDoorBtn.gameObject.SetActive(false);
-    }
-
     void CharacterBase_CanPickUpItem(object obj, EventArgs args)
     {
         ShowPickUpBtn(() =>
@@ -93,6 +89,31 @@ public class MobileInputsUI : MonoBehaviour
     void CharacterBase_CantPickUpItem(object obj, EventArgs args)
     {
         HidePickUpBtn();
+    }
+
+    public void ShowCanEnterDoorBtn(Action onClick)
+    {
+        enterDoorBtn.transform.DOScale(Vector3.one, .1f);
+        enterDoorBtn.onClick.RemoveAllListeners();
+        enterDoorBtn.onClick.AddListener(() => onClick());
+    }
+
+    public void HideCanEnterDoorBtn()
+    {
+        enterDoorBtn.transform.DOScale(Vector3.zero, .1f);
+    }
+
+    void CharacterBase_CanEnterDoor(object obj, EventArgs args)
+    {
+        ShowCanEnterDoorBtn(() =>
+        {
+            characterBase.EnterOrExitDoor();
+        });
+    }
+
+    void CharacterBase_CantEnterDoor(object obj, EventArgs args)
+    {
+        HideCanEnterDoorBtn();
     }
 
     void HandlerReloadProgressAndBtn()

@@ -94,8 +94,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0379185ba5adffd4c8b7db1a2015ef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ammoPickUpType: 2
-  bulletType: 1
+  chanceForSpawn: 5
+  ammoType: 2
   ammoAmount: 15
 --- !u!1 &935630908738973549
 GameObject:

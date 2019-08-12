@@ -233,7 +233,7 @@ public class Enemy : MonoBehaviour
         {
             curWaitingTime = 2;
             targetPosition = transform.position + Vector3.right * UnityEngine.Random.Range(-10f, 10f);
-            targetPosition.x = Mathf.Clamp(targetPosition.x, World.Ins.worldEndPoints.x, World.Ins.worldEndPoints.y);
+            targetPosition.x = Mathf.Clamp(targetPosition.x, MapsController.Ins.GetCurrentWorldEndPoints().x, MapsController.Ins.GetCurrentWorldEndPoints().y);
             curEnemyState = EnemyState.Moving;
         }
 

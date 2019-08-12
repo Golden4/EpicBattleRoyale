@@ -62,7 +62,6 @@ public class AutomaticWeapon : Weapon
         muzzleFlash.transform.localPosition = Vector3.right * .2f;
 
         bulletSystem.GiveBullets(10);
-        bulletSystem.GiveBulletsStock(20);
     }
 
     public override void OnUpdate()

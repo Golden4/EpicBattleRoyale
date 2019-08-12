@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class AmmoItemPickUp : ItemPickUp
 {
-    public GameAssets.PickUpItemsData.AmmoPickUpList ammoPickUpType;
-    public Weapon.WeaponType bulletType;
+    public GameAssets.PickUpItemsData.AmmoList ammoType;
     public int ammoAmount;
 
     public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
@@ -26,7 +25,7 @@ public class AmmoItemPickUp : ItemPickUp
                     if (weapon.WeaponIs(typeof(AutomaticWeapon)))
                     {
                         AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
-                        if (automaticWeapon.weaponType == bulletType)
+                        if (automaticWeapon.bulletSystem.ammoType == ammoType)
                         {
                             automaticWeapon.bulletSystem.GiveBulletsStock(20);
                             ShowPopUp("+20");

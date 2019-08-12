@@ -12,6 +12,8 @@ public class BulletSystem
     public int maxBullets;
     public int maxBulletsStock;
 
+    public GameAssets.PickUpItemsData.AmmoList ammoType;
+
     public event EventHandler OnBulletsChange;
 
     public int GetCurrentBullets()

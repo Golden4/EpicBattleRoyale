@@ -23,7 +23,7 @@ public class MapNavigate : MonoBehaviour
     {
         CharacterBase character = col.transform.GetComponent<CharacterBase>();
 
-        if (character != null)
+        if (character != null && World.Ins.player.characterBase == character)
             if (Input.GetKey(KeyCode.Space) && !colided)
             {
                 colided = true;
@@ -35,7 +35,7 @@ public class MapNavigate : MonoBehaviour
     {
         CharacterBase character = col.transform.GetComponent<CharacterBase>();
 
-        if (character != null)
+        if (character != null && World.Ins.player.characterBase == character)
             if (!colided)
             {
                 colided = true;

@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class GameAssets : ScriptableObject
 {
-
+    #region Singleton
     static GameAssets data;
 
     static bool Loaded;
@@ -25,7 +25,9 @@ public class GameAssets : ScriptableObject
             return data;
         }
     }
+    #endregion
 
+    #region WeaponsData
     public List<Weapon> weapons;
 
     public enum WeaponsList
@@ -45,7 +47,9 @@ public class GameAssets : ScriptableObject
             return x.weaponName == weapon;
         });
     }
+    #endregion
 
+    #region CharactersData
     public List<CharacterBase> characters;
 
     public enum CharacterList
@@ -61,6 +65,7 @@ public class GameAssets : ScriptableObject
              return x.characterName == character;
          });
     }
+    #endregion
 
     public PickUpItemsData pickUpItems;
 
@@ -72,19 +77,19 @@ public class GameAssets : ScriptableObject
         public List<HealthItemPickUp> healthPickUpItems;
         public List<AmmoItemPickUp> ammoPickUpItems;
 
-        public enum ArmorPickUpList
+        public enum ArmorList
         {
             Small,
             Big
         }
 
-        public enum HealthPickUpList
+        public enum HealthList
         {
             Small,
             Big
         }
 
-        public enum AmmoPickUpList
+        public enum AmmoList
         {
             AutomaticWeapon,
             SniperWeapon,
@@ -100,7 +105,7 @@ public class GameAssets : ScriptableObject
             });
         }
 
-        public ItemPickUp GetPickUpItem(ArmorPickUpList item)
+        public ItemPickUp GetPickUpItem(ArmorList item)
         {
             return armorPickUpItems.Find(x =>
             {
@@ -108,7 +113,7 @@ public class GameAssets : ScriptableObject
             });
         }
 
-        public ItemPickUp GetPickUpItem(HealthPickUpList item)
+        public ItemPickUp GetPickUpItem(HealthList item)
         {
             return healthPickUpItems.Find(x =>
             {
@@ -116,12 +121,58 @@ public class GameAssets : ScriptableObject
             });
         }
 
-        public ItemPickUp GetPickUpItem(AmmoPickUpList item)
+        public ItemPickUp GetPickUpItem(AmmoList item)
         {
             return ammoPickUpItems.Find(x =>
             {
-                return x.ammoPickUpType == item;
+                return x.ammoType == item;
             });
+        }
+
+        public ItemPickUp GetRandomPickUpItemWeapon()
+        {
+            List<ItemPickUp> pickUpItems = new List<ItemPickUp>(weaponsPickUpItems.ToArray());
+            return weaponsPickUpItems[GetRandomIndex(pickUpItems)];
+        }
+
+        public ItemPickUp GetRandomPickUpItemHealth()
+        {
+            List<ItemPickUp> pickUpItems = new List<ItemPickUp>(healthPickUpItems.ToArray());
+            return weaponsPickUpItems[GetRandomIndex(pickUpItems)];
+        }
+
+        public ItemPickUp GetRandomPickUpItemArmor()
+        {
+            List<ItemPickUp> pickUpItems = new List<ItemPickUp>(armorPickUpItems.ToArray());
+            return weaponsPickUpItems[GetRandomIndex(pickUpItems)];
+        }
+
+        int GetRandomIndex(List<ItemPickUp> pickUpItems)
+        {
+            int RandomNum = Random.Range(0, GetSummChance(pickUpItems));
+
+            int i = 0;
+            int sum = 0;
+
+            while (sum <= RandomNum)
+            {
+                sum += pickUpItems[i].chanceForSpawn;
+                i++;
+            }
+
+            return i - 1;
+        }
+
+        int GetSummChance(List<ItemPickUp> pickUpItems)
+        {
+            int summ = 0;
+
+            for (int i = 0; i < pickUpItems.Count; i++)
+            {
+                summ += pickUpItems[i].chanceForSpawn;
+            }
+
+            return summ;
         }
     }
 
@@ -130,36 +181,11 @@ public class GameAssets : ScriptableObject
     public ParticleSystem pfMuzzleFlash;
     public TMPro.TextMeshPro pfPopUpDamage;
 
-    public GameObject pfMap;
-
-    public enum HouseType
-    {
-        highRiseBuilding,
-    }
-
-    [System.Serializable]
-    public class HouseData
-    {
-        public HouseType houseType;
-        public GameObject pfOuterHouse;
-        public GameObject pfInnerHouse;
-    }
-
-    public List<HouseData> houses;
-
-    public HouseData GetHouseData(HouseType type)
-    {
-        return houses.Find(x =>
-        {
-            return x.houseType == type;
-        });
-    }
-
     /*	void OnValidate ()
-	{
-		for (int i = 0; i < weapons.Length; i++) {
-			weapons [i].weaponName = (WeaponsList)i;
-		}
-	}*/
+    {
+        for (int i = 0; i < weapons.Length; i++) {
+            weapons [i].weaponName = (WeaponsList)i;
+        }
+    }*/
 
 }

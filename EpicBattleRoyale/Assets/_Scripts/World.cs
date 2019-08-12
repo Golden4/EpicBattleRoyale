@@ -9,7 +9,6 @@ public class World : MonoBehaviour
     public List<ItemPickUp> itemsPickUp = new List<ItemPickUp>();
     public Player player;
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
-    public Vector2 worldEndPoints = new Vector2(-37, 37);
     GameObject itemsHolder;
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
@@ -24,16 +23,16 @@ public class World : MonoBehaviour
         if (itemsHolder == null)
             itemsHolder = new GameObject("ItemsHolder");
 
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.MP5, new Vector3(-5, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.Beretta, new Vector3(5, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(3, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
-        SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
-        SpawnItemPickUpWeapon(GameAssets.WeaponsList.AK12, new Vector3(-12, -3f));
-        SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.MP5, new Vector3(-5, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.Beretta, new Vector3(5, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(3, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
+        // SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
+        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.AK12, new Vector3(-12, -3f));
+        // SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
         SpawnCharacterPlayer(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-        // SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
+        //SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(-10, -6f));
 
         // for (int i = -2; i <= 2; i++)
         // {
@@ -41,10 +40,10 @@ public class World : MonoBehaviour
         //         SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(i * 5, -3));
         // }
 
-        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.AutomaticWeapon, new Vector3(1 * 3, -3f));
-        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.PistolWeapon, new Vector3(2 * 3, -3f));
-        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.ShotGunWeapon, new Vector3(3 * 3, -3f));
-        SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.SniperWeapon, new Vector3(4 * 3, -3f));
+        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.AutomaticWeapon, new Vector3(1 * 3, -3f));
+        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.PistolWeapon, new Vector3(2 * 3, -3f));
+        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.ShotGunWeapon, new Vector3(3 * 3, -3f));
+        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.SniperWeapon, new Vector3(4 * 3, -3f));
 
 
         // enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.SniperRiffle);
@@ -105,47 +104,68 @@ public class World : MonoBehaviour
         return player;
     }
 
-    public ArmorItemPickUp SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList item, Vector3 position)
+    public ArmorItemPickUp SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorList item, Vector3 position, bool random = false)
     {
-        GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
+        GameObject goPf = null;
+        if (!random)
+            goPf = GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject;
+        else
+            goPf = GameAssets.Get.pickUpItems.GetRandomPickUpItemArmor().gameObject;
+
+
+        GameObject go = Instantiate(goPf);
         ArmorItemPickUp armorItemPickUp = go.GetComponent<ArmorItemPickUp>();
         armorItemPickUp.Setup(position);
         itemsPickUp.Add(armorItemPickUp);
-        armorItemPickUp.transform.SetParent(itemsHolder.transform, false);
 
         return armorItemPickUp;
     }
 
-    public HealthItemPickUp SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList item, Vector3 position)
+    public HealthItemPickUp SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthList item, Vector3 position, bool random = false)
     {
-        GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
+        GameObject goPf = null;
+
+        if (!random)
+            goPf = GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject;
+        else
+            goPf = GameAssets.Get.pickUpItems.GetRandomPickUpItemHealth().gameObject;
+
+
+        GameObject go = Instantiate(goPf);
+
         HealthItemPickUp healthItemPickUp = go.GetComponent<HealthItemPickUp>();
         healthItemPickUp.Setup(position);
         itemsPickUp.Add(healthItemPickUp);
-        healthItemPickUp.transform.SetParent(itemsHolder.transform, false);
 
         return healthItemPickUp;
 
     }
 
-    public WeaponItemPickUp SpawnItemPickUpWeapon(GameAssets.WeaponsList item, Vector3 position)
+    public WeaponItemPickUp SpawnItemPickUpWeapon(GameAssets.WeaponsList item, Vector3 position, bool random = false)
     {
 
-        GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
+        GameObject goPf = null;
+
+        if (!random)
+            goPf = GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject;
+        else
+            goPf = GameAssets.Get.pickUpItems.GetRandomPickUpItemWeapon().gameObject;
+
+
+        GameObject go = Instantiate(goPf);
+
         WeaponItemPickUp weaponItemPickUp = go.GetComponent<WeaponItemPickUp>();
         weaponItemPickUp.Setup(position);
         itemsPickUp.Add(weaponItemPickUp);
-        weaponItemPickUp.transform.SetParent(itemsHolder.transform, false);
         return weaponItemPickUp;
     }
 
-    public AmmoItemPickUp SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList item, Vector3 position)
+    public AmmoItemPickUp SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList item, Vector3 position, bool random = false)
     {
         GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
         AmmoItemPickUp ammoItemPickUp = go.GetComponent<AmmoItemPickUp>();
         ammoItemPickUp.Setup(position);
         itemsPickUp.Add(ammoItemPickUp);
-        ammoItemPickUp.transform.SetParent(itemsHolder.transform, false);
 
         return ammoItemPickUp;
     }

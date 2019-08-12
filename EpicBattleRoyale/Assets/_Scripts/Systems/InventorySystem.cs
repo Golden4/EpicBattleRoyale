@@ -19,7 +19,7 @@ public class InventorySystem
             OnPickUp(item, EventArgs.Empty);
     }
 
-    public void CAN_PickUpItem(ItemPickUp item)
+    public void CanPickUpItem(ItemPickUp item)
     {
         canPickUpItems.Add(item);
 
@@ -29,7 +29,7 @@ public class InventorySystem
         }
     }
 
-    public void CANT_PickUpItem(ItemPickUp item)
+    public void CanT_PickUpItem(ItemPickUp item)
     {
         canPickUpItems.Remove(item);
         if (canPickUpItems.Count == 0)

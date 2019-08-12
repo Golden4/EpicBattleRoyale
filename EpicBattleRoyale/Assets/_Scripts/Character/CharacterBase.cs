@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CharacterBase : MonoBehaviour
 {
@@ -33,7 +34,6 @@ public class CharacterBase : MonoBehaviour
     public HealthSystem healthSystem;
     public InventorySystem inventorySystem;
 
-    public event EventHandler OnCanEnterDoor;
     public event Action<CharacterBase, Weapon, int> OnHitted;
     public event EventHandler OnDie;
 
@@ -56,7 +56,7 @@ public class CharacterBase : MonoBehaviour
         srs = GetComponentsInChildren<SkinnedMeshRenderer>();
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
         inventorySystem = new InventorySystem(this);
-        MapsController.Ins.OnChangingMap += OnChangingMap;
+
 
         foreach (var item in srs)
         {
@@ -300,15 +300,36 @@ public class CharacterBase : MonoBehaviour
     {
         return !IsDead();
     }
+    public event EventHandler CanEnterDoorEvent;
+    public event EventHandler AwayDoorEvent;
 
-    public void CanEnterDoor()
+    HouseDoor houseInfo;
+
+    public void CanEnterDoor(HouseDoor houseInfo)
     {
-
+        this.houseInfo = houseInfo;
+        if (CanEnterDoorEvent != null)
+            CanEnterDoorEvent(this, EventArgs.Empty);
     }
 
-    public void EnterDoor()
+    public void AwayDoor()
     {
+        houseInfo = null;
 
+        if (AwayDoorEvent != null)
+            AwayDoorEvent(this, EventArgs.Empty);
+    }
+
+    public void EnterOrExitDoor()
+    {
+        if (MapsController.Ins.mapState == MapsController.State.Map)
+        {
+            if (houseInfo != null)
+            {
+                MapsController.Ins.EnterHouse(houseInfo);
+            }
+        }
+        else MapsController.Ins.ExitHouse();
     }
 
     public bool CanHit()
@@ -338,48 +359,10 @@ public class CharacterBase : MonoBehaviour
         tmp.text = "-" + damage.ToString();
         tmp.fontSize = Mathf.Clamp(6 + damage / 10, 6, 10);
         tmp.transform.position = transform.position;
-        iTween.MoveTo(tmp.gameObject, transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
+        tmp.transform.DOMove(transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
+        // iTween.MoveTo(tmp.gameObject, transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
         Utility.Invoke(this, .2f, delegate { iTween.ScaleTo(tmp.gameObject, Vector3.zero, .3f); });
         Destroy(tmp.gameObject, .5f);
-    }
-
-    void OnChangingMap(MapsController.MapInfo arg1, Direction arg2)
-    {
-        int index = -1;
-
-        Direction[] dir1 = new Direction[] {
-            Direction.Bottom, Direction.Left, Direction.Right, Direction.Top
-        };
-
-        Direction[] dir2 = new Direction[] {
-            Direction.Top, Direction.Right, Direction.Left, Direction.Bottom
-        };
-
-        for (int i = 0; i < dir1.Length; i++)
-        {
-            if (arg2 == dir1[i])
-            {
-                for (int j = 0; j < arg1.roads.Length; j++)
-                {
-                    if (arg1.roads[j] == dir2[i])
-                    {
-                        index = j;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (index != -1)
-        {
-            bool isFacingRight = true;
-            if (index == 1)
-            {
-                isFacingRight = false;
-            }
-            MoveToPosition(MapsController.Ins.characterSpawnPoints[index], isFacingRight);
-        }
-
     }
 
     public void MoveToPosition(Vector3 position, bool isFacingRight)
