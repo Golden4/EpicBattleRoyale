@@ -116,6 +116,8 @@ namespace UnityEngine.UI.Extensions
             }
         }
 
+        public BezierPath bezierPath = new BezierPath();
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             if (m_points == null)
@@ -125,8 +127,6 @@ namespace UnityEngine.UI.Extensions
             //If Bezier is desired, pick the implementation
             if (BezierMode != BezierType.None && BezierMode != BezierType.Catenary && m_points.Length > 3)
             {
-                BezierPath bezierPath = new BezierPath();
-
                 bezierPath.SetControlPoints(pointsToDraw);
                 bezierPath.SegmentsPerCurve = bezierSegmentsPerCurve;
                 List<Vector2> drawingPoints;

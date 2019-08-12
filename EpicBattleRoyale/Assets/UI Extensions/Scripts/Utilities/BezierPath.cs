@@ -178,6 +178,7 @@ namespace UnityEngine.UI.Extensions
             @param t The paramater indicating where on the curve the point is. 0 corresponds 
             to the "left" point, 1 corresponds to the "right" end point.
         */
+
         public Vector2 CalculateBezierPoint(int curveIndex, float t)
         {
             int nodeIndex = curveIndex * 3;
@@ -194,6 +195,7 @@ namespace UnityEngine.UI.Extensions
             Gets the drawing points. This implementation simply calculates a certain number
             of points per curve.
         */
+
         public List<Vector2> GetDrawingPoints0()
         {
             List<Vector2> drawingPoints = new List<Vector2>();

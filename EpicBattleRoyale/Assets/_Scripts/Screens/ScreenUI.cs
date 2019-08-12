@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
-public class ScreenUI : ScreenBase
+public class ScreenUI : SimpleMenu<ScreenUI>
 {
     public static ScreenUI Ins;
     public HealthArmorUI healthArmorUI;
     public WeaponsUI weaponsUI;
     public MobileInputsUI mobileInputsUI;
 
-    public override void OnInit()
+    protected override void Awake()
     {
+        base.Awake();
         Ins = this;
         World.OnPlayerSpawn += World_OnPlayerSpawn;
 

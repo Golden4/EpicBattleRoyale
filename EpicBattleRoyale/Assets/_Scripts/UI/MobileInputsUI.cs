@@ -81,7 +81,6 @@ public class MobileInputsUI : MonoBehaviour
     {
         ShowPickUpBtn(() =>
         {
-            Debug.Log("ShowPickUpBtn");
             characterBase.inventorySystem.PickUp();
         });
     }
@@ -100,7 +99,8 @@ public class MobileInputsUI : MonoBehaviour
 
     public void HideCanEnterDoorBtn()
     {
-        enterDoorBtn.transform.DOScale(Vector3.zero, .1f);
+        if (enterDoorBtn != null)
+            enterDoorBtn.transform.DOScale(Vector3.zero, .1f);
     }
 
     void CharacterBase_CanEnterDoor(object obj, EventArgs args)

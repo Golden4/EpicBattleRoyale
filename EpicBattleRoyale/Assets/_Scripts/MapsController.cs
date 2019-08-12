@@ -342,7 +342,7 @@ public class MapsController : MonoBehaviour
 
     // }
 
-    Vector2Int[] directions = new Vector2Int[] {
+    public static Vector2Int[] directions = new Vector2Int[] {
         Vector2Int.down,
         Vector2Int.up,
         Vector2Int.left,
