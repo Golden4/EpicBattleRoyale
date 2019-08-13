@@ -9,139 +9,45 @@ public class UIMap : MonoBehaviour
 {
     [SerializeField] UILineRenderer pfLineRenderer;
     [SerializeField] Transform lineRendererHolder;
-
-    const int mapSize = 4;
-    MapData[,] maps = new MapData[mapSize, mapSize];
+    [SerializeField] RectTransform gameMapPanel;
+    [SerializeField] Image pfHouse;
 
     Dictionary<Vector2Int, UILineRenderer> lineRenderers = new Dictionary<Vector2Int, UILineRenderer>();
 
     public RawImage playerPointImage;
+    public bool increasedMap = false;
 
-    void Start()
+    IEnumerator Start()
     {
-        MapsController.Ins.OnChangingMap += OnChangingMap;
-        GenerateMap();
+        gameMapPanel.gameObject.AddComponent<Button>().onClick.AddListener(delegate
+        {
+            if (increasedMap)
+            {
+                ShowDecreaseMapBtn();
+            }
+            else
+            {
+                ShowIncreaseMapBtn();
+            }
+        });
+        yield return new WaitForEndOfFrame();
         CreateLineRenderers();
+        yield return new WaitForEndOfFrame();
+        CreateAllHouses();
     }
 
-    void OnChangingMap(MapsController.MapInfo arg1, Direction arg2)
-    {
-        playerPointImage.rectTransform.anchoredPosition = new Vector3(12 + arg1.coord.x * 25, -12 - arg1.coord.y * 25);
-    }
-
-    void OnDestroy()
-    {
-        MapsController.Ins.OnChangingMap -= OnChangingMap;
-    }
-
-    void GenerateMap()
-    {
-        for (int i = 0; i < mapSize; i++)
-        {
-            for (int j = 0; j < mapSize; j++)
-            {
-                maps[i, j] = new MapData();
-
-            }
-        }
-
-        for (int i = 0; i < mapSize; i++)
-        {
-            for (int j = 0; j < mapSize; j++)
-            {
-                GoToDirection(new Vector2Int(i, j), (Direction)Random.Range(0, 4));
-            }
-        }
-
-        for (int i = 0; i < mapSize; i++)
-        {
-            for (int j = 0; j < mapSize; j++)
-            {
-                int roadsCount = Random.Range(2, 4);
-
-                if (maps[i, j].GetRoadsCount() < roadsCount)
-                {
-                    int randNum = Random.Range(0, 4);
-
-                    for (int k = 0; k < 4; k++)
-                    {
-                        if (maps[i, j].roads.Contains((Direction)((k + randNum) % 4)))
-                            continue;
-                        if (GoToDirection(new Vector2Int(i, j), (Direction)((k + randNum) % 4)))
-
-                            if (maps[i, j].GetRoadsCount() >= roadsCount)
-                                break;
-                    }
-
-                }
-            }
-        }
-
-        for (int i = 0; i < mapSize; i++)
-        {
-            for (int j = 0; j < mapSize; j++)
-            {
-                maps[i, j].SortRoads();
-            }
-        }
-
-    }
-
-    bool GoToDirection(Vector2Int mapCoords, Direction direction)
-    {
-        if (mapCoords.x >= 0 && mapCoords.x < mapSize && mapCoords.y >= 0 && mapCoords.y < mapSize)
-        {
-            Vector2Int coords = mapCoords + MapsController.directions[(int)direction];
-            if (coords.x >= 0 && coords.x < mapSize && coords.y >= 0 && coords.y < mapSize)
-            {
-
-
-                Direction[] dir = new Direction[] { Direction.Top, Direction.Bottom, Direction.Left, Direction.Right };
-                Direction[] oppositeDir = new Direction[] { Direction.Bottom, Direction.Top, Direction.Right, Direction.Left };
-
-                if (!maps[mapCoords.x, mapCoords.y].roads.Contains(direction) && !maps[coords.x, coords.y].roads.Contains(oppositeDir[(int)direction]) && maps[coords.x, coords.y].GetRoadsCount() < 3)
-                {
-
-                    maps[mapCoords.x, mapCoords.y].roads.Add(dir[(int)direction]);
-                    maps[coords.x, coords.y].roads.Add(oppositeDir[(int)direction]);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    void ShowDirectionsMapsInConsole()
-    {
-        for (int j = 0; j < mapSize; j++)
-        {
-            string roads = "";
-
-            for (int i = 0; i < mapSize; i++)
-            {
-                roads += "   " + string.Format("[{0},{1}]", i, j);
-
-                for (int k = 0; k < maps[i, j].roads.Count; k++)
-                {
-                    roads += " " + maps[i, j].roads[k].ToString();
-                }
-            }
-
-            Debug.Log(roads + j);
-        }
-    }
     void CreateLineRenderers()
     {
-        for (int i = 0; i < mapSize; i++)
+        for (int i = 0; i < MapsController.Ins.mapSize; i++)
         {
-            for (int j = 0; j < mapSize; j++)
+            for (int j = 0; j < MapsController.Ins.mapSize; j++)
             {
-                CreateLineRenderer(maps[i, j], new Vector2Int(i, j));
+                CreateLineRenderer(MapsController.Ins.maps[i, j], new Vector2Int(i, j));
             }
         }
     }
-    void CreateLineRenderer(MapData data, Vector2Int coords)
+
+    void CreateLineRenderer(MapsController.MapInfo data, Vector2Int coords)
     {
         GameObject newLr = Instantiate(pfLineRenderer.gameObject);
         newLr.SetActive(true);
@@ -151,18 +57,21 @@ public class UIMap : MonoBehaviour
 
         UILineRenderer lr = newLr.GetComponent<UILineRenderer>();
 
-        Vector2[] pointsList = new Vector2[1 + (data.roads.Count - 1) * 3];
+        Vector2[] pointsList;
 
-        if (data.roads.Count == 3)
+        if (data.centerRoad != Direction.None)
         {
+
+            pointsList = new Vector2[7];
+
             if (data.roads.Contains(Direction.Bottom) && data.roads.Contains(Direction.Top))
             {
                 pointsList[0] = (new Vector2(.5f, 1f));
                 pointsList[6] = (new Vector2(.5f, 0));
 
-                if (data.roads.Contains(Direction.Left))
+                if (data.centerRoad == Direction.Left)
                     pointsList[3] = (new Vector2(0, .5f));
-                if (data.roads.Contains(Direction.Right))
+                if (data.centerRoad == Direction.Right)
                     pointsList[3] = (new Vector2(1f, .5f));
 
                 pointsList[1] = (new Vector2(.5f, .5f)) + new Vector2(Random.Range(-1f, 1f), Random.Range(0, 1f)) * .3f;
@@ -177,9 +86,9 @@ public class UIMap : MonoBehaviour
                 pointsList[0] = (new Vector2(0, .5f));
                 pointsList[6] = (new Vector2(1f, .5f));
 
-                if (data.roads.Contains(Direction.Bottom))
+                if (data.centerRoad == Direction.Bottom)
                     pointsList[3] = (new Vector2(.5f, 0));
-                if (data.roads.Contains(Direction.Top))
+                if (data.centerRoad == Direction.Top)
                     pointsList[3] = (new Vector2(.5f, 1f));
 
                 pointsList[1] = (new Vector2(.1f, .5f)) + new Vector2(Random.Range(0, 1f), Random.Range(-1f, 1f)) * .3f;
@@ -189,8 +98,9 @@ public class UIMap : MonoBehaviour
                 pointsList[5] = (new Vector2(.5f, .5f)) + new Vector2(Random.Range(0, 1f), Random.Range(-1f, 1f)) * .3f;
             }
         }
-
-        if (data.roads.Count == 2)
+        else
+        {
+            pointsList = new Vector2[4];
             for (int i = 0; i < pointsList.Length; i++)
             {
                 if ((i % 3) == 0)
@@ -215,66 +125,181 @@ public class UIMap : MonoBehaviour
                 else
                     pointsList[i] = (new Vector2(.5f, .5f)) + Random.insideUnitCircle * .3f;
             }
+        }
 
         lr.Points = pointsList;
         lineRenderers[coords] = lr;
     }
 
+    void CreateAllHouses()
+    {
+        for (int i = 0; i < MapsController.Ins.mapSize; i++)
+        {
+            for (int j = 0; j < MapsController.Ins.mapSize; j++)
+            {
+                CreateHouses(MapsController.Ins.maps[i, j], new Vector2Int(i, j));
+            }
+        }
+    }
+    void CreateHouses(MapsController.MapInfo data, Vector2Int coords)
+    {
+        for (int i = 0; i < data.houses.Count; i++)
+        {
+            RectTransform newHouse = Instantiate(pfHouse.gameObject).GetComponent<RectTransform>();
+            newHouse.gameObject.SetActive(true);
+
+            float persent = WorldPositionToPersent(data.houses[i].houseSpawnPositionsX);
+
+            if (newHouse.transform.parent != lineRenderers[coords].transform)
+                newHouse.transform.SetParent(lineRenderers[coords].transform, false);
+
+            newHouse.localPosition = CalculateRoadPoint(persent, coords);
+            newHouse.localRotation = Quaternion.FromToRotation(Vector3.up, CalculateRoadDirection(persent, coords));
+        }
+    }
+
     public Vector2 Evaluate(float persent, Vector2Int coords)
     {
         Vector2 point = Vector2.zero;
+        Vector2 direction = Vector2.zero;
 
-        if (lineRenderers[coords] == null || lineRenderers[coords].bezierPath == null)
+        if (lineRenderers.Count == 0 || lineRenderers[coords] == null || lineRenderers[coords].bezierPath == null || lineRenderers[coords].Points == null || lineRenderers[coords].bezierPath.GetControlPoints() == null || lineRenderers[coords].bezierPath.GetControlPoints().Count == 0)
             return point;
 
-        if (maps[coords.x, coords.y].roads.Count == 3)
+        if (MapsController.Ins.maps[coords.x, coords.y].centerRoad != Direction.None)
         {
             if (persent < .5f)
-                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, persent * 2);
+            {
+                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(1, 1 - persent * 2f);
+                direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(1, 1 - persent * 2f);
+            }
             else
-                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(1, .5f + persent * 2f);
+            {
+                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, 1 - (persent - .5f) * 2f);
+                direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(0, 1 - (persent - .5f) * 2f);
+            }
         }
         else
         {
-            point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, persent);
+            point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, 1f - persent);
+            direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(0, 1f - persent);
         }
 
-        playerPointImage.rectTransform.localPosition = new Vector2(point.x * 100, point.y * -100);
+
 
         if (playerPointImage.transform.parent != lineRenderers[coords].transform)
+        {
             playerPointImage.transform.SetParent(lineRenderers[coords].transform, false);
-        Debug.Log(point);
+        }
+
+        playerPointImage.transform.SetAsLastSibling();
+
+        playerPointImage.rectTransform.localPosition = new Vector2(point.x * 100, point.y * 100) + Vector2.up * -100;
+
+        Vector3 lookDir = Vector3.down;
+
+        if (World.Ins.player.characterBase.isFacingRight)
+            lookDir = Vector3.up;
+
+        playerPointImage.rectTransform.localRotation = Quaternion.FromToRotation(lookDir, direction);
+
         return point;
+    }
+
+    public Vector2 CalculateRoadPoint(float persent, Vector2Int coords)
+    {
+        Vector2 point = Vector2.zero;
+
+        if (lineRenderers[coords] == null || lineRenderers[coords].bezierPath == null || lineRenderers[coords].Points == null || lineRenderers[coords].bezierPath.GetControlPoints() == null || lineRenderers[coords].bezierPath.GetControlPoints().Count == 0)
+            return point;
+
+        if (MapsController.Ins.maps[coords.x, coords.y].centerRoad != Direction.None)
+        {
+            if (persent < .5f)
+            {
+                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(1, 1 - persent * 2f);
+            }
+            else
+            {
+                point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, 1 - (persent - .5f) * 2f);
+            }
+        }
+        else
+        {
+            point = lineRenderers[coords].bezierPath.CalculateBezierPoint(0, 1f - persent);
+        }
+
+        return new Vector2(point.x * 100, point.y * 100) + Vector2.up * -100;
+    }
+
+
+    public Vector2 CalculateRoadDirection(float persent, Vector2Int coords)
+    {
+        Vector2 direction = Vector2.zero;
+
+        if (lineRenderers[coords] == null || lineRenderers[coords].bezierPath == null || lineRenderers[coords].Points == null || lineRenderers[coords].bezierPath.GetControlPoints() == null || lineRenderers[coords].bezierPath.GetControlPoints().Count == 0)
+            return direction;
+
+        if (MapsController.Ins.maps[coords.x, coords.y].centerRoad != Direction.None)
+        {
+            if (persent < .5f)
+            {
+                direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(1, 1 - persent * 2f);
+            }
+            else
+            {
+                direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(0, 1 - (persent - .5f) * 2f);
+            }
+        }
+        else
+        {
+            direction = lineRenderers[coords].bezierPath.CalculateBezierDirection(0, 1f - persent);
+        }
+        return direction;
     }
 
     void Update()
     {
         if (World.Ins.player != null)
         {
-            float size = (Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().y) + Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().x));
-            float persent = (Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().x) + Mathf.Abs(World.Ins.player.transform.position.x)) / size;
+            float persent = WorldPositionToPersent(World.Ins.player.transform.position.x);
+            persent = 1f - persent;
+
             Evaluate(persent, MapsController.Ins.GetCurrentMapInfo().coord);
         }
     }
 
-    public class MapData
+    float WorldPositionToPersent(float position)
     {
-        public List<Direction> roads = new List<Direction>();
+        float size = (Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().y) + Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().x));
 
-        public void SortRoads()
-        {
-            List<Direction> dir = new List<Direction>() { Direction.Top, Direction.Right, Direction.Bottom, Direction.Left };
+        float persent = (Mathf.Abs(MapsController.Ins.GetCurrentWorldEndPoints().x - position)) / size;
 
-            roads.Sort((x, y) =>
-            {
-                return (dir.IndexOf(x)).CompareTo(dir.IndexOf(y));
-            });
-        }
-
-        public int GetRoadsCount()
-        {
-            return roads.Count;
-        }
+        return persent;
     }
+
+    public void ShowDecreaseMapBtn()
+    {
+        gameMapPanel.anchorMin = Vector2.one;
+        gameMapPanel.anchorMax = Vector2.one;
+
+        gameMapPanel.localScale = Vector3.one * .25f;
+        gameMapPanel.pivot = Vector2.one;
+        gameMapPanel.anchoredPosition = Vector3.zero;
+        increasedMap = false;
+    }
+
+    public void ShowIncreaseMapBtn()
+    {
+        gameMapPanel.anchorMin = Vector2.one * .5f;
+        gameMapPanel.anchorMax = Vector2.one * .5f;
+
+        gameMapPanel.localScale = Vector3.one;
+        gameMapPanel.pivot = Vector2.one * .5f;
+        gameMapPanel.anchoredPosition = Vector3.zero;
+        increasedMap = true;
+    }
+
+
 
 }

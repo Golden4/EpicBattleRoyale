@@ -182,7 +182,6 @@ namespace UnityEngine.UI.Extensions
         public Vector2 CalculateBezierPoint(int curveIndex, float t)
         {
             int nodeIndex = curveIndex * 3;
-
             Vector2 p0 = controlPoints[nodeIndex];
             Vector2 p1 = controlPoints[nodeIndex + 1];
             Vector2 p2 = controlPoints[nodeIndex + 2];
@@ -190,6 +189,19 @@ namespace UnityEngine.UI.Extensions
 
             return CalculateBezierPoint(t, p0, p1, p2, p3);
         }
+
+        public Vector2 CalculateBezierDirection(int curveIndex, float t)
+        {
+            int nodeIndex = curveIndex * 3;
+
+            Vector2 p0 = controlPoints[nodeIndex];
+            Vector2 p1 = controlPoints[nodeIndex + 1];
+            Vector2 p2 = controlPoints[nodeIndex + 2];
+            Vector2 p3 = controlPoints[nodeIndex + 3];
+
+            return CalculateBezierDirection(t, p0, p1, p2, p3);
+        }
+
 
         /**
             Gets the drawing points. This implementation simply calculates a certain number
@@ -331,6 +343,7 @@ namespace UnityEngine.UI.Extensions
         /**
             Caluclates a point on the Bezier curve represented with the four controlpoints given.
         */
+
         private Vector2 CalculateBezierPoint(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
         {
             float u = 1 - t;
@@ -345,6 +358,15 @@ namespace UnityEngine.UI.Extensions
             p += 3 * u * tt * p2; //third term
             p += ttt * p3; //fourth term
 
+            return p;
+
+        }
+
+        private Vector2 CalculateBezierDirection(float t, Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+        {
+            Vector2 p = -3 * p0 * (1 - t) * (1 - t) + 3 * p1 * (1 - t) * (1 - t) * (1 - t) + 6 * p2 * (1 - t) * t - 9 * p1 * (1 - t) * (1 - t) * t - 3 * p2 * t * t + 3 * p3 * t * t;
+
+            //Vector2 p = p0 * (1 - t) * (1 - t) + p1 * 2 * (1 - t) * t + p3 * t * t;
             return p;
 
         }

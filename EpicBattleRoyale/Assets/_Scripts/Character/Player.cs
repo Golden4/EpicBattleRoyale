@@ -98,13 +98,19 @@ public class Player : MonoBehaviour
         {
             if (dir == dir1[i])
             {
-                for (int j = 0; j < mapInfo.roads.Length; j++)
+                for (int j = 0; j < mapInfo.roads.Count; j++)
                 {
                     if (mapInfo.roads[j] == dir2[i])
                     {
                         index = j;
                         break;
                     }
+                }
+
+                if (mapInfo.centerRoad == dir2[i])
+                {
+                    index = 2;
+                    break;
                 }
             }
         }

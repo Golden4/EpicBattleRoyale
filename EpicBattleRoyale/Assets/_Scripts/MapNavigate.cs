@@ -24,13 +24,14 @@ public class MapNavigate : MonoBehaviour
         CharacterBase character = col.transform.GetComponent<CharacterBase>();
 
         if (character != null && World.Ins.player.characterBase == character)
-            if (Input.GetKey(KeyCode.Space) && !colided)
+            if (Input.GetKeyDown(KeyCode.Space) && !colided)
             {
                 colided = true;
                 ChangeDirection(direction);
             }
     }
     bool colided;
+
     void OnCollisionEnter2D(Collision2D col)
     {
         CharacterBase character = col.transform.GetComponent<CharacterBase>();

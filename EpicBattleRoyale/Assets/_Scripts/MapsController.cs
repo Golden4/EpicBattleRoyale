@@ -6,8 +6,8 @@ using System;
 public class MapsController : MonoBehaviour
 {
     public static MapsController Ins;
-    public GameObject pfMap;
     public List<HouseData> pfHouses;
+    public List<MapData> pfMaps;
 
     public enum State
     {
@@ -23,9 +23,13 @@ public class MapsController : MonoBehaviour
         (Vector3.zero + Vector3.up * -3)
     };
 
+    public int mapSize = 4;
+
     public MapInfo[] mapInfo = new MapInfo[16];
 
-    public Dictionary<Vector2Int, MapInfo> mapInfoDic = new Dictionary<Vector2Int, MapInfo>();
+    public MapInfo[,] maps;
+
+    //public Dictionary<Vector2Int, MapInfo> mapInfoDic = new Dictionary<Vector2Int, MapInfo>();
 
     Vector2Int curMapCoords = Vector2Int.zero;
     public int curHouseIndex;
@@ -35,6 +39,7 @@ public class MapsController : MonoBehaviour
     public List<Tuple<Vector2Int, int, GameObject>> curInnerHouses = new List<Tuple<Vector2Int, int, GameObject>>();
 
     public event Action<MapInfo, Direction> OnChangingMap;
+    public event Action OnGenerateMap;
 
     void Awake()
     {
@@ -43,22 +48,31 @@ public class MapsController : MonoBehaviour
 
     void Start()
     {
-        for (int i = 0; i < mapInfo.Length; i++)
-        {
-            mapInfoDic[mapInfo[i].coord] = mapInfo[i];
-        }
+        GenerateMap();
 
-        for (int i = 0; i < mapInfo.Length; i++)
+        for (int i = 0; i < mapSize; i++)
         {
-            SpawnMap(mapInfo[i]);
+            for (int j = 0; j < mapSize; j++)
+            {
+                SpawnMap(maps[i, j]);
+            }
+
         }
 
         ChangeMap(GetMapInfo(Vector2Int.zero), Direction.None);
     }
 
+    void GenerateMap()
+    {
+        MapsGenerator.GenerateMaps(mapSize, ref maps);
+
+        if (OnGenerateMap != null)
+            OnGenerateMap();
+    }
+
     void SpawnMap(MapInfo map)
     {
-        GameObject mapGo = Instantiate(pfMap);
+        GameObject mapGo = Instantiate(GetMapData(map.mapType).pfMap.gameObject);
 
         mapGo.gameObject.SetActive(true);
         mapGo.transform.name = "Map " + map.coord.ToString();
@@ -66,39 +80,59 @@ public class MapsController : MonoBehaviour
 
         MapNavigate[] mapsNav = new MapNavigate[] {
             mapGo.transform.Find ("Left").GetComponent <MapNavigate> (),
-            mapGo.transform.Find ("Right").GetComponent <MapNavigate> (),
-            mapGo.transform.Find ("Center").GetComponent <MapNavigate> ()
+            mapGo.transform.Find ("Center").GetComponent <MapNavigate> (),
+            mapGo.transform.Find ("Right").GetComponent <MapNavigate> ()
         };
 
-        List<Vector3> itemsSpawnPoints = new List<Vector3>();
+        Vector3 centerPos = mapsNav[1].transform.position;
+        centerPos.x = map.centerRoadPositionX;
+        mapsNav[1].transform.position = centerPos;
 
+
+
+        if (map.centerRoad != Direction.None)
+        {
+
+            mapsNav[0].gameObject.SetActive(true);
+            mapsNav[0].direction = map.roads[0];
+            mapsNav[2].gameObject.SetActive(true);
+            mapsNav[2].direction = map.roads[1];
+            mapsNav[1].gameObject.SetActive(true);
+            mapsNav[1].direction = map.centerRoad;
+        }
+        else
+        {
+            mapsNav[0].gameObject.SetActive(true);
+            mapsNav[0].direction = map.roads[0];
+            mapsNav[2].gameObject.SetActive(true);
+            mapsNav[2].direction = map.roads[1];
+            mapsNav[1].gameObject.SetActive(false);
+        }
+
+        // for (int i = 0; i < mapsNav.Length; i++)
+        // {
+        //     if (map.roads.Count > i)
+        //     {
+        //         mapsNav[i].gameObject.SetActive(true);
+        //         mapsNav[i].direction = map.roads[i];
+        //     }
+        //     else
+        //         mapsNav[i].gameObject.SetActive(false);
+        // }
+
+        if (map.houses.Count > 0)
+            for (int i = 0; i < map.houses.Count; i++)
+            {
+                SpawnOuterHouse(map, map.houses[i].houseType, i, mapGo.transform);
+            }
+
+        List<Vector3> itemsSpawnPoints = new List<Vector3>();
         for (int i = (int)GetCurrentWorldEndPoints().x + 10; i < (int)GetCurrentWorldEndPoints().y - 10; i = i + 3)
         {
             itemsSpawnPoints.Add(new Vector3(i, -4));
         }
 
         SpawnItems(itemsSpawnPoints, mapGo.transform);
-
-        Vector3 centerPos = mapsNav[2].transform.position;
-        centerPos.x = map.centerRoadPositionX;
-        mapsNav[2].transform.position = centerPos;
-
-        for (int i = 0; i < mapsNav.Length; i++)
-        {
-            if (map.roads.Length > i)
-            {
-                mapsNav[i].gameObject.SetActive(true);
-                mapsNav[i].direction = map.roads[i];
-            }
-            else
-                mapsNav[i].gameObject.SetActive(false);
-        }
-
-        if (map.houses.Length > 0)
-            for (int i = 0; i < map.houses.Length; i++)
-            {
-                SpawnOuterHouse(map, map.houses[i].houseType, i, mapGo.transform);
-            }
     }
 
     void SpawnOuterHouse(MapInfo map, HouseType houseType, int houseIndex, Transform parent)
@@ -121,7 +155,7 @@ public class MapsController : MonoBehaviour
 
         GameObject innerHouse = Instantiate(GetHouseData(map.houses[houseIndex].houseType).pfInnerHouse.gameObject);
         innerHouse.gameObject.SetActive(true);
-        innerHouse.transform.name = "Inner House: " + map.houses[houseIndex].houseType + " | Map " + map.coord.ToString();
+        innerHouse.transform.name = "Inner House" + houseIndex + ": " + map.houses[houseIndex].houseType + " | Map " + map.coord.ToString();
 
         SpawnItems(itemsSpawnPoints, innerHouse.transform);
 
@@ -200,9 +234,7 @@ public class MapsController : MonoBehaviour
 
     public MapInfo GetMapInfo(int x, int y)
     {
-        MapInfo mapInf;
-        mapInfoDic.TryGetValue(new Vector2Int(x, y), out mapInf);
-        return mapInf;
+        return maps[x, y];
     }
 
     public MapInfo GetMapInfo(Vector2Int xy)
@@ -228,9 +260,9 @@ public class MapsController : MonoBehaviour
     void UpdateWorldEndPoints()
     {
         if (mapState == State.House)
-            worldEndPoints = GetHouseData(GetMapInfo(curMapCoords).houses[curHouseIndex].houseType).worldEndPoints;
+            worldEndPoints = GetHouseData(GetCurrentMapInfo().houses[curHouseIndex].houseType).worldEndPoints;
         else
-            worldEndPoints = GetMapInfo(curMapCoords).worldEndPoints;
+            worldEndPoints = GetMapData(GetCurrentMapInfo().mapType).worldEndPoints;
     }
 
     public event Action<HouseDoor> OnEnterHouseEvent;
@@ -280,12 +312,25 @@ public class MapsController : MonoBehaviour
         House5,
     }
 
+    public enum MapType
+    {
+        Normal
+    }
+
     [System.Serializable]
     public class HouseData
     {
         public HouseType houseType;
         public GameObject pfOuterHouse;
         public GameObject pfInnerHouse;
+        public Vector2 worldEndPoints = new Vector2(-37, 37);
+    }
+
+    [System.Serializable]
+    public class MapData
+    {
+        public MapType mapType;
+        public GameObject pfMap;
         public Vector2 worldEndPoints = new Vector2(-37, 37);
     }
 
@@ -297,26 +342,75 @@ public class MapsController : MonoBehaviour
         });
     }
 
-
-#if UNITY_EDITOR
-    void OnValidate()
+    public MapData GetMapData(MapType type)
     {
-        for (int i = 0; i < mapInfo.Length; i++)
+        return pfMaps.Find(x =>
         {
-            mapInfo[i].coord = new Vector2Int(i % 4, i / 4);
-        }
+            return x.mapType == type;
+        });
     }
-#endif
+
+
+    // #if UNITY_EDITOR
+    //     void OnValidate()
+    //     {
+    //         for (int i = 0; i < mapInfo.Length; i++)
+    //         {
+    //             mapInfo[i].coord = new Vector2Int(i % 4, i / 4);
+    //         }
+    //     }
+    // #endif
 
     [System.Serializable]
     public class MapInfo
     {
+        public MapType mapType;
         public bool isFirstEntry;
         public Vector2Int coord;
-        public Direction[] roads;
+        public List<Direction> roads = new List<Direction>();
+        public Direction centerRoad = Direction.None;
         public float centerRoadPositionX;
-        public HouseInfo[] houses;
-        public Vector2 worldEndPoints = new Vector2(-37, 37);
+        public List<HouseInfo> houses = new List<HouseInfo>();
+
+        public void ValidateRoads()
+        {
+            if (roads.Contains(Direction.Bottom) && roads.Contains(Direction.Top))
+            {
+                if (roads.Contains(Direction.Left))
+                    centerRoad = Direction.Left;
+                if (roads.Contains(Direction.Right))
+                    centerRoad = Direction.Right;
+            }
+
+            if (roads.Contains(Direction.Left) && roads.Contains(Direction.Right))
+            {
+                if (roads.Contains(Direction.Bottom))
+                    centerRoad = Direction.Bottom;
+                if (roads.Contains(Direction.Top))
+                    centerRoad = Direction.Top;
+            }
+
+
+            if (centerRoad != Direction.None)
+                roads.Remove(centerRoad);
+            Debug.Log(roads[0] + "  " + roads[1] + "   " + centerRoad);
+            SortRoads();
+        }
+
+        public void SortRoads()
+        {
+            List<Direction> dir = new List<Direction>() { Direction.Top, Direction.Left, Direction.Bottom, Direction.Right };
+            //List<Direction> dir = new List<Direction>() { Direction.Top, Direction.Bottom, Direction.Right, Direction.Left };
+            roads.Sort((x, y) =>
+            {
+                return (dir.IndexOf(x)).CompareTo(dir.IndexOf(y));
+            });
+        }
+
+        public int GetRoadsCount()
+        {
+            return roads.Count;
+        }
     }
 
     [System.Serializable]
@@ -324,6 +418,12 @@ public class MapsController : MonoBehaviour
     {
         public float houseSpawnPositionsX;
         public HouseType houseType;
+
+        public HouseInfo(float houseSpawnPositionsX, HouseType houseType)
+        {
+            this.houseSpawnPositionsX = houseSpawnPositionsX;
+            this.houseType = houseType;
+        }
 
         public Vector3 GetHouseSpawnPosition()
         {
