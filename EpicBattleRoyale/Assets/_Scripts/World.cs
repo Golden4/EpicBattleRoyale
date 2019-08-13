@@ -162,7 +162,15 @@ public class World : MonoBehaviour
 
     public AmmoItemPickUp SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList item, Vector3 position, bool random = false)
     {
-        GameObject go = Instantiate(GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject);
+        GameObject goPf = null;
+
+        if (!random)
+            goPf = GameAssets.Get.pickUpItems.GetPickUpItem(item).gameObject;
+        else
+            goPf = GameAssets.Get.pickUpItems.GetRandomPickUpItemAmmo().gameObject;
+
+        GameObject go = Instantiate(goPf);
+
         AmmoItemPickUp ammoItemPickUp = go.GetComponent<AmmoItemPickUp>();
         ammoItemPickUp.Setup(position);
         itemsPickUp.Add(ammoItemPickUp);

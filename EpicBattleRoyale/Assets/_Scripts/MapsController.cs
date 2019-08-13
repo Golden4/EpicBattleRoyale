@@ -127,7 +127,8 @@ public class MapsController : MonoBehaviour
             }
 
         List<Vector3> itemsSpawnPoints = new List<Vector3>();
-        for (int i = (int)GetCurrentWorldEndPoints().x + 10; i < (int)GetCurrentWorldEndPoints().y - 10; i = i + 3)
+
+        for (int i = (int)GetMapData(GetCurrentMapInfo().mapType).worldEndPoints.x + 10; i < (int)GetMapData(GetCurrentMapInfo().mapType).worldEndPoints.y - 10; i = i + 3)
         {
             itemsSpawnPoints.Add(new Vector3(i, -4));
         }
@@ -164,14 +165,14 @@ public class MapsController : MonoBehaviour
 
     void SpawnItems(List<Vector3> itemsSpawnPoints, Transform parent)
     {
+        //check spawn point
         for (int i = 0; i < itemsSpawnPoints.Count; i++)
         {
-            if (UnityEngine.Random.Range(0, 1) == 0)
+            if (UnityEngine.Random.Range(0, 10) == 0)
             {
-                int randNum = UnityEngine.Random.Range(0, 1);
+                int randNum = UnityEngine.Random.Range(0, 5);
 
                 //spawn weapon with ammo
-
                 if (randNum == 0)
                 {
                     WeaponItemPickUp wa = World.Ins.SpawnItemPickUpWeapon(GameAssets.WeaponsList.Fists, itemsSpawnPoints[i], true);
@@ -188,8 +189,24 @@ public class MapsController : MonoBehaviour
                         }
 
                     }
-
-
+                }
+                //random Armor spawn
+                if (randNum == 1)
+                {
+                    ArmorItemPickUp newItem = World.Ins.SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorList.Big, itemsSpawnPoints[i], true);
+                    newItem.transform.SetParent(parent, false);
+                }
+                //random Health spawn
+                if (randNum == 2)
+                {
+                    HealthItemPickUp newItem = World.Ins.SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthList.Big, itemsSpawnPoints[i], true);
+                    newItem.transform.SetParent(parent, false);
+                }
+                //random Ammo spawn
+                if (randNum == 3)
+                {
+                    AmmoItemPickUp newItem = World.Ins.SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList.AutomaticWeapon, itemsSpawnPoints[i], true);
+                    newItem.transform.SetParent(parent, false);
                 }
             }
         }
@@ -393,7 +410,6 @@ public class MapsController : MonoBehaviour
 
             if (centerRoad != Direction.None)
                 roads.Remove(centerRoad);
-            Debug.Log(roads[0] + "  " + roads[1] + "   " + centerRoad);
             SortRoads();
         }
 

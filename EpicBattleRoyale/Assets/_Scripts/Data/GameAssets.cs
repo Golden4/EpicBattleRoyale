@@ -138,13 +138,19 @@ public class GameAssets : ScriptableObject
         public ItemPickUp GetRandomPickUpItemHealth()
         {
             List<ItemPickUp> pickUpItems = new List<ItemPickUp>(healthPickUpItems.ToArray());
-            return weaponsPickUpItems[GetRandomIndex(pickUpItems)];
+            return healthPickUpItems[GetRandomIndex(pickUpItems)];
         }
 
         public ItemPickUp GetRandomPickUpItemArmor()
         {
             List<ItemPickUp> pickUpItems = new List<ItemPickUp>(armorPickUpItems.ToArray());
-            return weaponsPickUpItems[GetRandomIndex(pickUpItems)];
+            return armorPickUpItems[GetRandomIndex(pickUpItems)];
+        }
+
+        public ItemPickUp GetRandomPickUpItemAmmo()
+        {
+            List<ItemPickUp> pickUpItems = new List<ItemPickUp>(ammoPickUpItems.ToArray());
+            return ammoPickUpItems[GetRandomIndex(pickUpItems)];
         }
 
         int GetRandomIndex(List<ItemPickUp> pickUpItems)

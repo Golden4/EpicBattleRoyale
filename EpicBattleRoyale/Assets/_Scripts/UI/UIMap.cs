@@ -149,7 +149,7 @@ public class UIMap : MonoBehaviour
             newHouse.gameObject.SetActive(true);
 
             float persent = WorldPositionToPersent(data.houses[i].houseSpawnPositionsX);
-
+            persent = 1 - persent;
             if (newHouse.transform.parent != lineRenderers[coords].transform)
                 newHouse.transform.SetParent(lineRenderers[coords].transform, false);
 
@@ -194,14 +194,18 @@ public class UIMap : MonoBehaviour
 
         playerPointImage.transform.SetAsLastSibling();
 
-        playerPointImage.rectTransform.localPosition = new Vector2(point.x * 100, point.y * 100) + Vector2.up * -100;
+        //если игрок не в доме
+        if (MapsController.Ins.mapState == MapsController.State.Map)
+        {
+            playerPointImage.rectTransform.localPosition = new Vector2(point.x * 100, point.y * 100) + Vector2.up * -100;
 
-        Vector3 lookDir = Vector3.down;
+            playerPointImage.rectTransform.localRotation = Quaternion.FromToRotation(Vector3.down, direction);
+        }
 
-        if (World.Ins.player.characterBase.isFacingRight)
-            lookDir = Vector3.up;
+        Vector3 scale = playerPointImage.rectTransform.localScale;
+        scale.y = (!World.Ins.player.characterBase.isFacingRight) ? 4 : -4;
+        playerPointImage.rectTransform.localScale = scale;
 
-        playerPointImage.rectTransform.localRotation = Quaternion.FromToRotation(lookDir, direction);
 
         return point;
     }
@@ -294,7 +298,7 @@ public class UIMap : MonoBehaviour
         gameMapPanel.anchorMin = Vector2.one * .5f;
         gameMapPanel.anchorMax = Vector2.one * .5f;
 
-        gameMapPanel.localScale = Vector3.one;
+        gameMapPanel.localScale = Vector3.one * .9f;
         gameMapPanel.pivot = Vector2.one * .5f;
         gameMapPanel.anchoredPosition = Vector3.zero;
         increasedMap = true;

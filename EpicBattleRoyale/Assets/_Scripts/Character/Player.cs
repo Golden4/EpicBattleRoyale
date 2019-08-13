@@ -118,11 +118,27 @@ public class Player : MonoBehaviour
         if (index != -1)
         {
             bool isFacingRight = true;
+
+            Vector3 pos = default;
+
             if (index == 1)
             {
                 isFacingRight = false;
+                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, -4);
             }
-            characterBase.MoveToPosition(MapsController.Ins.characterSpawnPoints[index], isFacingRight);
+
+            if (index == 0)
+            {
+                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, -4);
+            }
+
+            if (index == 2)
+            {
+                pos = new Vector3(0, -4);
+            }
+
+            characterBase.MoveToPosition(pos, isFacingRight);
+
         }
 
     }
