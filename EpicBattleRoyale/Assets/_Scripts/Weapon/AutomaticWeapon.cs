@@ -38,14 +38,15 @@ public class AutomaticWeapon : Weapon
 
     public BulletSystem bulletSystem;
     public ShootMode mode;
+    [HideInInspector]
     public State curState;
     public float reloadTime = 2;
     public float shootAnimationTime = .2f;
     public Transform muzzlePoint;
     protected ParticleSystem muzzleFlash;
     protected Transform shellPoint;
+    [HideInInspector]
     public float reloadingProgress;
-
 
     public event Action<float> OnReload;
     public event Action OnReloadComplete;

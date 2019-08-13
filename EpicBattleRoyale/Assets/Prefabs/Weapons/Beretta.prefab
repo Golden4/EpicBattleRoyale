@@ -51,7 +51,7 @@ MonoBehaviour:
   slotType: 1
   sprite: {fileID: 21300004, guid: 0e519db2b52170c44a9c888721ee56a4, type: 3}
   m_damage: {x: 3, y: 8}
-  firingRange: 10
+  firingRange: 13
   fireRate: 0.3
   isActive: 0
   firingSideInput: 0

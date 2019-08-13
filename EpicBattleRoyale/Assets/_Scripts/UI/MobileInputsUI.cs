@@ -7,14 +7,21 @@ using DG.Tweening;
 
 public class MobileInputsUI : MonoBehaviour
 {
+    public static MobileInputsUI Ins;
     public Button pickUpBtn;
     public Button reloadRtn;
     public Button enterDoorBtn;
+    public Button goMapBtn;
     public Image reloadImageProgress;
+    public Text reloadTextProgress;
     AutomaticWeapon aw;
     WeaponController wc;
     CharacterBase characterBase;
 
+    void Awake()
+    {
+        Ins = this;
+    }
     public void Setup(WeaponController wc, CharacterBase cb)
     {
         this.wc = wc;
@@ -23,6 +30,7 @@ public class MobileInputsUI : MonoBehaviour
         HideReloadBtn();
         HideReloadTimeProgress();
         HideCanEnterDoorBtn();
+        HideCanGoMapBtn();
         wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
         cb.inventorySystem.OnCanPickUp += CharacterBase_CanPickUpItem;
         cb.inventorySystem.OnCantPickUp += CharacterBase_CantPickUpItem;
@@ -69,6 +77,7 @@ public class MobileInputsUI : MonoBehaviour
     public void SetReloadTimeProgress(float progress)
     {
         reloadImageProgress.gameObject.SetActive(true);
+        reloadTextProgress.text = string.Format("{0}s", progress.ToString("0.0"));
         reloadImageProgress.fillAmount = progress / aw.reloadTime;
     }
 
@@ -101,6 +110,19 @@ public class MobileInputsUI : MonoBehaviour
     {
         if (enterDoorBtn != null)
             enterDoorBtn.transform.DOScale(Vector3.zero, .1f);
+    }
+
+    public void ShowCanGoMapBtn(Action onClick)
+    {
+        goMapBtn.transform.DOScale(Vector3.one, .1f);
+        goMapBtn.onClick.RemoveAllListeners();
+        goMapBtn.onClick.AddListener(() => onClick());
+    }
+
+    public void HideCanGoMapBtn()
+    {
+        if (goMapBtn != null)
+            goMapBtn.transform.DOScale(Vector3.zero, .1f);
     }
 
     void CharacterBase_CanEnterDoor(object obj, EventArgs args)

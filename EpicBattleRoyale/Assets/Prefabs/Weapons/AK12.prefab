@@ -51,15 +51,16 @@ MonoBehaviour:
   slotType: 2
   sprite: {fileID: 21300000, guid: e9d95f2fd203b0240b56d896897f42f6, type: 3}
   m_damage: {x: 3, y: 7}
-  firingRange: 10
+  firingRange: 13
   fireRate: 0.15
   isActive: 0
   firingSideInput: 0
   bulletSystem:
     curBullets: 0
     curBulletsStock: 0
-    maxBullets: 15
+    maxBullets: 20
     maxBulletsStock: 100
+    ammoType: 0
   mode: 2
   curState: 0
   reloadTime: 2

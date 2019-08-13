@@ -300,6 +300,7 @@ public class CharacterBase : MonoBehaviour
     {
         return !IsDead();
     }
+
     public event EventHandler CanEnterDoorEvent;
     public event EventHandler AwayDoorEvent;
 

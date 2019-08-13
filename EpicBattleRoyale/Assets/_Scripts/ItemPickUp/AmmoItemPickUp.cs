@@ -27,8 +27,8 @@ public class AmmoItemPickUp : ItemPickUp
                         AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
                         if (automaticWeapon.bulletSystem.ammoType == ammoType)
                         {
-                            automaticWeapon.bulletSystem.GiveBulletsStock(20);
-                            ShowPopUp("+20");
+                            automaticWeapon.bulletSystem.GiveBulletsStock(ammoAmount);
+                            ShowPopUp("+" + ammoAmount);
                             return true;
                         }
                     }

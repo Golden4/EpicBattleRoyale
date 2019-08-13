@@ -18,6 +18,7 @@ public class HouseDoor : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         CharacterBase cb = col.transform.GetComponent<CharacterBase>();
+
         if (cb != null)
         {
             cbs.Add(cb);
@@ -30,6 +31,7 @@ public class HouseDoor : MonoBehaviour
     void OnTriggerExit2D(Collider2D col)
     {
         CharacterBase cb = col.transform.GetComponent<CharacterBase>();
+
         if (cb != null)
         {
             cbs.Remove(cb);

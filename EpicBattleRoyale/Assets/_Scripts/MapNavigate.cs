@@ -13,23 +13,52 @@ public class MapNavigate : MonoBehaviour
 			ChangeDirection ();
 	}*/
 
-
     void Awake()
     {
         MapsController.Ins.OnChangingMap += OnChangingMap;
     }
 
-    void OnTriggerStay2D(Collider2D col)
-    {
-        CharacterBase character = col.transform.GetComponent<CharacterBase>();
 
-        if (character != null && World.Ins.player.characterBase == character)
-            if (Input.GetKeyDown(KeyCode.Space) && !colided)
-            {
-                colided = true;
-                ChangeDirection(direction);
-            }
+    List<CharacterBase> cbs = new List<CharacterBase>();
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+
+        CharacterBase cb = col.transform.GetComponent<CharacterBase>();
+        if (cb != null)
+        {
+            cbs.Add(cb);
+
+            if (World.Ins.player.characterBase == cb)
+                MobileInputsUI.Ins.ShowCanGoMapBtn(delegate
+                {
+                    colided = true;
+                    ChangeDirection(direction);
+                });
+        }
     }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        CharacterBase cb = col.transform.GetComponent<CharacterBase>();
+        if (cb != null)
+        {
+            cbs.Remove(cb);
+            if (World.Ins.player.characterBase == cb)
+                MobileInputsUI.Ins.HideCanGoMapBtn();
+        }
+    }
+
+    void OnDisable()
+    {
+        for (int i = 0; i < cbs.Count; i++)
+        {
+            if (World.Ins.player.characterBase == cbs[i])
+                MobileInputsUI.Ins.HideCanGoMapBtn();
+        }
+        cbs.Clear();
+    }
+
     bool colided;
 
     void OnCollisionEnter2D(Collision2D col)

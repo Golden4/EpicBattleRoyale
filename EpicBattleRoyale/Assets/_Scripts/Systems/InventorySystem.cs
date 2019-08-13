@@ -45,10 +45,25 @@ public class InventorySystem
     {
         for (int i = 0; i < canPickUpItems.Count; i++)
         {
+            if (canPickUpItems[i] == null)
+            {
+                canPickUpItems.Remove(canPickUpItems[i]);
+                i--;
+                continue;
+            }
+
             if (characterBase.CanPickUp() && canPickUpItems[i].PickUp(characterBase, true))
             {
                 canPickUpItems[i].DestroyItem();
-                return;
+                break;
+            }
+        }
+
+        if (canPickUpItems.Count == 0)
+        {
+            if (OnCantPickUp != null)
+            {
+                OnCantPickUp(this, EventArgs.Empty);
             }
         }
     }

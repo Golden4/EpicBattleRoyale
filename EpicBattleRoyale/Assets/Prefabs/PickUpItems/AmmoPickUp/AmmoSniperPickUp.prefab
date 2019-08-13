@@ -96,7 +96,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chanceForSpawn: 5
   ammoType: 1
-  ammoAmount: 15
+  ammoAmount: 10
 --- !u!1 &935630908738973549
 GameObject:
   m_ObjectHideFlags: 0

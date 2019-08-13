@@ -132,6 +132,7 @@ public class SkinnedMeshCombiner : MonoBehaviour
         combinedSkinnedRenderer.sharedMesh.boneWeights = boneWeights.ToArray();
         combinedSkinnedRenderer.sharedMesh.bindposes = bindposes.ToArray();
         combinedSkinnedRenderer.sharedMesh.RecalculateBounds();
+        combinedSkinnedRenderer.sortingOrder = 10;
 
         combinedSkinnedRenderer.materials = spriteMeshInstances[0].sharedMaterials;
 
