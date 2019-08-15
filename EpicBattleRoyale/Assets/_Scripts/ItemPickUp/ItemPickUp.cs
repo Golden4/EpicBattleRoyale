@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using TMPro;
 
-public class ItemPickUp : MonoBehaviour
+public class ItemPickUp : Interactable
 {
-
     /*	public enum ItemPickUpType {
 		Armor,
 		Health,
@@ -69,17 +70,48 @@ public class ItemPickUp : MonoBehaviour
 
     public virtual void Setup(Vector3 position)
     {
-        transform.position = position;
+        Init();
+        InitRenederers();
+        MoveTo(position, 0);
         //AddForce((Vector3.up + Vector3.right) * 150);
     }
 
-    void Start()
+    protected override void Start()
     {
         Utility.Invoke(this, cantPickUpDelay, delegate
         {
             cantPickUpDelay = 0;
-            TryPickUp();
         });
+    }
+
+    public override bool CanInteract(CharacterBase cb)
+    {
+        if (!CompareEntities(cb.worldPosition))
+            return false;
+
+        if (cantPickUpDelay == 0)
+        {
+            TryPickUp(cb);
+            return true;
+        }
+
+        return false;
+    }
+
+    public override void AwayInteract(CharacterBase cb)
+    {
+        cb.inventorySystem.CanT_PickUpItem(this);
+    }
+
+    public override bool Interact(CharacterBase cb)
+    {
+        cb.inventorySystem.PickUp();
+        return true;
+    }
+
+    public override InteractableType GetInteractableType()
+    {
+        return InteractableType.ItemPickUp;
     }
 
     public void AddForce(Vector3 vec)
@@ -95,19 +127,20 @@ public class ItemPickUp : MonoBehaviour
     public void DestroyItem()
     {
         World.Ins.itemsPickUp.Remove(this);
-        cb.inventorySystem.OnCharacterPickUp(this);
         Destroy(gameObject);
     }
 
     public virtual void ShowPopUp(string info = "", Sprite sprite = null)
     {
-        GameObject textMesh = Instantiate(Resources.Load<GameObject>("Prefabs/PopUpInfo"));
+        GameObject textMesh = Instantiate(GameAssets.Get.pfPopUpInfo.gameObject);
 
         if (textMesh != null)
         {
             textMesh.gameObject.SetActive(true);
             textMesh.transform.SetParent(null, false);
-            textMesh.GetComponentInChildren<TextMesh>().text = info;
+            TextMeshPro textMeshPro = textMesh.GetComponentInChildren<TextMeshPro>();
+
+            textMeshPro.text = info;
 
             if (sprite != null)
             {
@@ -117,23 +150,19 @@ public class ItemPickUp : MonoBehaviour
 
             textMesh.transform.position = transform.position;
             textMesh.GetComponentInChildren<MeshRenderer>().sortingOrder = 100;
-            iTween.MoveTo(textMesh.gameObject, textMesh.transform.position + Vector3.up * 2, .8f);
-            iTween.FadeTo(textMesh.gameObject, 0f, .8f);
+
+            Sequence mySequence = DOTween.Sequence();
+            mySequence.Append(textMesh.transform.DOMove(textMesh.transform.position + Vector3.up * 2, .8f));
+            mySequence.Insert(.5f, textMeshPro.DOFade(0, .3f));
+
+
+            // iTween.MoveTo(textMesh.gameObject, , .8f);
+            // iTween.FadeTo(textMesh.gameObject, 0f, .8f);
             Destroy(textMesh.gameObject, 1f);
         }
     }
 
-    CharacterBase cb;
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        cb = col.transform.GetComponent<CharacterBase>();
-        if (cantPickUpDelay == 0)
-            TryPickUp();
-
-    }
-
-    void TryPickUp()
+    void TryPickUp(CharacterBase cb)
     {
         if (cb != null && cb.CanPickUp())
         {
@@ -148,21 +177,5 @@ public class ItemPickUp : MonoBehaviour
         }
     }
 
-    void OnTriggerStay2D(Collider2D col)
-    {
-        if (cb == null)
-            cb = col.transform.GetComponent<CharacterBase>();
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-        cb = col.transform.GetComponent<CharacterBase>();
-
-        if (cb != null)
-        {
-            cb.inventorySystem.CanT_PickUpItem(this);
-            cb = null;
-        }
-    }
 
 }

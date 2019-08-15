@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class CharacterBase : MonoBehaviour
+public class CharacterBase : EntityBase
 {
     public GameAssets.CharacterList characterName;
     bool isInit;
-    public float maxSpeed = 3.5f;
-    public float firingSpeed = 2;
-    float curSpeed;
+    public Vector2 maxSpeed;
+    public Vector2 firingSpeed;
+    Vector2 curSpeed;
     public float jumpForce = 500;
     public bool airControl = true;
     public LayerMask whatIsGround;
@@ -29,18 +29,36 @@ public class CharacterBase : MonoBehaviour
     [HideInInspector]
     public bool shootingSideRight;
     [HideInInspector]
-    public float move;
+    public Vector2 moveInput;
     bool isDead;
     public HealthSystem healthSystem;
     public InventorySystem inventorySystem;
 
+    float curJumpPos;
+    float curJumpVelocity;
+
     public event Action<CharacterBase, Weapon, int> OnHitted;
     public event EventHandler OnDie;
+
+    List<Interactable> interactableObjects = new List<Interactable>();
+    public event Action<Interactable> OnCanInteractEvent;
+    public event Action<Interactable> OnCantInteractEvent;
+    public event Action<Interactable> OnInteractEvent;
 
     void Awake()
     {
         if (!isInit)
             Setup();
+    }
+    protected override void Start()
+    {
+        Init();
+        StartCoroutine(InitRenederersCoroutine());
+    }
+    protected IEnumerator InitRenederersCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        InitRenederers();
     }
 
     public void Setup()
@@ -49,7 +67,11 @@ public class CharacterBase : MonoBehaviour
             return;
 
         healthSystem = new HealthSystem(100, 0);
+
         healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
+        MapsController.Ins.OnChangingMap += OnChangingMap;
+        MapsController.Ins.OnEnterHouseEvent += OnEnterHouse;
+
         groundCheck = transform.Find("GroundCheck");
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -114,24 +136,45 @@ public class CharacterBase : MonoBehaviour
         if (anim.GetBool("Die") && isDead)
             return;
 
-        isGrounded = false;
+        if (curJumpPos > 0)
+            isGrounded = false;
+        else
+            isGrounded = true;
 
-        RaycastHit2D[] hit = Physics2D.RaycastAll(groundCheck.position, Vector3.down, .2f);
-        for (int i = 0; i < hit.Length; i++)
+        // RaycastHit2D[] hit = Physics2D.RaycastAll(groundCheck.position, Vector3.down, .2f);
+        // for (int i = 0; i < hit.Length; i++)
+        // {
+        //     if (hit[i].collider != null && hit[i].collider.gameObject != gameObject && !hit[i].collider.isTrigger)
+        //     {
+        //         isGrounded = true;
+        //         isJumping = false;
+        //         break;
+        //     }
+        // }
+
+        //если приземлились
+        if (curJumpPos < 0)
         {
-            if (hit[i].collider != null && hit[i].collider.gameObject != gameObject && !hit[i].collider.isTrigger)
-            {
-                isGrounded = true;
-                isJumping = false;
-                break;
-            }
+            curJumpVelocity = 0;
+            curJumpPos = 0;
+            isGrounded = true;
+            isJumping = false;
+        }
+
+        //Если прыгнули
+        if (curJumpVelocity != 0)
+        {
+            curJumpPos += Time.fixedDeltaTime * curJumpVelocity;
+            curJumpVelocity -= Time.fixedDeltaTime * 20f;
+            isGrounded = false;
+            isJumping = true;
         }
 
         if (isGrounded && !anim.GetBool("Die") && isDead)
             anim.SetBool("Die", true);
 
         anim.SetBool("Jump", !isGrounded);
-        Move(move);
+        Move(moveInput);
     }
 
     void HealthSystem_OnHealthZero(object sender, EventArgs e)
@@ -238,14 +281,17 @@ public class CharacterBase : MonoBehaviour
         anim.SetBool("isReloading", false);
         //anim.Play ("Reload" + weaponType.ToString ());
     }
-    public void Move(float moveDir)
+    public void Move(Vector2 moveDir)
     {
         if (isGrounded || airControl)
         {
-            anim.SetFloat("Speed", Mathf.Abs(moveDir));
+            float maginitude = Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude));
+
+            anim.SetFloat("Speed", maginitude);
+
             if (isFiring)
             {
-                if (moveDir < 0 && shootingSideRight || moveDir > 0 && !shootingSideRight)
+                if (moveDir.x < 0 && shootingSideRight || moveDir.x > 0 && !shootingSideRight)
                 {
                     anim.SetFloat("SpeedMultiplayer", -.7f);
                     curSpeed = firingSpeed;
@@ -260,14 +306,19 @@ public class CharacterBase : MonoBehaviour
             else
             {
                 anim.SetFloat("SpeedMultiplayer", 1);
-                if (moveDir != 0)
-                    Flip(moveDir > 0);
+
+                if (moveDir.x != 0)
+                    Flip(moveDir.x > 0);
+
                 curSpeed = maxSpeed;
             }
 
-            //anim.SetBool ("isWeapon", isWeapon);
+            float xPos = worldPosition.x + moveDir.x * curSpeed.x * Time.fixedDeltaTime;
+            float yPos = worldPosition.y + moveDir.y * curSpeed.y * Time.fixedDeltaTime;
 
-            rb.velocity = new Vector2(moveDir * curSpeed, rb.velocity.y);
+            MoveTo(new Vector2(xPos, yPos), curJumpPos);
+
+            // rb.velocity = new Vector2(moveDir * curSpeed, rb.velocity.y);
 
         }
     }
@@ -278,8 +329,8 @@ public class CharacterBase : MonoBehaviour
         {
             isGrounded = false;
             jumpDelay = .2f;
-            rb.AddForce(new Vector2(0f, jumpForce));
             isJumping = true;
+            curJumpVelocity = jumpForce;
         }
     }
 
@@ -301,27 +352,7 @@ public class CharacterBase : MonoBehaviour
         return !IsDead();
     }
 
-    public event EventHandler CanEnterDoorEvent;
-    public event EventHandler AwayDoorEvent;
-
-    HouseDoor houseInfo;
-
-    public void CanEnterDoor(HouseDoor houseInfo)
-    {
-        this.houseInfo = houseInfo;
-        if (CanEnterDoorEvent != null)
-            CanEnterDoorEvent(this, EventArgs.Empty);
-    }
-
-    public void AwayDoor()
-    {
-        houseInfo = null;
-
-        if (AwayDoorEvent != null)
-            AwayDoorEvent(this, EventArgs.Empty);
-    }
-
-    public void EnterOrExitDoor()
+    public void EnterOrExitDoor(HouseDoor houseInfo)
     {
         if (MapsController.Ins.mapState == MapsController.State.Map)
         {
@@ -331,6 +362,13 @@ public class CharacterBase : MonoBehaviour
             }
         }
         else MapsController.Ins.ExitHouse();
+    }
+
+    void OnEnterHouse(HouseDoor house)
+    {
+
+        MoveToPosition(new Vector3(MapsController.Ins.GetHouseData(house.houseType).worldEndPoints.x + 2, -4), true);
+        ClearInteractableObjects();
     }
 
     public bool CanHit()
@@ -360,17 +398,148 @@ public class CharacterBase : MonoBehaviour
         tmp.text = "-" + damage.ToString();
         tmp.fontSize = Mathf.Clamp(6 + damage / 10, 6, 10);
         tmp.transform.position = transform.position;
-        tmp.transform.DOMove(transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
+        tmp.sortingOrder = 500;
+
+        Sequence mySequence = DOTween.Sequence();
+
+        mySequence.Append(tmp.transform.DOMove(transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f));
+        mySequence.PrependInterval(.2f);
+        mySequence.Append(tmp.transform.DOScale(Vector3.zero, .3f));
+
         // iTween.MoveTo(tmp.gameObject, transform.position + Vector3.up + (Vector3)UnityEngine.Random.insideUnitCircle, .3f);
-        Utility.Invoke(this, .2f, delegate { iTween.ScaleTo(tmp.gameObject, Vector3.zero, .3f); });
+        //Utility.Invoke(this, .2f, delegate { iTween.ScaleTo(tmp.gameObject, Vector3.zero, .3f); });
+
         Destroy(tmp.gameObject, .5f);
     }
 
     public void MoveToPosition(Vector3 position, bool isFacingRight)
     {
-        transform.position = position;
+        MoveTo(position);
         isJumping = false;
-        rb.velocity = Vector3.zero;
+        //rb.velocity = Vector3.zero;
+        curJumpVelocity = 0;
+        curJumpPos = 0;
         Flip(isFacingRight);
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        Interactable interactable = col.GetComponent<Interactable>();
+        if (interactable != null)
+            if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
+            {
+                //Debug.Log("OnTriggerEnter2D" + interactable.name);
+                interactableObjects.Add(interactable);
+
+                if (OnCanInteractEvent != null)
+                    OnCanInteractEvent(interactable);
+            }
+    }
+
+    void OnTriggerStay2D(Collider2D col)
+    {
+        Interactable interactable = col.GetComponent<Interactable>();
+
+        if (interactable != null)
+        {
+            if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
+            {
+                //Debug.Log("OnTriggerEnter2D" + interactable.name);
+                interactableObjects.Add(interactable);
+
+                if (OnCanInteractEvent != null)
+                    OnCanInteractEvent(interactable);
+            }
+
+            if (interactableObjects.Contains(interactable) && !interactable.CanInteract(this))
+            {
+                //Debug.Log("OnTriggerExit2D" + interactable.name);
+                interactable.AwayInteract(this);
+                interactableObjects.Remove(interactable);
+
+                if (OnCantInteractEvent != null)
+                    OnCantInteractEvent(interactable);
+            }
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        Interactable interactable = col.GetComponent<Interactable>();
+
+        if (interactable != null)
+            if (interactableObjects.Contains(interactable))
+            {
+                //Debug.Log("OnTriggerExit2D" + interactable.name);
+                interactable.AwayInteract(this);
+                interactableObjects.Remove(interactable);
+
+                if (OnCantInteractEvent != null)
+                    OnCantInteractEvent(interactable);
+            }
+    }
+
+    void OnChangingMap(MapsController.MapInfo mapInfo, Direction dir)
+    {
+        //если вышли из дома
+        if (dir == Direction.None)
+        {
+            Vector3 pos = MapsController.Ins.GetCurrentMapInfo().houses[MapsController.Ins.curHouseIndex].GetDoorPosition(mapInfo) + Vector3.up;
+            MoveToPosition(pos, false);
+        }
+        else
+        {
+            int index = -1;
+
+            index = MapsController.Ins.GetSpawnDirection(mapInfo, dir);
+
+            if (index != -1)
+            {
+                bool isFacingRight = true;
+
+                Vector3 pos = default;
+
+                if (index == 1)
+                {
+                    isFacingRight = false;
+                    pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, worldPosition.y);
+                }
+
+                if (index == 0)
+                {
+                    pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, worldPosition.y);
+                }
+
+                if (index == 2)
+                {
+                    pos = new Vector3(0, MapsController.Ins.GetCurrentWorldUpDownEndPoints().y);
+                }
+
+                MoveToPosition(pos, isFacingRight);
+
+                Debug.Log(index + "   " + pos + "  " + MapsController.Ins.GetCurrentWorldEndPoints().x);
+            }
+        }
+
+
+        ClearInteractableObjects();
+    }
+
+    void ClearInteractableObjects()
+    {
+        for (int i = 0; i < interactableObjects.Count; i++)
+        {
+            interactableObjects[i].AwayInteract(this);
+
+            if (OnCantInteractEvent != null)
+                OnCantInteractEvent(interactableObjects[i]);
+        }
+        interactableObjects.Clear();
+    }
+
+
+    void OnDestroy()
+    {
+        MapsController.Ins.OnChangingMap -= OnChangingMap;
     }
 }

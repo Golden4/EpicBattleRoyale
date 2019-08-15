@@ -32,15 +32,58 @@ public class MobileInputsUI : MonoBehaviour
         HideCanEnterDoorBtn();
         HideCanGoMapBtn();
         wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
-        cb.inventorySystem.OnCanPickUp += CharacterBase_CanPickUpItem;
-        cb.inventorySystem.OnCantPickUp += CharacterBase_CantPickUpItem;
-        cb.CanEnterDoorEvent += CharacterBase_CanEnterDoor;
-        cb.AwayDoorEvent += CharacterBase_CantEnterDoor;
+        cb.OnCanInteractEvent += OnCanInteract;
+        cb.OnCantInteractEvent += OnCantInteract;
     }
 
     void Update()
     {
         HandlerReloadProgressAndBtn();
+    }
+
+    void OnCanInteract(Interactable interactable)
+    {
+        switch (interactable.GetInteractableType())
+        {
+            case Interactable.InteractableType.ItemPickUp:
+                ShowPickUpBtn(() =>
+                {
+                    interactable.Interact(characterBase);
+                });
+                break;
+            case Interactable.InteractableType.HouseDoor:
+
+                ShowCanEnterDoorBtn(() =>
+                {
+                    interactable.Interact(characterBase);
+                });
+                break;
+
+            case Interactable.InteractableType.MapChange:
+                ShowCanGoMapBtn(() =>
+                    {
+                        interactable.Interact(characterBase);
+                    });
+                break;
+        }
+    }
+
+    void OnCantInteract(Interactable interactable)
+    {
+        switch (interactable.GetInteractableType())
+        {
+            case Interactable.InteractableType.ItemPickUp:
+                if (characterBase.inventorySystem.canPickUpItems.Count == 0)
+                    HidePickUpBtn();
+                break;
+            case Interactable.InteractableType.HouseDoor:
+                HideCanEnterDoorBtn();
+                break;
+
+            case Interactable.InteractableType.MapChange:
+                HideCanGoMapBtn();
+                break;
+        }
     }
 
     public void ShowPickUpBtn(Action onClick)
@@ -86,19 +129,6 @@ public class MobileInputsUI : MonoBehaviour
         reloadImageProgress.gameObject.SetActive(false);
     }
 
-    void CharacterBase_CanPickUpItem(object obj, EventArgs args)
-    {
-        ShowPickUpBtn(() =>
-        {
-            characterBase.inventorySystem.PickUp();
-        });
-    }
-
-    void CharacterBase_CantPickUpItem(object obj, EventArgs args)
-    {
-        HidePickUpBtn();
-    }
-
     public void ShowCanEnterDoorBtn(Action onClick)
     {
         enterDoorBtn.transform.DOScale(Vector3.one, .1f);
@@ -123,19 +153,6 @@ public class MobileInputsUI : MonoBehaviour
     {
         if (goMapBtn != null)
             goMapBtn.transform.DOScale(Vector3.zero, .1f);
-    }
-
-    void CharacterBase_CanEnterDoor(object obj, EventArgs args)
-    {
-        ShowCanEnterDoorBtn(() =>
-        {
-            characterBase.EnterOrExitDoor();
-        });
-    }
-
-    void CharacterBase_CantEnterDoor(object obj, EventArgs args)
-    {
-        HideCanEnterDoorBtn();
     }
 
     void HandlerReloadProgressAndBtn()

@@ -46,7 +46,7 @@ public class Enemy : MonoBehaviour
         this.characterBase = characterBase;
         this.weaponController = weaponController;
         transform.position = position;
-        characterBase.maxSpeed -= .5f;
+        characterBase.maxSpeed -= Vector2.one * .5f;
         characterBase.OnDie += OnDie;
         characterBase.OnHitted += OnHitted;
     }
@@ -237,7 +237,7 @@ public class Enemy : MonoBehaviour
             curEnemyState = EnemyState.Moving;
         }
 
-        characterBase.move = 0;
+        characterBase.moveInput.x = 0;
         weaponController.GetCurrentWeapon().firingSideInput = 0;
     }
     float jumpDelay;
@@ -309,7 +309,8 @@ public class Enemy : MonoBehaviour
         {
             curEnemyState = EnemyState.Waiting;
         }
-        characterBase.move = 0;
+
+        characterBase.moveInput.x = 0;
     }
 
     void OnPickUp(object obj, EventArgs arg)
@@ -358,11 +359,11 @@ public class Enemy : MonoBehaviour
 
         if (distance > stopDistance)
         {
-            characterBase.Move(Mathf.RoundToInt(dir.x));
+            characterBase.Move(Mathf.RoundToInt(dir.x) * Vector2.right);
         }
         else
         {
-            characterBase.Move(0);
+            characterBase.Move(Vector2.zero);
             if (OnReachedTargetPosition != null)
             {
                 OnReachedTargetPosition();

@@ -33,8 +33,6 @@ public class Player : MonoBehaviour
         weaponController.Setup();
 
         transform.position = position;
-        MapsController.Ins.OnChangingMap += OnChangingMap;
-        MapsController.Ins.OnEnterHouseEvent += OnEnterHouse;
         isInit = true;
     }
 
@@ -63,89 +61,17 @@ public class Player : MonoBehaviour
         if (characterBase.IsDead())
             return;
 
-        characterBase.move = Mathf.RoundToInt(CrossPlatformInputManager.GetAxisRaw("Horizontal"));
-        if (characterBase.move == 0)
-            characterBase.move = Input.GetAxisRaw("Horizontal");
+        characterBase.moveInput.x = Mathf.RoundToInt(CrossPlatformInputManager.GetAxisRaw("Horizontal"));
+
+        characterBase.moveInput.y = Mathf.RoundToInt(CrossPlatformInputManager.GetAxisRaw("Vertical"));
+
+        if (characterBase.moveInput.x == 0)
+            characterBase.moveInput.x = Input.GetAxisRaw("Horizontal");
+
+        if (characterBase.moveInput.y == 0)
+            characterBase.moveInput.y = Input.GetAxisRaw("Vertical");
 
     }
 
-    void OnDestroy()
-    {
-        MapsController.Ins.OnChangingMap -= OnChangingMap;
-    }
-
-    void OnChangingMap(MapsController.MapInfo mapInfo, Direction dir)
-    {
-        //если вышли из дома
-        if (dir == Direction.None)
-        {
-            Vector3 pos = MapsController.Ins.GetCurrentMapInfo().houses[MapsController.Ins.curHouseIndex].GetHouseSpawnPosition() + Vector3.up;
-            characterBase.MoveToPosition(pos, false);
-            return;
-        }
-
-        int index = -1;
-
-        Direction[] dir1 = new Direction[] {
-            Direction.Bottom, Direction.Left, Direction.Right, Direction.Top
-        };
-
-        Direction[] dir2 = new Direction[] {
-            Direction.Top, Direction.Right, Direction.Left, Direction.Bottom
-        };
-
-        for (int i = 0; i < dir1.Length; i++)
-        {
-            if (dir == dir1[i])
-            {
-                for (int j = 0; j < mapInfo.roads.Count; j++)
-                {
-                    if (mapInfo.roads[j] == dir2[i])
-                    {
-                        index = j;
-                        break;
-                    }
-                }
-
-                if (mapInfo.centerRoad == dir2[i])
-                {
-                    index = 2;
-                    break;
-                }
-            }
-        }
-
-        if (index != -1)
-        {
-            bool isFacingRight = true;
-
-            Vector3 pos = default;
-
-            if (index == 1)
-            {
-                isFacingRight = false;
-                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, -4);
-            }
-
-            if (index == 0)
-            {
-                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, -4);
-            }
-
-            if (index == 2)
-            {
-                pos = new Vector3(0, -4);
-            }
-
-            characterBase.MoveToPosition(pos, isFacingRight);
-
-        }
-
-    }
-
-    void OnEnterHouse(HouseDoor house)
-    {
-        characterBase.MoveToPosition(new Vector3(MapsController.Ins.GetHouseData(house.houseType).worldEndPoints.x + 2, -4), true);
-    }
 
 }

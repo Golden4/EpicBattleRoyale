@@ -29,8 +29,6 @@ public class MapsController : MonoBehaviour
 
     public MapInfo[,] maps;
 
-    //public Dictionary<Vector2Int, MapInfo> mapInfoDic = new Dictionary<Vector2Int, MapInfo>();
-
     Vector2Int curMapCoords = Vector2Int.zero;
     public int curHouseIndex;
 
@@ -92,7 +90,6 @@ public class MapsController : MonoBehaviour
 
         if (map.centerRoad != Direction.None)
         {
-
             mapsNav[0].gameObject.SetActive(true);
             mapsNav[0].direction = map.roads[0];
             mapsNav[2].gameObject.SetActive(true);
@@ -139,9 +136,9 @@ public class MapsController : MonoBehaviour
     void SpawnOuterHouse(MapInfo map, HouseType houseType, int houseIndex, Transform parent)
     {
         GameObject outerHouse = Instantiate(GetHouseData(houseType).pfOuterHouse.gameObject);
-        outerHouse.transform.position = map.houses[houseIndex].GetHouseSpawnPosition();
         outerHouse.transform.SetParent(parent, false);
         HouseDoor outsideHouse = outerHouse.AddComponent<HouseDoor>();
+        outsideHouse.MoveTo(map.houses[houseIndex].GetHouseSpawnPosition(map));
         outsideHouse.Setup(map.coord, houseType, houseIndex);
     }
 
@@ -168,7 +165,7 @@ public class MapsController : MonoBehaviour
         //check spawn point
         for (int i = 0; i < itemsSpawnPoints.Count; i++)
         {
-            if (UnityEngine.Random.Range(0, 5) == 0)
+            if (UnityEngine.Random.Range(0, 1) == 0)
             {
                 int randNum = UnityEngine.Random.Range(0, 101);
 
@@ -184,7 +181,7 @@ public class MapsController : MonoBehaviour
                         int itemPickUpAmmoAmount = UnityEngine.Random.Range(1, 5);
                         for (int k = 0; k < itemPickUpAmmoAmount; k++)
                         {
-                            AmmoItemPickUp ammo = World.Ins.SpawnItemPickUpAmmo(aw.bulletSystem.ammoType, itemsSpawnPoints[i] + Vector3.right * UnityEngine.Random.Range(-.5f, .5f));
+                            AmmoItemPickUp ammo = World.Ins.SpawnItemPickUpAmmo(aw.bulletSystem.ammoType, itemsSpawnPoints[i] + (Vector3)UnityEngine.Random.insideUnitCircle * .5f);
                             ammo.transform.SetParent(parent, false);
                         }
 
@@ -204,6 +201,7 @@ public class MapsController : MonoBehaviour
                     HealthItemPickUp newItem = World.Ins.SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthList.Big, itemsSpawnPoints[i], true);
                     newItem.transform.SetParent(parent, false);
                 }
+                else
                 //random Ammo spawn
                 if (randNum - 70 < 20)
                 {
@@ -237,7 +235,7 @@ public class MapsController : MonoBehaviour
 
         curMapCoords = map.coord;
         mapState = State.Map;
-        UpdateWorldEndPoints();
+        UpdateAllWorldEndPoints();
 
         if (OnChangingMap != null)
         {
@@ -269,19 +267,42 @@ public class MapsController : MonoBehaviour
         return GetMapInfo(curMapCoords);
     }
 
-    public Vector2 worldEndPoints;
+    Vector2 worldUpDownEndPoints;
+    Vector2 worldEndPoints;
 
     public Vector2 GetCurrentWorldEndPoints()
     {
+        if (worldEndPoints == default)
+            UpdateAllWorldEndPoints();
+
         return worldEndPoints;
     }
 
-    void UpdateWorldEndPoints()
+    public Vector2 GetCurrentWorldUpDownEndPoints()
+    {
+        if (worldUpDownEndPoints == default)
+            UpdateAllWorldEndPoints();
+        return worldUpDownEndPoints;
+    }
+
+    public float GetCurrentVerticalCenterPoint()
+    {
+        return GetCurrentWorldUpDownEndPoints().x + (GetCurrentWorldUpDownEndPoints().y - GetCurrentWorldUpDownEndPoints().x) / 2f;
+    }
+
+    void UpdateAllWorldEndPoints()
     {
         if (mapState == State.House)
+        {
             worldEndPoints = GetHouseData(GetCurrentMapInfo().houses[curHouseIndex].houseType).worldEndPoints;
+            worldUpDownEndPoints = GetHouseData(GetCurrentMapInfo().houses[curHouseIndex].houseType).worldUpDownEndPoints;
+        }
         else
+        {
             worldEndPoints = GetMapData(GetCurrentMapInfo().mapType).worldEndPoints;
+            worldUpDownEndPoints = GetMapData(GetCurrentMapInfo().mapType).worldUpDownEndPoints;
+        }
+
     }
 
     public event Action<HouseDoor> OnEnterHouseEvent;
@@ -295,7 +316,7 @@ public class MapsController : MonoBehaviour
 
         mapState = State.House;
         curHouseIndex = house.houseIndex;
-        UpdateWorldEndPoints();
+        UpdateAllWorldEndPoints();
 
         for (int i = 0; i < curInnerHouses.Count; i++)
         {
@@ -322,6 +343,43 @@ public class MapsController : MonoBehaviour
         ChangeMap(GetCurrentMapInfo(), Direction.None);
     }
 
+    public int GetSpawnDirection(MapsController.MapInfo mapInfo, Direction dir)
+    {
+        //0 left 1 right 2 center
+        int spawnDirection = -1;
+
+        Direction[] dir1 = new Direction[] {
+            Direction.Bottom, Direction.Left, Direction.Right, Direction.Top
+        };
+
+        Direction[] dir2 = new Direction[] {
+            Direction.Top, Direction.Right, Direction.Left, Direction.Bottom
+        };
+
+        for (int i = 0; i < dir1.Length; i++)
+        {
+            if (dir == dir1[i])
+            {
+                for (int j = 0; j < mapInfo.roads.Count; j++)
+                {
+                    if (mapInfo.roads[j] == dir2[i])
+                    {
+                        spawnDirection = j;
+                        break;
+                    }
+                }
+
+                if (mapInfo.centerRoad == dir2[i])
+                {
+                    spawnDirection = 2;
+                    break;
+                }
+            }
+        }
+
+        return spawnDirection;
+    }
+
     public enum HouseType
     {
         House1,
@@ -342,7 +400,8 @@ public class MapsController : MonoBehaviour
         public HouseType houseType;
         public GameObject pfOuterHouse;
         public GameObject pfInnerHouse;
-        public Vector2 worldEndPoints = new Vector2(-37, 37);
+        public Vector2 worldEndPoints;
+        public Vector2 worldUpDownEndPoints;
     }
 
     [System.Serializable]
@@ -350,7 +409,8 @@ public class MapsController : MonoBehaviour
     {
         public MapType mapType;
         public GameObject pfMap;
-        public Vector2 worldEndPoints = new Vector2(-37, 37);
+        public Vector2 worldEndPoints;
+        public Vector2 worldUpDownEndPoints;
     }
 
     public HouseData GetHouseData(HouseType type)
@@ -436,6 +496,7 @@ public class MapsController : MonoBehaviour
     {
         public float houseSpawnPositionsX;
         public HouseType houseType;
+        BoxCollider2D doorCollider;
 
         public HouseInfo(float houseSpawnPositionsX, HouseType houseType)
         {
@@ -443,11 +504,22 @@ public class MapsController : MonoBehaviour
             this.houseType = houseType;
         }
 
-        public Vector3 GetHouseSpawnPosition()
+        public Vector3 GetHouseSpawnPosition(MapInfo mapsInfo)
         {
             Vector3 pos = Vector3.zero;
             pos.x = houseSpawnPositionsX;
-            pos.y = -5.25f;
+            pos.y = MapsController.Ins.GetMapData(mapsInfo.mapType).worldUpDownEndPoints.y;
+            return pos;
+        }
+
+        public Vector3 GetDoorPosition(MapInfo mapsInfo)
+        {
+            if (doorCollider == null)
+                doorCollider = MapsController.Ins.GetHouseData(houseType).pfOuterHouse.GetComponent<BoxCollider2D>();
+
+            Vector3 pos = Vector3.zero;
+            pos.x = houseSpawnPositionsX + doorCollider.offset.x;
+            pos.y = MapsController.Ins.GetMapData(mapsInfo.mapType).worldUpDownEndPoints.y;
             return pos;
         }
     }

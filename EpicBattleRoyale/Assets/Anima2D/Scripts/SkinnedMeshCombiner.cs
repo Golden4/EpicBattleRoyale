@@ -8,6 +8,7 @@ public class SkinnedMeshCombiner : MonoBehaviour
     private SpriteMeshInstance[] m_SpriteMeshInstances;
     private MaterialPropertyBlock m_MaterialPropertyBlock;
     private SkinnedMeshRenderer m_CachedSkinnedRenderer;
+    public int sortingOrder;
 
     public SpriteMeshInstance[] spriteMeshInstances
     {
@@ -112,8 +113,8 @@ public class SkinnedMeshCombiner : MonoBehaviour
                 meshIndex[i] = combineInstance.mesh.vertexCount;
                 combineInstance.transform = skinnedMeshRenderer.localToWorldMatrix;
                 combineInstances.Add(combineInstance);
-
-                skinnedMeshRenderer.gameObject.SetActive(false);
+                Destroy(skinnedMeshRenderer.gameObject);
+                //skinnedMeshRenderer.gameObject.SetActive(false);
             }
         }
 
@@ -132,13 +133,14 @@ public class SkinnedMeshCombiner : MonoBehaviour
         combinedSkinnedRenderer.sharedMesh.boneWeights = boneWeights.ToArray();
         combinedSkinnedRenderer.sharedMesh.bindposes = bindposes.ToArray();
         combinedSkinnedRenderer.sharedMesh.RecalculateBounds();
-        combinedSkinnedRenderer.sortingOrder = 10;
+        combinedSkinnedRenderer.sortingOrder = sortingOrder;
 
         combinedSkinnedRenderer.materials = spriteMeshInstances[0].sharedMaterials;
 
         transform.position = l_position;
         transform.rotation = l_rotation;
         transform.localScale = l_scale;
+
     }
 
     void OnWillRenderObject()

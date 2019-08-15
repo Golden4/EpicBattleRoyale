@@ -186,6 +186,8 @@ public class GameAssets : ScriptableObject
     public Shell pfShell;
     public ParticleSystem pfMuzzleFlash;
     public TMPro.TextMeshPro pfPopUpDamage;
+    public TMPro.TextMeshPro pfPopUpInfo;
+    public SpriteRenderer pfEntityShadow;
 
     /*	void OnValidate ()
     {

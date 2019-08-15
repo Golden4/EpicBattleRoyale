@@ -9,8 +9,7 @@ public class InventorySystem
     public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
     public List<ItemPickUp> pickedUpItems = new List<ItemPickUp>();
     public List<Bullets> bullets = new List<Bullets>();
-    public event EventHandler OnCanPickUp;
-    public event EventHandler OnCantPickUp;
+
     public event EventHandler OnPickUp;
 
     public void OnCharacterPickUp(ItemPickUp item)
@@ -21,24 +20,29 @@ public class InventorySystem
 
     public void CanPickUpItem(ItemPickUp item)
     {
-        canPickUpItems.Add(item);
 
-        if (OnCanPickUp != null)
-        {
-            OnCanPickUp(this, EventArgs.Empty);
-        }
+        if (!canPickUpItems.Contains(item))
+            canPickUpItems.Add(item);
+
+        // if (OnCanPickUp != null)
+        // {
+        //     OnCanPickUp(this, EventArgs.Empty);
+        // }
     }
 
     public void CanT_PickUpItem(ItemPickUp item)
     {
-        canPickUpItems.Remove(item);
-        if (canPickUpItems.Count == 0)
-        {
-            if (OnCantPickUp != null)
-            {
-                OnCantPickUp(this, EventArgs.Empty);
-            }
-        }
+
+        if (canPickUpItems.Contains(item))
+            canPickUpItems.Remove(item);
+
+        // if (canPickUpItems.Count == 0)
+        // {
+        //     if (OnCantPickUp != null)
+        //     {
+        //         OnCantPickUp(this, EventArgs.Empty);
+        //     }
+        // }
     }
 
     public void PickUp()
@@ -59,13 +63,13 @@ public class InventorySystem
             }
         }
 
-        if (canPickUpItems.Count == 0)
-        {
-            if (OnCantPickUp != null)
-            {
-                OnCantPickUp(this, EventArgs.Empty);
-            }
-        }
+        // if (canPickUpItems.Count == 0)
+        // {
+        //     if (OnCantPickUp != null)
+        //     {
+        //         OnCantPickUp(this, EventArgs.Empty);
+        //     }
+        // }
     }
 
     public InventorySystem(CharacterBase characterBase)

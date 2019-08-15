@@ -2,52 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapNavigate : MonoBehaviour
+public class MapNavigate : Interactable
 {
 
     public Direction direction;
-
-    /*	void OnTriggerEnter (Collider2D col)
-	{
-		if (col.CompareTag ("Player"))
-			ChangeDirection ();
-	}*/
-
-    void Awake()
+    void OnEnable()
     {
-        MapsController.Ins.OnChangingMap += OnChangingMap;
+        colided = false;
     }
-
 
     List<CharacterBase> cbs = new List<CharacterBase>();
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-
-        CharacterBase cb = col.transform.GetComponent<CharacterBase>();
-        if (cb != null)
-        {
-            cbs.Add(cb);
-
-            if (World.Ins.player.characterBase == cb)
-                MobileInputsUI.Ins.ShowCanGoMapBtn(delegate
-                {
-                    colided = true;
-                    ChangeDirection(direction);
-                });
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-        CharacterBase cb = col.transform.GetComponent<CharacterBase>();
-        if (cb != null)
-        {
-            cbs.Remove(cb);
-            if (World.Ins.player.characterBase == cb)
-                MobileInputsUI.Ins.HideCanGoMapBtn();
-        }
-    }
 
     void OnDisable()
     {
@@ -61,26 +25,35 @@ public class MapNavigate : MonoBehaviour
 
     bool colided;
 
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        CharacterBase character = col.transform.GetComponent<CharacterBase>();
-
-        if (character != null && World.Ins.player.characterBase == character)
-            if (!colided)
-            {
-                colided = true;
-                ChangeDirection(direction);
-            }
-    }
-
     void ChangeDirection(Direction direction)
     {
+        colided = true;
         MapsController.Ins.GoToMap(direction);
     }
 
-    void OnChangingMap(MapsController.MapInfo mapInfo, Direction direction)
+    public override bool Interact(CharacterBase cb)
     {
-        colided = false;
+        if (!colided)
+        {
+            colided = true;
+            ChangeDirection(direction);
+            return true;
+        }
+
+        return false;
     }
 
+    public override bool CanInteract(CharacterBase cb)
+    {
+        return true;
+    }
+
+    public override void AwayInteract(CharacterBase cb)
+    {
+    }
+
+    public override InteractableType GetInteractableType()
+    {
+        return InteractableType.MapChange;
+    }
 }

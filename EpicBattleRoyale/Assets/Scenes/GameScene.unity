@@ -1478,9 +1478,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovementRange: 40
-  axesToUse: 1
+  axesToUse: 0
   horizontalAxisName: Horizontal
-  verticalAxisName: 
+  verticalAxisName: Vertical
 --- !u!1 &407173038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3293,34 +3293,40 @@ MonoBehaviour:
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
     worldEndPoints: {x: -20, y: 20}
+    worldUpDownEndPoints: {x: -5, y: -2}
   - houseType: 1
     pfOuterHouse: {fileID: 1489081602486382168, guid: 7bcc622bdb246114abe8956a32bfcb59,
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
     worldEndPoints: {x: -20, y: 20}
+    worldUpDownEndPoints: {x: -5, y: -2}
   - houseType: 2
     pfOuterHouse: {fileID: 736430939249677253, guid: 1e9db935500cc23448ac760c02d6d9e8,
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
     worldEndPoints: {x: -20, y: 20}
+    worldUpDownEndPoints: {x: -5, y: -2}
   - houseType: 3
     pfOuterHouse: {fileID: 8350344444179269163, guid: e8ca64920e36ce344aebacc9e1db5b81,
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
     worldEndPoints: {x: -20, y: 20}
+    worldUpDownEndPoints: {x: -5, y: -2}
   - houseType: 4
     pfOuterHouse: {fileID: 8880845573897302798, guid: 95c917366712ba1439a2a4b30a9f13bb,
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
     worldEndPoints: {x: -20, y: 20}
+    worldUpDownEndPoints: {x: -5, y: -2}
   pfMaps:
   - mapType: 0
     pfMap: {fileID: 8231321016298368354, guid: 9966a1fe71ebd6945875c0a301b86dcf, type: 3}
     worldEndPoints: {x: -37, y: 37}
+    worldUpDownEndPoints: {x: -6, y: -1}
   mapState: 0
   characterSpawnPoints:
   - {x: -36, y: -4.5, z: -0}
@@ -3451,7 +3457,6 @@ MonoBehaviour:
     centerRoadPositionX: 0
     houses: []
   curHouseIndex: 0
-  worldEndPoints: {x: 0, y: 0}
 --- !u!4 &1209955566
 Transform:
   m_ObjectHideFlags: 0

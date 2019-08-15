@@ -74,12 +74,44 @@ public class MapsGenerator
                     {
                         if (maps[i, j].roads.Contains((Direction)((k + randNum) % 4)))
                             continue;
+
                         if (GoRoadToDirection(new Vector2Int(i, j), (Direction)((k + randNum) % 4), mapSize, ref maps))
 
                             if (maps[i, j].GetRoadsCount() >= roadsCount)
                                 break;
                     }
 
+                }
+            }
+        }
+
+        for (int i = 0; i < mapSize; i++)
+        {
+            for (int j = 0; j < mapSize; j++)
+            {
+                if (maps[i, j].coord.x == 0 || maps[i, j].coord.x == mapSize)
+                {
+                    if (!(maps[i, j].roads.Contains(Direction.Top) && maps[i, j].roads.Contains(Direction.Bottom)) && maps[i, j].roads.Count == 2)
+                    {
+                        if (maps[i, j].roads.Contains(Direction.Top))
+                            GoRoadToDirection(new Vector2Int(i, j), Direction.Bottom, mapSize, ref maps);
+
+                        if (maps[i, j].roads.Contains(Direction.Bottom))
+                            GoRoadToDirection(new Vector2Int(i, j), Direction.Top, mapSize, ref maps);
+                    }
+                }
+
+                if (maps[i, j].coord.y == 0 || maps[i, j].coord.y == mapSize)
+                {
+                    if (!(maps[i, j].roads.Contains(Direction.Left) && maps[i, j].roads.Contains(Direction.Right)) && maps[i, j].roads.Count == 2)
+                    {
+
+                        if (maps[i, j].roads.Contains(Direction.Left))
+                            GoRoadToDirection(new Vector2Int(i, j), Direction.Right, mapSize, ref maps);
+
+                        if (maps[i, j].roads.Contains(Direction.Right))
+                            GoRoadToDirection(new Vector2Int(i, j), Direction.Left, mapSize, ref maps);
+                    }
                 }
             }
         }

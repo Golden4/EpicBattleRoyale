@@ -293,6 +293,25 @@ namespace Anima2D
             UpdateTimestamp();
 #endif
             UpdateCurrentMesh();
+
+
+            if (cachedRenderer)
+            {
+                cachedRenderer.sortingLayerID = sortingLayerID;
+                cachedRenderer.sortingOrder = sortingOrder;
+                cachedRenderer.sharedMaterials = m_Materials;
+                cachedRenderer.GetPropertyBlock(materialPropertyBlock);
+
+                if (spriteTexture)
+                {
+                    materialPropertyBlock.SetTexture("_MainTex", spriteTexture);
+                }
+
+                materialPropertyBlock.SetColor("_Color", color);
+
+                cachedRenderer.SetPropertyBlock(materialPropertyBlock);
+            }
+
         }
 
         void UpdateInitialMesh()
@@ -438,23 +457,6 @@ namespace Anima2D
         void OnWillRenderObject()
         {
             UpdateRenderers();
-
-            if (cachedRenderer)
-            {
-                cachedRenderer.sortingLayerID = sortingLayerID;
-                cachedRenderer.sortingOrder = sortingOrder;
-                cachedRenderer.sharedMaterials = m_Materials;
-                cachedRenderer.GetPropertyBlock(materialPropertyBlock);
-
-                if (spriteTexture)
-                {
-                    materialPropertyBlock.SetTexture("_MainTex", spriteTexture);
-                }
-
-                materialPropertyBlock.SetColor("_Color", color);
-
-                cachedRenderer.SetPropertyBlock(materialPropertyBlock);
-            }
         }
     }
 }

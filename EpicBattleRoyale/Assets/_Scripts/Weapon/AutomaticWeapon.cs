@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq.Expressions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -201,7 +202,15 @@ public class AutomaticWeapon : Weapon
     protected void SpawnBullet(bool isFacingRight, Vector2 direction = default, int bulletDamage = -1)
     {
         GameObject bullet = Instantiate(GameAssets.Get.pfBullet.gameObject);
-        bullet.transform.position = muzzlePoint.transform.position + Vector3.right * (isFacingRight ? 1 : -1) * .3f;
+        BulletHandler bh = bullet.GetComponent<BulletHandler>();
+
+        Vector2 position = (Vector2)wc.cb.worldPosition + Vector2.right * (-wc.cb.worldPosition.x + muzzlePoint.transform.position.x) + Vector2.right * (isFacingRight ? 1 : -1) * .3f;
+
+        float zPosition = /*-(wc.cb.worldPosition.y) */ (-wc.cb.worldPosition.y + muzzlePoint.transform.position.y);
+        bh.worldPosition = position;
+        // bh.MoveTo(position, zPosition);
+        //bullet.transform.position = muzzlePoint.transform.position + Vector3.right * (isFacingRight ? 1 : -1) * .3f;
+
         int curBulletDamage = damage;
 
         if (bulletDamage != -1)
@@ -209,11 +218,11 @@ public class AutomaticWeapon : Weapon
 
         if (direction == default)
         {
-            bullet.GetComponent<BulletHandler>().Setup(wc.cb, Vector3.right * (isFacingRight ? 1 : -1), curBulletDamage, firingRange, this);
+            bh.Setup(wc.cb, Vector3.right * (isFacingRight ? 1 : -1), zPosition, curBulletDamage, firingRange, this);
         }
         else
         {
-            bullet.GetComponent<BulletHandler>().Setup(wc.cb, direction * (isFacingRight ? 1 : -1), curBulletDamage, firingRange, this);
+            bh.Setup(wc.cb, direction * (isFacingRight ? 1 : -1), zPosition, curBulletDamage, firingRange, this);
         }
     }
 

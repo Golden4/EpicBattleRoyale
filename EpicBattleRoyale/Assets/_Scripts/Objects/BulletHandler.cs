@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletHandler : MonoBehaviour
+public class BulletHandler : EntityBase
 {
     public int damage;
     public float bulletSize = .5f;
     public float speed = 5;
     float destroyDistance = 3;
-    Vector3 direction;
+    Vector2 direction;
+    float zPosition;
     public CharacterBase cb;
     public Weapon weapon;
     public LayerMask hitLayers;
@@ -22,9 +23,9 @@ public class BulletHandler : MonoBehaviour
             DestroyBullet();
         }
 
-        transform.position += direction * Time.fixedDeltaTime * speed;
+        MoveTo((Vector2)worldPosition + direction * Time.fixedDeltaTime * speed, zPosition);
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position - (direction * bulletSize), direction, bulletSize * 2, hitLayers);
+        RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position - (direction * bulletSize), direction, bulletSize * 2, hitLayers);
 
         if (hit.collider != null)
         {
@@ -37,13 +38,14 @@ public class BulletHandler : MonoBehaviour
         }
     }
 
-    public void Setup(CharacterBase cb, Vector2 dir, int damage, float destroyDistance, Weapon weapon)
+    public void Setup(CharacterBase cb, Vector2 dir, float zPosition, int damage, float destroyDistance, Weapon weapon)
     {
         this.cb = cb;
         direction = (Vector3)dir.normalized;
         this.damage = damage;
         this.destroyDistance = destroyDistance;
         this.weapon = weapon;
+        this.zPosition = zPosition;
         transform.localEulerAngles = new Vector3(0, 0, Vector3.Angle(Vector3.right, dir));
     }
 

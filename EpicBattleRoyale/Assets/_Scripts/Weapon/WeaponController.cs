@@ -67,15 +67,6 @@ public class WeaponController : MonoBehaviour
         return newWeapon;
     }
 
-    public Weapon FindWeaponInInventory(GameAssets.WeaponsList weapon)
-    {
-        for (int i = 0; i < WEAPON_COUNT; i++)
-        {
-            if (weaponsInInventory[i] != null && weaponsInInventory[i].weaponName == weapon)
-                return weaponsInInventory[i];
-        }
-        return null;
-    }
 
     public Weapon GiveWeapon(GameAssets.WeaponsList weapon, int indexInInventory)
     {
@@ -101,12 +92,29 @@ public class WeaponController : MonoBehaviour
                 indexWeapon = currentWeaponInHandIndex;
         }
 
+
+        Renderer weaponRenderer = go.GetComponentInChildren<Renderer>();
+        if (weaponRenderer != null)
+            cb.AddRenderer(weaponRenderer);
+
         SwitchWeapon(indexWeapon);
+
 
         if (OnGiveWeapon != null)
             OnGiveWeapon(weapon, EventArgs.Empty);
 
         return weaponsInInventory[indexInInventory];
+    }
+
+
+    public Weapon FindWeaponInInventory(GameAssets.WeaponsList weapon)
+    {
+        for (int i = 0; i < WEAPON_COUNT; i++)
+        {
+            if (weaponsInInventory[i] != null && weaponsInInventory[i].weaponName == weapon)
+                return weaponsInInventory[i];
+        }
+        return null;
     }
 
     public void DropWeaponFromInventory(int index)
@@ -116,7 +124,7 @@ public class WeaponController : MonoBehaviour
             if (weaponsInInventory[index].weaponName != GameAssets.WeaponsList.Fists)
             {
                 WeaponItemPickUp weaponItemPickUp = World.Ins.SpawnItemPickUpWeapon(weaponsInInventory[index].weaponName,
-                                                        transform.position + ((cb.isFacingRight) ? 2 : -2) * Vector3.right);
+                                                        cb.worldPosition + ((cb.isFacingRight) ? 2 : -2) * Vector3.right);
 
                 if (weaponsInInventory[index].WeaponIs(typeof(AutomaticWeapon)))
                 {
@@ -131,8 +139,12 @@ public class WeaponController : MonoBehaviour
 
 					weaponItemPickUp.AddBulletInfo (automaticWeapon.bulletSystem);
 				}*/
-
             }
+
+            Renderer weaponRenderer = weaponsInInventory[index].GetComponentInChildren<Renderer>();
+            if (weaponRenderer != null)
+                cb.DeleteRederer(weaponRenderer);
+
             Destroy(weaponsInInventory[index].gameObject);
         }
     }
@@ -272,36 +284,36 @@ public class WeaponController : MonoBehaviour
     void SetWeaponLocation(Weapon weapon, bool isActive, int slotIndex)
     {
         weapon.gameObject.SetActive(true);
+        SpriteRenderer spriteRenderer = weapon.GetComponentInChildren<SpriteRenderer>();
+
+        weapon.isActive = isActive;
 
         if (isActive)
         {
-            weapon.isActive = true;
             weapon.transform.SetParent(slotsVisual[0].weaponHolder, false);
-            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
-                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[0].orderInLayerWeapon;
+            if (spriteRenderer != null)
+                cb.ChangeSortingOrder((Renderer)spriteRenderer, slotsVisual[0].orderInLayerWeapon);
             slotsVisual[0].isEmpty = false;
         }
         else if ((slotIndex == 0 || slotIndex == 1) && slotsVisual[1].isEmpty)
         {
-            weapon.isActive = false;
             weapon.transform.SetParent(slotsVisual[1].weaponHolder, false);
-            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
-                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[1].orderInLayerWeapon;
+            if (spriteRenderer != null)
+                cb.ChangeSortingOrder((Renderer)spriteRenderer, slotsVisual[1].orderInLayerWeapon);
             slotsVisual[1].isEmpty = false;
         }
         else if (slotIndex == 2)
         {
-            weapon.isActive = false;
             weapon.transform.SetParent(slotsVisual[2].weaponHolder, false);
-            if (weapon.GetComponentInChildren<SpriteRenderer>() != null)
-                weapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = slotsVisual[2].orderInLayerWeapon;
+            if (spriteRenderer != null)
+                cb.ChangeSortingOrder((Renderer)spriteRenderer, slotsVisual[2].orderInLayerWeapon);
             slotsVisual[2].isEmpty = false;
         }
         else
         {
-            weapon.isActive = false;
             weapon.gameObject.SetActive(false);
         }
+
 
         weapon.transform.localPosition = Vector3.zero;
 
