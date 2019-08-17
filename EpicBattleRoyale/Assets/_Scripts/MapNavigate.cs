@@ -4,31 +4,19 @@ using UnityEngine;
 
 public class MapNavigate : Interactable
 {
-
     public Direction direction;
+
     void OnEnable()
     {
         colided = false;
     }
 
-    List<CharacterBase> cbs = new List<CharacterBase>();
-
-    void OnDisable()
-    {
-        for (int i = 0; i < cbs.Count; i++)
-        {
-            if (World.Ins.player.characterBase == cbs[i])
-                MobileInputsUI.Ins.HideCanGoMapBtn();
-        }
-        cbs.Clear();
-    }
-
     bool colided;
 
-    void ChangeDirection(Direction direction)
+    void ChangeDirection(CharacterBase cb, Direction direction)
     {
         colided = true;
-        MapsController.Ins.GoToMap(direction);
+        MapsController.Ins.GoToMap(cb, direction);
     }
 
     public override bool Interact(CharacterBase cb)
@@ -36,7 +24,7 @@ public class MapNavigate : Interactable
         if (!colided)
         {
             colided = true;
-            ChangeDirection(direction);
+            ChangeDirection(cb, direction);
             return true;
         }
 

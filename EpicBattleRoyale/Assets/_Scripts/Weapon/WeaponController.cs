@@ -34,6 +34,7 @@ public class WeaponController : MonoBehaviour
     // public Transform pistolBackHolder;
     // public int orderInLayerPistolWeapon;
     public float switchingWeaponTime = .5f;
+    public Sound weaponSwitchSound;
     float switchingWeapon;
 
     public event EventHandler OnWeaponSwitch;
@@ -259,6 +260,8 @@ public class WeaponController : MonoBehaviour
 			cb.isWeapon = false;
 		else
 			cb.isWeapon = GetCurrentWeapon ().GetWeaponType () != Weapon.WeaponType.Melee;*/
+
+        AudioManager.PlaySound(weaponSwitchSound);
 
         if (OnWeaponSwitch != null)
             OnWeaponSwitch(weaponsInInventory[weaponIndex], EventArgs.Empty);

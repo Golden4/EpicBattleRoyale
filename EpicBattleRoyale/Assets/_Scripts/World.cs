@@ -32,7 +32,7 @@ public class World : MonoBehaviour
         // SpawnItemPickUpWeapon(GameAssets.WeaponsList.AK12, new Vector3(-12, -3f));
         // SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
         SpawnCharacterPlayer(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-        //SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(-10, -6f));
+        SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
 
         // for (int i = -2; i <= 2; i++)
         // {
@@ -55,6 +55,7 @@ public class World : MonoBehaviour
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
         character.transform.name = "CharacterEnemy" + allCharacters.Count;
+
         foreach (Component item in character.GetComponents<Component>())
         {
             if (item.GetType() == typeof(Player))
@@ -200,7 +201,7 @@ public class World : MonoBehaviour
         }
     }
 
-    public CharacterBase GetClosestCharacter(Vector3 position, CharacterBase cbExclude)
+    public CharacterBase GetClosestCharacter(Vector2 position, CharacterBase cbExclude)
     {
         int closeCharacterIndex = -1;
         float closeDistance = Mathf.Infinity;
@@ -210,7 +211,7 @@ public class World : MonoBehaviour
             if (cbExclude == allCharacters[i] || allCharacters[i].IsDead())
                 continue;
 
-            float distance = Vector3.Distance(allCharacters[i].transform.position, position);
+            float distance = Vector2.Distance((Vector2)allCharacters[i].worldPosition, position);
 
             if (distance < closeDistance)
             {

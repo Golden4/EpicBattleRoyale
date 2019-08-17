@@ -45,5 +45,7 @@ MonoBehaviour:
     type: 3}
   pfPopUpDamage: {fileID: 8600508504053211702, guid: 5b7095c893bc4474d98df1809e67c1b8,
     type: 3}
+  pfPopUpInfo: {fileID: 8739724906407221341, guid: b91a722d2a2f87c46bb500c3a5e7e8b6,
+    type: 3}
   pfEntityShadow: {fileID: 3365628130517620994, guid: 71dfcd9083b81b049b6daa8109172c51,
     type: 3}

@@ -53,6 +53,14 @@ MonoBehaviour:
   m_damage: {x: 3, y: 7}
   firingRange: 13
   fireRate: 0.15
+  fireSound:
+    name: Sound
+    clip: {fileID: 8300000, guid: 547748824d54fda4ebd29c64cb20fd51, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0.2
   isActive: 0
   firingSideInput: 0
   bulletSystem:

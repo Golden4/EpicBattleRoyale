@@ -53,7 +53,7 @@ public class UIMap : MonoBehaviour
         newLr.SetActive(true);
         newLr.transform.SetParent(lineRendererHolder, false);
 
-        newLr.GetComponent<RectTransform>().anchoredPosition = new Vector2(coords.x * 100, coords.y * -100);
+        newLr.GetComponent<RectTransform>().anchoredPosition = new Vector2(coords.x * 100, coords.y * -100) + new Vector2(25, -25);
 
         UILineRenderer lr = newLr.GetComponent<UILineRenderer>();
 
@@ -298,7 +298,7 @@ public class UIMap : MonoBehaviour
         gameMapPanel.anchorMin = Vector2.one * .5f;
         gameMapPanel.anchorMax = Vector2.one * .5f;
 
-        gameMapPanel.localScale = Vector3.one * .9f;
+        gameMapPanel.localScale = Vector3.one * .82f;
         gameMapPanel.pivot = Vector2.one * .5f;
         gameMapPanel.anchoredPosition = Vector3.zero;
         increasedMap = true;

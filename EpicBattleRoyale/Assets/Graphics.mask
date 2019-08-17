@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Graphics
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Meshes
+    m_Weight: 1
+  - m_Path: Meshes/rhand1
+    m_Weight: 1
+  - m_Path: Meshes/rhand2
+    m_Weight: 1
+  - m_Path: Meshes/body
+    m_Weight: 1
+  - m_Path: Meshes/rfist
+    m_Weight: 1
+  - m_Path: Meshes/head
+    m_Weight: 1
+  - m_Path: Meshes/rleg1
+    m_Weight: 1
+  - m_Path: Meshes/rfoot
+    m_Weight: 1
+  - m_Path: Meshes/rleg2
+    m_Weight: 1
+  - m_Path: Meshes/lfoot
+    m_Weight: 1
+  - m_Path: Meshes/lleg1
+    m_Weight: 1
+  - m_Path: Meshes/lleg2
+    m_Weight: 1
+  - m_Path: Meshes/rarm
+    m_Weight: 1
+  - m_Path: Meshes/lhandMesh
+    m_Weight: 1
+  - m_Path: Meshes/lhandMesh/lhand1
+    m_Weight: 1
+  - m_Path: Meshes/lhandMesh/lhand2
+    m_Weight: 1
+  - m_Path: Meshes/lhandMesh/lfist
+    m_Weight: 1
+  - m_Path: root
+    m_Weight: 1
+  - m_Path: root/bone_1
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_3
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_7
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_7/bone_8
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_7/bone_8/bone_9
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_7/bone_8/bone_9/WeaponHandHolder
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_4
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_4/bone_5
+    m_Weight: 1
+  - m_Path: root/bone_1/bone_4/bone_5/bone_6
+    m_Weight: 1
+  - m_Path: root/bone_10
+    m_Weight: 1
+  - m_Path: root/bone_10/bone_11
+    m_Weight: 1
+  - m_Path: root/bone_10/bone_11/bone_12
+    m_Weight: 1
+  - m_Path: root/bone_13
+    m_Weight: 1
+  - m_Path: root/bone_13/bone_14
+    m_Weight: 1
+  - m_Path: root/bone_13/bone_14/bone_15
+    m_Weight: 1
+  - m_Path: root/rArmIK_Target
+    m_Weight: 1
+  - m_Path: root/lArm_IK_Target
+    m_Weight: 1
+  - m_Path: root/WeaponBackHolder
+    m_Weight: 1
+  - m_Path: root/PistolHolder
+    m_Weight: 1
+  - m_Path: lLegIK
+    m_Weight: 1
+  - m_Path: lLegIK/lLegIK_Target
+    m_Weight: 1
+  - m_Path: rLegIK
+    m_Weight: 1
+  - m_Path: rLegIK/rLegIK_Target
+    m_Weight: 1

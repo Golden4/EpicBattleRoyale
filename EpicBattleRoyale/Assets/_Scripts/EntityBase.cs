@@ -7,7 +7,7 @@ public class EntityBase : MonoBehaviour
     SpriteRenderer shadow;
     Vector2 pivotOffset;
 
-    List<Renderer> renderers = new List<Renderer>();
+    protected List<Renderer> renderers = new List<Renderer>();
     List<int> originalSortingOrders = new List<int>();
 
     //[HideInInspector]

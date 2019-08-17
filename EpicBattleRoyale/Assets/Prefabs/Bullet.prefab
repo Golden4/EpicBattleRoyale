@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f716c7f959f5efe498b829922fce0264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldPosition: {x: 0, y: 0, z: 0}
   damage: 0
   bulletSize: 0.2
   speed: 18
@@ -99,4 +100,4 @@ MonoBehaviour:
   weapon: {fileID: 0}
   hitLayers:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 8193

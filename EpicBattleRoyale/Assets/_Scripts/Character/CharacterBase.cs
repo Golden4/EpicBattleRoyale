@@ -37,13 +37,14 @@ public class CharacterBase : EntityBase
     float curJumpPos;
     float curJumpVelocity;
 
-    public event Action<CharacterBase, Weapon, int> OnHitted;
+    public event Action<CharacterBase, Weapon, int, HitBox.HitBoxType> OnHittedEvent;
     public event EventHandler OnDie;
 
     List<Interactable> interactableObjects = new List<Interactable>();
     public event Action<Interactable> OnCanInteractEvent;
     public event Action<Interactable> OnCantInteractEvent;
     public event Action<Interactable> OnInteractEvent;
+
 
     void Awake()
     {
@@ -59,15 +60,14 @@ public class CharacterBase : EntityBase
     {
         yield return new WaitForSeconds(1);
         InitRenederers();
+        Debug.Log(anim.runtimeAnimatorController.name);
     }
 
     public void Setup()
     {
         if (isInit)
             return;
-
         healthSystem = new HealthSystem(100, 0);
-
         healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
         MapsController.Ins.OnChangingMap += OnChangingMap;
         MapsController.Ins.OnEnterHouseEvent += OnEnterHouse;
@@ -75,15 +75,17 @@ public class CharacterBase : EntityBase
         groundCheck = transform.Find("GroundCheck");
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        srs = GetComponentsInChildren<SkinnedMeshRenderer>();
+
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
+
         inventorySystem = new InventorySystem(this);
 
-
-        foreach (var item in srs)
+        foreach (var item in renderers)
         {
             item.sharedMaterial = mat;
         }
+
+        MapsController.Ins.ChangeMap(this, Vector2Int.zero, Direction.Right);
 
         isInit = true;
     }
@@ -123,7 +125,7 @@ public class CharacterBase : EntityBase
 
     public void LerpCharacter(float persent, Color fadeColor = default, Color origColor = default)
     {
-        foreach (SkinnedMeshRenderer item in srs)
+        foreach (Renderer item in renderers)
         {
             //Color color = Color.Lerp(origColor, fadeColor, persent);
             item.material.SetFloat("_FillAlpha", t);
@@ -197,11 +199,11 @@ public class CharacterBase : EntityBase
         // collider.offset = new Vector2(.89f, .34f);
         // collider.size = new Vector2(1.8f, .8f);
         // collider.direction = CapsuleDirection2D.Horizontal;
-        StartCoroutine(FadeCharacter(2, 3, Color.clear, delegate
-                 {
-                     World.Ins.allCharacters.Remove(this);
-                     Destroy(gameObject);
-                 }));
+        // StartCoroutine(FadeCharacter(2, 3, Color.clear, delegate
+        //          {
+        //              World.Ins.allCharacters.Remove(this);
+        //              Destroy(gameObject);
+        //          }));
         // Utility.LerpSprite(this, srs, 2, 3, Color.clear, delegate
         //  {
         //      World.Ins.allCharacters.Remove(this);
@@ -212,40 +214,39 @@ public class CharacterBase : EntityBase
             OnDie(this, EventArgs.Empty);
     }
 
-    SkinnedMeshRenderer[] srs;
-    IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
-    {
-        yield return new WaitForSeconds(delay);
-        float curFadeTime = fadeTime;
+    // IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     float curFadeTime = fadeTime;
 
-        while (curFadeTime > 0)
-        {
-            curFadeTime -= Time.deltaTime;
+    //     while (curFadeTime > 0)
+    //     {
+    //         curFadeTime -= Time.deltaTime;
 
-            foreach (SkinnedMeshRenderer item in srs)
-            {
-                Color color = Color.Lerp(Color.white, Color.clear, curFadeTime / fadeTime);
+    //         foreach (SkinnedMeshRenderer item in srs)
+    //         {
+    //             Color color = Color.Lerp(Color.white, Color.clear, curFadeTime / fadeTime);
 
-                if (curFadeTime <= 0.05f)
-                {
-                    color = Color.clear;
-                    curFadeTime = 0;
-                }
-                else
-                {
-                    color.a = curFadeTime / fadeTime;
-                }
+    //             if (curFadeTime <= 0.05f)
+    //             {
+    //                 color = Color.clear;
+    //                 curFadeTime = 0;
+    //             }
+    //             else
+    //             {
+    //                 color.a = curFadeTime / fadeTime;
+    //             }
 
-                item.material.SetColor("_FillColor", color);
+    //             item.material.SetColor("_FillColor", color);
 
-            }
+    //         }
 
-            yield return null;
-        }
-        if (OnEndFade != null)
-            OnEndFade();
+    //         yield return null;
+    //     }
+    //     if (OnEndFade != null)
+    //         OnEndFade();
 
-    }
+    // }
 
     public void SetWeaponAnimationType(WeaponController.SlotType type)
     {
@@ -285,6 +286,7 @@ public class CharacterBase : EntityBase
     {
         if (isGrounded || airControl)
         {
+            moveDir = moveDir.normalized;
             float maginitude = Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude));
 
             anim.SetFloat("Speed", maginitude);
@@ -361,13 +363,15 @@ public class CharacterBase : EntityBase
                 MapsController.Ins.EnterHouse(houseInfo);
             }
         }
-        else MapsController.Ins.ExitHouse();
+        else MapsController.Ins.ExitHouse(this);
     }
 
     void OnEnterHouse(HouseDoor house)
     {
-
         MoveToPosition(new Vector3(MapsController.Ins.GetHouseData(house.houseType).worldEndPoints.x + 2, -4), true);
+
+        //transform.SetParent(MapsController.Ins.GetHouseGO(house).transform);
+
         ClearInteractableObjects();
     }
 
@@ -377,8 +381,11 @@ public class CharacterBase : EntityBase
     }
 
     float hitCooldown;
-    public void OnCharacterHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
+
+    public void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
     {
+        damage = Mathf.RoundToInt((float)damage * HitBox.GetDamagePersent(hitBoxType));
+        Debug.Log(this.name + "   " + hitBoxType + "   " + damage);
         healthSystem.Damage(damage);
 
         t = 1;
@@ -387,8 +394,8 @@ public class CharacterBase : EntityBase
 
         SpawnDamagePopUpText(hitCharacter, hitWeapon, damage);
 
-        if (OnHitted != null)
-            OnHitted(hitCharacter, hitWeapon, damage);
+        if (OnHittedEvent != null)
+            OnHittedEvent(hitCharacter, hitWeapon, damage, hitBoxType);
     }
 
     void SpawnDamagePopUpText(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
@@ -479,7 +486,7 @@ public class CharacterBase : EntityBase
             }
     }
 
-    void OnChangingMap(MapsController.MapInfo mapInfo, Direction dir)
+    void OnChangingMap(CharacterBase characterBase, MapsController.MapInfo mapInfo, Direction dir)
     {
         //если вышли из дома
         if (dir == Direction.None)
@@ -516,11 +523,10 @@ public class CharacterBase : EntityBase
                 }
 
                 MoveToPosition(pos, isFacingRight);
-
-                Debug.Log(index + "   " + pos + "  " + MapsController.Ins.GetCurrentWorldEndPoints().x);
             }
         }
 
+        //transform.SetParent(MapsController.Ins.curMaps[mapInfo.coord].transform);
 
         ClearInteractableObjects();
     }

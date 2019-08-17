@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Shell : MonoBehaviour
 {
@@ -20,8 +21,7 @@ public class Shell : MonoBehaviour
         int rotForce = ((Random.Range(0, 2) == 0) ? 1 : -1);
         rb.AddForce(Vector2.up * curForce + Vector2.right * rotForce * Random.Range(0f, 5));
         rb.AddTorque(rotForce * curForce / 25);
-
-        Destroy(newShell, 3);
+        Destroy(newShell, .8f);
     }
 
     static Vector3 GetShellSize(Weapon.WeaponType type)

@@ -48,10 +48,10 @@ public class Enemy : MonoBehaviour
         transform.position = position;
         characterBase.maxSpeed -= Vector2.one * .5f;
         characterBase.OnDie += OnDie;
-        characterBase.OnHitted += OnHitted;
+        characterBase.OnHittedEvent += OnHitted;
     }
 
-    void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
+    void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
     {
         if (curTargetState != TargetState.TargetCharacter)
         {

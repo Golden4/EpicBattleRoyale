@@ -30,13 +30,14 @@ public class MapsController : MonoBehaviour
     public MapInfo[,] maps;
 
     Vector2Int curMapCoords = Vector2Int.zero;
+
     public int curHouseIndex;
 
     public Dictionary<Vector2Int, GameObject> curMaps = new Dictionary<Vector2Int, GameObject>();
 
     public List<Tuple<Vector2Int, int, GameObject>> curInnerHouses = new List<Tuple<Vector2Int, int, GameObject>>();
 
-    public event Action<MapInfo, Direction> OnChangingMap;
+    public event Action<CharacterBase, MapInfo, Direction> OnChangingMap;
     public event Action OnGenerateMap;
 
     void Awake()
@@ -56,8 +57,6 @@ public class MapsController : MonoBehaviour
             }
 
         }
-
-        ChangeMap(GetMapInfo(Vector2Int.zero), Direction.None);
     }
 
     void GenerateMap()
@@ -140,6 +139,7 @@ public class MapsController : MonoBehaviour
         HouseDoor outsideHouse = outerHouse.AddComponent<HouseDoor>();
         outsideHouse.MoveTo(map.houses[houseIndex].GetHouseSpawnPosition(map));
         outsideHouse.Setup(map.coord, houseType, houseIndex);
+        outsideHouse.GetComponentInChildren<HouseDoor>().doorType = HouseDoor.HouseDoorType.Outer;
     }
 
     void SpawnInnerHouse(MapInfo map, int houseIndex)
@@ -154,6 +154,7 @@ public class MapsController : MonoBehaviour
         GameObject innerHouse = Instantiate(GetHouseData(map.houses[houseIndex].houseType).pfInnerHouse.gameObject);
         innerHouse.gameObject.SetActive(true);
         innerHouse.transform.name = "Inner House" + houseIndex + ": " + map.houses[houseIndex].houseType + " | Map " + map.coord.ToString();
+        innerHouse.GetComponentInChildren<HouseDoor>().doorType = HouseDoor.HouseDoorType.Inner;
 
         SpawnItems(itemsSpawnPoints, innerHouse.transform);
 
@@ -212,8 +213,10 @@ public class MapsController : MonoBehaviour
         }
     }
 
-    public void ChangeMap(MapInfo map, Direction direction)
+    public void ChangeMap(CharacterBase characterBase, Vector2Int mapCoords, Direction direction)
     {
+
+        MapInfo map = GetMapInfo(mapCoords + directions[(int)direction]);
 
         for (int i = 0; i < curInnerHouses.Count; i++)
         {
@@ -239,14 +242,13 @@ public class MapsController : MonoBehaviour
 
         if (OnChangingMap != null)
         {
-            OnChangingMap(map, direction);
+            OnChangingMap(characterBase, map, direction);
         }
     }
 
-    public void GoToMap(Direction direction)
+    public void GoToMap(CharacterBase characterBase, Direction direction)
     {
-        MapInfo map = GetMapInfo(curMapCoords + directions[(int)direction]);
-        ChangeMap(map, direction);
+        ChangeMap(characterBase, curMapCoords, direction);
     }
 
     public MapInfo GetMapInfo(int x, int y)
@@ -338,9 +340,9 @@ public class MapsController : MonoBehaviour
             OnEnterHouseEvent(house);
     }
 
-    public void ExitHouse()
+    public void ExitHouse(CharacterBase characterBase)
     {
-        ChangeMap(GetCurrentMapInfo(), Direction.None);
+        ChangeMap(characterBase, curMapCoords, Direction.None);
     }
 
     public int GetSpawnDirection(MapsController.MapInfo mapInfo, Direction dir)
@@ -427,6 +429,19 @@ public class MapsController : MonoBehaviour
         {
             return x.mapType == type;
         });
+    }
+
+    public GameObject GetMapGO(Vector2Int coords)
+    {
+        return curMaps[coords];
+    }
+
+    public GameObject GetHouseGO(HouseDoor houseData)
+    {
+        Tuple<Vector2Int, int, GameObject> go = curInnerHouses.Find(x => { return ((x.Item1 == GetMapInfo(curMapCoords).coord) && (x.Item2 == houseData.houseIndex)); });
+
+        return go.Item3;
+
     }
 
 

@@ -30,7 +30,7 @@ public class Weapon : MonoBehaviour
     }
 
     public float fireRate = 0.05f;
-
+    public Sound fireSound;
     [HideInInspector]
     public bool isActive;
     [HideInInspector]
@@ -129,5 +129,31 @@ public class Weapon : MonoBehaviour
     public void OnPickUp()
     {
 
+    }
+
+    public bool HitWithRaycast(Vector2 direction, float distance)
+    {
+        RaycastHit2D[] hit = Physics2D.RaycastAll(wc.cb.GetCharacterCenter(), direction, distance);
+
+        Debug.DrawRay(wc.cb.GetCharacterCenter(), direction, Color.red, distance);
+
+        for (int i = 0; i < hit.Length; i++)
+        {
+            if (hit[i].collider != null)
+            {
+                HitBox damagable = hit[i].collider.GetComponent<HitBox>();
+
+                if (damagable != null && damagable.characterBase != wc.cb)
+                {
+                    if (damagable.CanHit())
+                    {
+                        damagable.OnHitted(wc.cb, this, damage);
+                        Debug.Log("Hitted with raycast" + hit[i].collider.name + " damage =" + damage + "  hitBoxType = " + damagable.hitBoxType);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

@@ -29,8 +29,7 @@ public class BulletHandler : EntityBase
 
         if (hit.collider != null)
         {
-            CharacterBase damagable = hit.transform.GetComponent<CharacterBase>();
-
+            HitBox damagable = hit.collider.GetComponent<HitBox>();
             if (damagable != null)
                 OnHit(hit, damagable);
 
@@ -54,14 +53,15 @@ public class BulletHandler : EntityBase
         Destroy(gameObject);
     }
 
-    public void OnHit(RaycastHit2D hit, CharacterBase damagable)
+    public void OnHit(RaycastHit2D hit, HitBox damagable)
     {
         if (damagable != cb)
         {
             if (damagable.CanHit())
             {
-                damagable.OnCharacterHitted(cb, weapon, damage);
-                Debug.Log("Hitted " + hit.collider.name + " damage =" + damage);
+                damagable.OnHitted(cb, weapon, damage);
+
+                Debug.Log("Hitted" + hit.collider.name + " damage =" + damage + "  hitBoxType = " + damagable.hitBoxType);
                 DestroyBullet();
             }
         }

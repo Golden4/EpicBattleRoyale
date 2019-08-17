@@ -48,26 +48,7 @@ public class MeleeWeapon : Weapon
 
     public void Beat(bool isFacingRight)
     {
-        RaycastHit2D[] hit = Physics2D.RaycastAll(wc.cb.GetCharacterCenter(), Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), firingRange);
-        Debug.DrawRay(wc.cb.GetCharacterCenter(), Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), Color.red, firingRange);
-
-        for (int i = 0; i < hit.Length; i++)
-        {
-            if (hit[i].collider != null)
-            {
-                CharacterBase damagable = hit[i].transform.GetComponent<CharacterBase>();
-
-                if (damagable != null && damagable != wc.cb)
-                {
-                    if (damagable.CanHit())
-                    {
-                        damagable.OnCharacterHitted(wc.cb, this, damage);
-                        Debug.Log("Hitted with raycast" + hit[i].collider.name + " damage =" + damage);
-                        break;
-                    }
-                }
-            }
-        }
+        HitWithRaycast(Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), firingRange);
     }
 
     bool CanBeat()

@@ -18,13 +18,13 @@ public class ShotGunWeapon : AutomaticWeapon
         {
             if (hit[i].collider != null)
             {
-                CharacterBase damagable = hit[i].transform.GetComponent<CharacterBase>();
+                HitBox damagable = hit[i].transform.GetComponent<HitBox>();
 
-                if (damagable != null && damagable != wc.cb)
+                if (damagable != null && damagable.characterBase != wc.cb)
                 {
                     if (damagable.CanHit())
                     {
-                        damagable.OnCharacterHitted(wc.cb, this, damage);
+                        damagable.OnHitted(wc.cb, this, damage);
                         Debug.Log("Hitted with raycast" + hit[i].collider.name + " damage =" + damage);
                         hittedWithRaycast = true;
                         break;
@@ -45,5 +45,6 @@ public class ShotGunWeapon : AutomaticWeapon
         bulletSystem.ShotBullet(1);
         Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
         muzzleFlash.Emit(1);
+        AudioManager.PlaySound(fireSound);
     }
 }

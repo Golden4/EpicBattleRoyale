@@ -13,6 +13,10 @@ public class HealthSystem
     float armorTakeDamagePersent = .8f;
 
     public event EventHandler OnHealthChanged;
+
+    public event EventHandler OnDamaged;
+    public event EventHandler OnHealed;
+
     public event EventHandler OnHealthZero;
 
     public int GetHealth()
@@ -65,6 +69,9 @@ public class HealthSystem
 
             if (OnHealthChanged != null)
                 OnHealthChanged(this, EventArgs.Empty);
+
+            if (OnDamaged != null)
+                OnDamaged(this, EventArgs.Empty);
         }
 
         Debug.Log("Damage " + damage + "  health" + health + "  armor " + armor);
@@ -80,6 +87,9 @@ public class HealthSystem
         if (OnHealthChanged != null)
             OnHealthChanged(this, EventArgs.Empty);
 
+        if (OnHealed != null)
+            OnHealed(this, EventArgs.Empty);
+
         Debug.Log("Heal " + heal + "  armor " + armor);
     }
 
@@ -94,9 +104,35 @@ public class HealthSystem
 
             if (OnHealthChanged != null)
                 OnHealthChanged(this, EventArgs.Empty);
+
+            if (OnHealed != null)
+                OnHealed(this, EventArgs.Empty);
         }
 
         Debug.Log("Heal " + heal + "  health " + health);
+    }
+
+    public float GetArmorPersent()
+    {
+        return GetArmor() / (float)maxArmor;
+    }
+
+
+    public float GetHealthPersent()
+    {
+        return GetHealth() / (float)maxHealth;
+    }
+
+
+    public float GetArmorPersent(float armor)
+    {
+        return armor / (float)maxArmor;
+    }
+
+
+    public float GetHealthPersent(float health)
+    {
+        return health / (float)maxHealth;
     }
 
     public HealthSystem(int health, int armor)

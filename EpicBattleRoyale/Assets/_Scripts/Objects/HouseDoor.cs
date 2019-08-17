@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class HouseDoor : Interactable
 {
+    public enum HouseDoorType
+    {
+        Inner,
+        Outer
+    }
+    public HouseDoorType doorType;
     public Vector2Int mapCoords;
     public int houseIndex;
     public MapsController.HouseType houseType;
@@ -17,8 +23,9 @@ public class HouseDoor : Interactable
 
     public override bool CanInteract(CharacterBase cb)
     {
-        if (!CompareEntities(cb.worldPosition))
+        if (doorType != HouseDoorType.Inner && !CompareEntities(cb.worldPosition))
             return false;
+
         return true;
     }
 
