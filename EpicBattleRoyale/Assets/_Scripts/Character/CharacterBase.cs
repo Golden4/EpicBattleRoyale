@@ -45,7 +45,6 @@ public class CharacterBase : EntityBase
     public event Action<Interactable> OnCantInteractEvent;
     public event Action<Interactable> OnInteractEvent;
 
-
     void Awake()
     {
         if (!isInit)
@@ -60,7 +59,6 @@ public class CharacterBase : EntityBase
     {
         yield return new WaitForSeconds(1);
         InitRenederers();
-        Debug.Log(anim.runtimeAnimatorController.name);
     }
 
     public void Setup()
@@ -247,41 +245,6 @@ public class CharacterBase : EntityBase
     //         OnEndFade();
 
     // }
-
-    public void SetWeaponAnimationType(WeaponController.SlotType type)
-    {
-        weaponType = type;
-        anim.SetInteger("WeaponType", (int)type);
-        //anim.Play ("Hold" + weaponType.ToString (), 1, );
-    }
-
-    public void PlayFireAnimation(float fireRate = -1, bool shootingSide = false)
-    {
-        Flip(shootingSide);
-        this.shootingSideRight = shootingSide;
-        if (fireRate > -1)
-            anim.SetFloat("ShootingTime", 1f / fireRate);
-        anim.Play("Shoot" + weaponType.ToString(), 1);
-        anim.SetBool("Fire", true);
-    }
-
-    public void StopFireAnimation()
-    {
-        anim.SetBool("Fire", false);
-    }
-
-    public void PlayReloadAnimation(float reloadTime)
-    {
-        anim.SetFloat("ReloadTime", 1 / reloadTime);
-        anim.SetBool("isReloading", true);
-        anim.Play("Reload" + weaponType.ToString());
-    }
-
-    public void StopReloadAnimation()
-    {
-        anim.SetBool("isReloading", false);
-        //anim.Play ("Reload" + weaponType.ToString ());
-    }
     public void Move(Vector2 moveDir)
     {
         if (isGrounded || airControl)
@@ -336,7 +299,7 @@ public class CharacterBase : EntityBase
         }
     }
 
-    private void Flip(bool right)
+    public void Flip(bool right)
     {
         isFacingRight = right;
         Vector3 theScale = transform.localScale;
@@ -488,47 +451,50 @@ public class CharacterBase : EntityBase
 
     void OnChangingMap(CharacterBase characterBase, MapsController.MapInfo mapInfo, Direction dir)
     {
-        //если вышли из дома
-        if (dir == Direction.None)
+        if (characterBase == this)
         {
-            Vector3 pos = MapsController.Ins.GetCurrentMapInfo().houses[MapsController.Ins.curHouseIndex].GetDoorPosition(mapInfo) + Vector3.up;
-            MoveToPosition(pos, false);
-        }
-        else
-        {
-            int index = -1;
-
-            index = MapsController.Ins.GetSpawnDirection(mapInfo, dir);
-
-            if (index != -1)
+            //если вышли из дома
+            if (dir == Direction.None)
             {
-                bool isFacingRight = true;
-
-                Vector3 pos = default;
-
-                if (index == 1)
-                {
-                    isFacingRight = false;
-                    pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, worldPosition.y);
-                }
-
-                if (index == 0)
-                {
-                    pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, worldPosition.y);
-                }
-
-                if (index == 2)
-                {
-                    pos = new Vector3(0, MapsController.Ins.GetCurrentWorldUpDownEndPoints().y);
-                }
-
-                MoveToPosition(pos, isFacingRight);
+                Vector3 pos = MapsController.Ins.GetCurrentMapInfo().houses[MapsController.Ins.curHouseIndex].GetDoorPosition(mapInfo) + Vector3.up;
+                MoveToPosition(pos, false);
             }
+            else
+            {
+                int index = -1;
+
+                index = MapsController.Ins.GetSpawnDirection(mapInfo, dir);
+
+                if (index != -1)
+                {
+                    bool isFacingRight = true;
+
+                    Vector3 pos = default;
+
+                    if (index == 1)
+                    {
+                        isFacingRight = false;
+                        pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, worldPosition.y);
+                    }
+
+                    if (index == 0)
+                    {
+                        pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, worldPosition.y);
+                    }
+
+                    if (index == 2)
+                    {
+                        pos = new Vector3(0, MapsController.Ins.GetCurrentWorldUpDownEndPoints().y);
+                    }
+
+                    MoveToPosition(pos, isFacingRight);
+                }
+            }
+
+            //transform.SetParent(MapsController.Ins.curMaps[mapInfo.coord].transform);
+
+            ClearInteractableObjects();
         }
-
-        //transform.SetParent(MapsController.Ins.curMaps[mapInfo.coord].transform);
-
-        ClearInteractableObjects();
     }
 
     void ClearInteractableObjects()

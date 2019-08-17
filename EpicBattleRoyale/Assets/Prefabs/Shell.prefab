@@ -94,6 +94,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85b0a800d4c078340aacdcdb5a0e0349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shellSounds:
+  - name: 
+    clip: {fileID: 8300000, guid: a7a437d946c6f6541b907068e5e1874c, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
+  - name: 
+    clip: {fileID: 8300000, guid: 4e8a7b0609f0c354aa985c5bf02ae35c, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
+  - name: 
+    clip: {fileID: 8300000, guid: 95ca9e369563ee54da6d8cffd93748ae, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
 --- !u!50 &7845375452200589744
 Rigidbody2D:
   serializedVersion: 4

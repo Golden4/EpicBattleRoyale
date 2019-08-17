@@ -48,6 +48,7 @@ public class AutomaticWeapon : Weapon
     protected Transform shellPoint;
     [HideInInspector]
     public float reloadingProgress;
+    public Sound[] reloadSounds;
 
     public event Action<float> OnReload;
     public event Action OnReloadComplete;
@@ -110,7 +111,7 @@ public class AutomaticWeapon : Weapon
                     reloadingProgress = 0;
                     bulletSystem.ReloadBullets();
                     curState = State.Normal;
-                    wc.cb.StopReloadAnimation();
+                    wc.StopReloadAnimation();
                     if (OnReloadComplete != null)
                         OnReloadComplete();
                     Debug.Log("Reload was done");
@@ -129,7 +130,7 @@ public class AutomaticWeapon : Weapon
             reloadingProgress = reloadTime;
             curState = State.Reloading;
             // StartCoroutine("ReloadCoroutine");
-            wc.cb.PlayReloadAnimation(reloadTime);
+            wc.PlayReloadAnimation(reloadTime);
 
             if (OnReload != null)
                 OnReload(reloadTime);
@@ -213,7 +214,7 @@ public class AutomaticWeapon : Weapon
         while (curState == State.Shooting && isActive && Mathf.Abs(firingSideInput) > 0 && Bullets > 0)
         {
             bool side = firingSideInput < 0;
-            wc.cb.PlayFireAnimation(shootAnimationTime, side);
+            wc.PlayFireAnimation(shootAnimationTime, side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
 
             if (OnShot != null)
@@ -221,7 +222,7 @@ public class AutomaticWeapon : Weapon
 
             Shot(side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
-            wc.cb.StopFireAnimation();
+            wc.StopFireAnimation();
             yield return new WaitForSeconds(fireRate - shootAnimationTime);
         }
 
@@ -231,7 +232,7 @@ public class AutomaticWeapon : Weapon
 
     IEnumerator ReloadCoroutine()
     {
-        wc.cb.PlayReloadAnimation(reloadTime);
+        wc.PlayReloadAnimation(reloadTime);
 
         if (OnReload != null)
             OnReload(reloadTime);
@@ -244,7 +245,7 @@ public class AutomaticWeapon : Weapon
         {
             bulletSystem.ReloadBullets();
             curState = State.Normal;
-            wc.cb.StopReloadAnimation();
+            wc.StopReloadAnimation();
             if (OnReloadComplete != null)
                 OnReloadComplete();
             Debug.Log("Reload was done");
@@ -266,8 +267,8 @@ public class AutomaticWeapon : Weapon
         }
         reloadingProgress = 0;
         curState = State.Normal;
-        wc.cb.StopReloadAnimation();
-        wc.cb.StopFireAnimation();
+        wc.StopReloadAnimation();
+        wc.StopFireAnimation();
         firingSideInput = 0;
     }
 

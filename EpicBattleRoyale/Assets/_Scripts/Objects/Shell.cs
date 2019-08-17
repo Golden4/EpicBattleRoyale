@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class Shell : MonoBehaviour
 {
+    public Sound[] shellSounds;
     static Vector2 force = new Vector2(15, 40);
     static Shell pf;
 
@@ -21,7 +22,10 @@ public class Shell : MonoBehaviour
         int rotForce = ((Random.Range(0, 2) == 0) ? 1 : -1);
         rb.AddForce(Vector2.up * curForce + Vector2.right * rotForce * Random.Range(0f, 5));
         rb.AddTorque(rotForce * curForce / 25);
-        Destroy(newShell, .8f);
+
+        Shell shell = newShell.GetComponent<Shell>();
+        Utility.Invoke(shell, .6f, delegate { AudioManager.PlaySound(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)]); });
+        Destroy(newShell, 1);
     }
 
     static Vector3 GetShellSize(Weapon.WeaponType type)

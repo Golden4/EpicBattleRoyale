@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class WeaponSounds : MonoBehaviour
 {
-
     public Sound[] reloadSounds;
 
     void Reload(int num)
     {
-        AudioManager.PlaySound(reloadSounds[num]);
+        if (reloadSounds.Length > num)
+            AudioManager.PlaySound(reloadSounds[num]);
     }
 }

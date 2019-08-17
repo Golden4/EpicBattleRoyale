@@ -18,6 +18,7 @@ public class Weapon : MonoBehaviour
     public WeaponController.SlotType slotType;
     public Sprite sprite;
     public Vector2 m_damage = new Vector2(30, 50);
+    public RuntimeAnimatorController animatorController;
 
     public float firingRange = 2;
 

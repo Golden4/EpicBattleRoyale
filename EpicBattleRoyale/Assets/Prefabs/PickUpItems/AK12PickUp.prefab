@@ -72,6 +72,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15dd2a8f46bd4c34fa6de84f1fc92782, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldPosition: {x: 0, y: 0, z: 0}
   chanceForSpawn: 5
   weaponName: 5
 --- !u!1 &935630908738973549

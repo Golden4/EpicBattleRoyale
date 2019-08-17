@@ -35,14 +35,14 @@ public class MeleeWeapon : Weapon
 
         while (curState == State.Beating && isActive && Mathf.Abs(firingSideInput) > 0)
         {
-            wc.cb.PlayFireAnimation(-1, side);
+            wc.PlayFireAnimation(-1, side);
             side = firingSideInput < 0;
             wc.cb.shootingSideRight = side;
             yield return new WaitForSeconds(fireRate / 2f);
             Beat(side);
             yield return new WaitForSeconds(fireRate / 2f);
         }
-        wc.cb.StopFireAnimation();
+        wc.StopFireAnimation();
         curState = State.Normal;
     }
 
@@ -70,8 +70,8 @@ public class MeleeWeapon : Weapon
             StopCoroutine("BeatCoroutine");
         }
 
-        wc.cb.StopReloadAnimation();
-        wc.cb.StopFireAnimation();
+        wc.StopReloadAnimation();
+        wc.StopFireAnimation();
         curState = State.Normal;
         firingSideInput = 0;
     }

@@ -51,6 +51,7 @@ MonoBehaviour:
   slotType: 2
   sprite: {fileID: 21300006, guid: 0e519db2b52170c44a9c888721ee56a4, type: 3}
   m_damage: {x: 3, y: 7}
+  animatorController: {fileID: 9100000, guid: 5b46347c6cf956146a468db1b7d7e5ae, type: 2}
   firingRange: 13
   fireRate: 0.15
   fireSound:
@@ -75,6 +76,28 @@ MonoBehaviour:
   shootAnimationTime: 0.15
   muzzlePoint: {fileID: 4307691173345453201}
   reloadingProgress: 0
+  reloadSounds:
+  - name: 
+    clip: {fileID: 8300000, guid: 761f947c3b1ad4a4684e664be7525cd7, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
+  - name: 
+    clip: {fileID: 8300000, guid: 31ff1eea8a266604090be87b1ebbcfcf, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
+  - name: 
+    clip: {fileID: 8300000, guid: d2df3557b112f9f40970854047626862, type: 3}
+    loop: 0
+    volume: 1
+    pitch: 1
+    randomVolume: 0
+    randomPitch: 0
 --- !u!1 &2450762844211826764
 GameObject:
   m_ObjectHideFlags: 0

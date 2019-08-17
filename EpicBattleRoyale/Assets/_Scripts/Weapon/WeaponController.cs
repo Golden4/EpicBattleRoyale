@@ -37,6 +37,9 @@ public class WeaponController : MonoBehaviour
     public Sound weaponSwitchSound;
     float switchingWeapon;
 
+    Animator weaponAnimator;
+    WeaponSounds weaponSounds;
+
     public event EventHandler OnWeaponSwitch;
     public event EventHandler OnGiveWeapon;
     [HideInInspector]
@@ -53,7 +56,9 @@ public class WeaponController : MonoBehaviour
         if (isInit)
             return;
         isInit = true;
+        weaponAnimator = transform.GetChild(0).GetChild(0).GetComponentInChildren<Animator>();
         cb = GetComponent<CharacterBase>();
+        weaponSounds = GetComponentInChildren<WeaponSounds>();
         GiveWeapon(GameAssets.WeaponsList.Fists);
         cb.OnDie += OnDie;
     }
@@ -254,7 +259,9 @@ public class WeaponController : MonoBehaviour
         if (!GetCurrentWeapon().isFiring())
             switchingWeapon = switchingWeaponTime;
 
-        cb.SetWeaponAnimationType(weaponsInInventory[weaponIndex].slotType);
+        SetWeaponAnimationType(weaponsInInventory[weaponIndex].animatorController, weaponsInInventory[weaponIndex].slotType);
+
+        PlaySwitchAnimation();
 
         /*if (GetCurrentWeapon () == null)
 			cb.isWeapon = false;
@@ -412,6 +419,67 @@ public class WeaponController : MonoBehaviour
             if (weaponsInInventory[i] != null)
                 DropWeaponFromInventory(i);
         }
+    }
+
+    public void SetWeaponAnimationType(RuntimeAnimatorController runtimeAnimatorController, WeaponController.SlotType type)
+    {
+        weaponAnimator.runtimeAnimatorController = runtimeAnimatorController;
+        // if (type != WeaponController.SlotType.Melee)
+        // {
+        //     weaponAnimator.enabled = true;
+        //     weaponAnimator.SetInteger("WeaponType", (int)type);
+        // }
+        // else
+        // {
+        //     weaponAnimator.enabled = false;
+        // }
+        //anim.Play ("Hold" + weaponType.ToString (), 1, );
+    }
+
+    public void PlaySwitchAnimation()
+    {
+        if (weaponAnimator.runtimeAnimatorController != null)
+            weaponAnimator.Play("Switch");
+    }
+
+    public void PlayFireAnimation(float fireRate = -1, bool shootingSide = false)
+    {
+        cb.Flip(shootingSide);
+        cb.shootingSideRight = shootingSide;
+        if (weaponAnimator.runtimeAnimatorController != null)
+        {
+            if (fireRate > -1)
+                weaponAnimator.SetFloat("ShootingTime", 1f / fireRate);
+            weaponAnimator.Play("Shoot");
+            weaponAnimator.SetBool("Fire", true);
+        }
+    }
+
+    public void StopFireAnimation()
+    {
+        if (weaponAnimator.runtimeAnimatorController != null)
+            weaponAnimator.SetBool("Fire", false);
+    }
+
+    public void PlayReloadAnimation(float reloadTime)
+    {
+        if (weaponAnimator.runtimeAnimatorController != null)
+        {
+            if (GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
+                weaponSounds.reloadSounds = (GetCurrentWeapon() as AutomaticWeapon).reloadSounds;
+
+            weaponAnimator.SetFloat("ReloadTime", 2 / reloadTime);
+            weaponAnimator.SetBool("isReloading", true);
+            weaponAnimator.Play("Reload");
+
+        }
+    }
+
+    public void StopReloadAnimation()
+    {
+        if (weaponAnimator.runtimeAnimatorController != null)
+            weaponAnimator.SetBool("isReloading", false);
+        //anim.Play ("Reload" + weaponType.ToString ());
     }
 
     [System.Serializable]
