@@ -18,7 +18,7 @@ public abstract class Interactable : EntityBase
 
     public virtual bool CanInteract(CharacterBase cb)
     {
-        return CompareEntities(cb.worldPosition);
+        return CompareEntitiesPositions(cb.worldPosition);
     }
 
     public virtual void AwayInteract(CharacterBase cb)

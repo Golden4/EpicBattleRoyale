@@ -144,7 +144,7 @@ public class Weapon : MonoBehaviour
             {
                 HitBox damagable = hit[i].collider.GetComponent<HitBox>();
 
-                if (damagable != null && damagable.characterBase != wc.cb)
+                if (damagable != null && damagable.characterBase != wc.cb && wc.cb.CompareEntitiesPositions(damagable.characterBase.worldPosition))
                 {
                     if (damagable.CanHit())
                     {

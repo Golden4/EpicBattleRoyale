@@ -16,7 +16,7 @@ public class MapNavigate : Interactable
     void ChangeDirection(CharacterBase cb, Direction direction)
     {
         colided = true;
-        MapsController.Ins.GoToMap(cb, direction);
+        MapsController.Ins.GoToMapWithFade(cb, direction);
     }
 
     public override bool Interact(CharacterBase cb)

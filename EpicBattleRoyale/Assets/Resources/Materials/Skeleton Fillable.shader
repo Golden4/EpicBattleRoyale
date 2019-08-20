@@ -1,9 +1,9 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Spine/Skeleton Fill" {
+Shader "Spine/SkeletonFill" {
     Properties {
-        _FillColor ("Fill Color", Color) = (1,1,1,1)
-        _FillAlpha ("Fill Alpha", Range(0, 1)) = 0
+        _FillColor ("FillColor", Color) = (1,1,1,1)
+        _FillAlpha ("FillAlpha", Range(0, 1)) = 0
         [NoScaleOffset]_MainTex ("Main Texture", 2D) = "white" {}
     }
     SubShader {

@@ -34,7 +34,6 @@ public class MapsController : MonoBehaviour
     public int curHouseIndex;
 
     public Dictionary<Vector2Int, GameObject> curMaps = new Dictionary<Vector2Int, GameObject>();
-
     public List<Tuple<Vector2Int, int, GameObject>> curInnerHouses = new List<Tuple<Vector2Int, int, GameObject>>();
 
     public event Action<CharacterBase, MapInfo, Direction> OnChangingMap;
@@ -53,7 +52,7 @@ public class MapsController : MonoBehaviour
         {
             for (int j = 0; j < mapSize; j++)
             {
-                SpawnMap(maps[i, j]);
+                curMaps[maps[i, j].coord] = SpawnMap(maps[i, j]);
             }
 
         }
@@ -67,13 +66,12 @@ public class MapsController : MonoBehaviour
             OnGenerateMap();
     }
 
-    void SpawnMap(MapInfo map)
+    GameObject SpawnMap(MapInfo map)
     {
         GameObject mapGo = Instantiate(GetMapData(map.mapType).pfMap.gameObject);
 
         mapGo.gameObject.SetActive(true);
         mapGo.transform.name = "Map " + map.coord.ToString();
-        curMaps[map.coord] = mapGo;
 
         MapNavigate[] mapsNav = new MapNavigate[] {
             mapGo.transform.Find ("Left").GetComponent <MapNavigate> (),
@@ -84,8 +82,6 @@ public class MapsController : MonoBehaviour
         Vector3 centerPos = mapsNav[1].transform.position;
         centerPos.x = map.centerRoadPositionX;
         mapsNav[1].transform.position = centerPos;
-
-
 
         if (map.centerRoad != Direction.None)
         {
@@ -124,15 +120,17 @@ public class MapsController : MonoBehaviour
 
         List<Vector3> itemsSpawnPoints = new List<Vector3>();
 
-        for (int i = (int)GetMapData(GetCurrentMapInfo().mapType).worldEndPoints.x + 10; i < (int)GetMapData(GetCurrentMapInfo().mapType).worldEndPoints.y - 10; i = i + 3)
+        for (int i = (int)GetMapData(map.mapType).worldEndPoints.x + 10; i < (int)GetMapData(map.mapType).worldEndPoints.y - 10; i = i + 3)
         {
-            itemsSpawnPoints.Add(new Vector3(i, -4));
+            float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
+            itemsSpawnPoints.Add(new Vector3(i, yPos));
         }
 
         SpawnItems(itemsSpawnPoints, mapGo.transform);
+        return mapGo;
     }
 
-    void SpawnOuterHouse(MapInfo map, HouseType houseType, int houseIndex, Transform parent)
+    GameObject SpawnOuterHouse(MapInfo map, HouseType houseType, int houseIndex, Transform parent)
     {
         GameObject outerHouse = Instantiate(GetHouseData(houseType).pfOuterHouse.gameObject);
         outerHouse.transform.SetParent(parent, false);
@@ -140,15 +138,18 @@ public class MapsController : MonoBehaviour
         outsideHouse.MoveTo(map.houses[houseIndex].GetHouseSpawnPosition(map));
         outsideHouse.Setup(map.coord, houseType, houseIndex);
         outsideHouse.GetComponentInChildren<HouseDoor>().doorType = HouseDoor.HouseDoorType.Outer;
+        return outerHouse;
     }
 
-    void SpawnInnerHouse(MapInfo map, int houseIndex)
+    GameObject SpawnInnerHouse(MapInfo map, int houseIndex)
     {
         List<Vector3> itemsSpawnPoints = new List<Vector3>();
+        HouseData houseData = GetHouseData(map.houses[houseIndex].houseType);
 
-        for (int i = (int)GetCurrentWorldEndPoints().x + 10; i < (int)GetCurrentWorldEndPoints().y - 10; i = i + 3)
+        for (int i = (int)houseData.worldEndPoints.x + 10; i < (int)houseData.worldEndPoints.y - 10; i = i + 3)
         {
-            itemsSpawnPoints.Add(new Vector3(i, -3));
+            float yPos = UnityEngine.Random.Range(houseData.worldUpDownEndPoints.x, houseData.worldUpDownEndPoints.y);
+            itemsSpawnPoints.Add(new Vector3(i, yPos));
         }
 
         GameObject innerHouse = Instantiate(GetHouseData(map.houses[houseIndex].houseType).pfInnerHouse.gameObject);
@@ -159,6 +160,7 @@ public class MapsController : MonoBehaviour
         SpawnItems(itemsSpawnPoints, innerHouse.transform);
 
         curInnerHouses.Add(new Tuple<Vector2Int, int, GameObject>(map.coord, houseIndex, innerHouse));
+        return innerHouse;
     }
 
     void SpawnItems(List<Vector3> itemsSpawnPoints, Transform parent)
@@ -166,7 +168,7 @@ public class MapsController : MonoBehaviour
         //check spawn point
         for (int i = 0; i < itemsSpawnPoints.Count; i++)
         {
-            if (UnityEngine.Random.Range(0, 1) == 0)
+            if (UnityEngine.Random.Range(0, 10) == 0)
             {
                 int randNum = UnityEngine.Random.Range(0, 101);
 
@@ -215,7 +217,6 @@ public class MapsController : MonoBehaviour
 
     public void ChangeMap(CharacterBase characterBase, Vector2Int mapCoords, Direction direction)
     {
-
         MapInfo map = GetMapInfo(mapCoords + directions[(int)direction]);
 
         for (int i = 0; i < curInnerHouses.Count; i++)
@@ -246,9 +247,14 @@ public class MapsController : MonoBehaviour
         }
     }
 
-    public void GoToMap(CharacterBase characterBase, Direction direction)
+    public void GoToMapWithFade(CharacterBase characterBase, Direction direction)
     {
-        ChangeMap(characterBase, curMapCoords, direction);
+        //Fade and change map
+        SceneController.Ins.FadeIn(delegate
+        {
+            ChangeMap(characterBase, curMapCoords, direction);
+            SceneController.Ins.FadeOut();
+        }, .2f);
     }
 
     public MapInfo GetMapInfo(int x, int y)
@@ -340,9 +346,22 @@ public class MapsController : MonoBehaviour
             OnEnterHouseEvent(house);
     }
 
-    public void ExitHouse(CharacterBase characterBase)
+    public void EnterHouseWithFade(HouseDoor house)
     {
-        ChangeMap(characterBase, curMapCoords, Direction.None);
+        SceneController.Ins.FadeIn(delegate
+        {
+            EnterHouse(house);
+            SceneController.Ins.FadeOut();
+        }, .2f);
+    }
+
+    public void ExitHouseWithFade(CharacterBase characterBase)
+    {
+        SceneController.Ins.FadeIn(delegate
+        {
+            ChangeMap(characterBase, curMapCoords, Direction.None);
+            SceneController.Ins.FadeOut();
+        }, .2f);
     }
 
     public int GetSpawnDirection(MapsController.MapInfo mapInfo, Direction dir)

@@ -87,12 +87,12 @@ public class Enemy : MonoBehaviour
 
     public bool FindClosestTargetCharacter()
     {
-        CharacterBase closeCharacter = World.Ins.GetClosestCharacter(transform.position, characterBase);
+        CharacterBase closeCharacter = World.Ins.GetClosestCharacter(characterBase.worldPosition, characterBase);
 
         if (closeCharacter == null)
             return false;
 
-        float closeCharacterDistance = Vector3.Distance(closeCharacter.transform.position, transform.position);
+        float closeCharacterDistance = Vector2.Distance(closeCharacter.worldPosition, characterBase.worldPosition);
 
 
 
@@ -232,8 +232,9 @@ public class Enemy : MonoBehaviour
         if (curWaitingTime < 0 || curTargetState == TargetState.TargetCharacter)
         {
             curWaitingTime = 2;
-            targetPosition = transform.position + Vector3.right * UnityEngine.Random.Range(-10f, 10f);
+            targetPosition = (Vector2)characterBase.worldPosition + UnityEngine.Random.insideUnitCircle;// Vector3.right * UnityEngine.Random.Range(-10f, 10f);
             targetPosition.x = Mathf.Clamp(targetPosition.x, MapsController.Ins.GetCurrentWorldEndPoints().x, MapsController.Ins.GetCurrentWorldEndPoints().y);
+            targetPosition.y = Mathf.Clamp(targetPosition.y, MapsController.Ins.GetCurrentWorldUpDownEndPoints().x, MapsController.Ins.GetCurrentWorldUpDownEndPoints().y);
             curEnemyState = EnemyState.Moving;
         }
 
@@ -266,7 +267,7 @@ public class Enemy : MonoBehaviour
                 }
             }
 
-            HandleMovingToTargetPosition(targetCharacter.transform.position, GetFiringDistanceForCurrentWeapon(), delegate
+            HandleMovingToTargetPosition(targetCharacter.worldPosition, GetFiringDistanceForCurrentWeapon(), delegate
               {
                   curEnemyState = EnemyState.Attacking;
               });
@@ -279,8 +280,8 @@ public class Enemy : MonoBehaviour
     {
         if (curTargetState == TargetState.TargetCharacter)
         {
-            Vector3 dirT = (transform.position - targetCharacter.transform.position).normalized;
-            float distance = Mathf.Abs(transform.position.x - targetCharacter.transform.position.x);
+            Vector3 dirT = ((Vector2)characterBase.worldPosition - (Vector2)targetCharacter.worldPosition).normalized;
+            float distance = Mathf.Abs(characterBase.worldPosition.x - targetCharacter.worldPosition.x);
 
             weaponController.GetCurrentWeapon().firingSideInput = Mathf.RoundToInt(dirT.x);
 
@@ -310,7 +311,7 @@ public class Enemy : MonoBehaviour
             curEnemyState = EnemyState.Waiting;
         }
 
-        characterBase.moveInput.x = 0;
+        characterBase.moveInput = Vector2.zero;
     }
 
     void OnPickUp(object obj, EventArgs arg)
@@ -352,14 +353,14 @@ public class Enemy : MonoBehaviour
         return distanceToAttack;
     }
 
-    void HandleMovingToTargetPosition(Vector3 position, float stopDistance = .5f, Action OnReachedTargetPosition = null)
+    void HandleMovingToTargetPosition(Vector2 position, float stopDistance = .5f, Action OnReachedTargetPosition = null)
     {
-        Vector3 dir = (-transform.position + position).normalized;
-        float distance = Mathf.Abs(transform.position.x - position.x);
+        Vector2 dir = (-(Vector2)characterBase.worldPosition + position).normalized;
+        float distance = Mathf.Abs(characterBase.worldPosition.x - position.x);
 
         if (distance > stopDistance)
         {
-            characterBase.Move(Mathf.RoundToInt(dir.x) * Vector2.right);
+            characterBase.Move(new Vector2(Mathf.RoundToInt(dir.x), Mathf.RoundToInt(dir.y)));
         }
         else
         {

@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : SingletonResourse<GameManager>
 {
     public GameObject consoleDebugger;
 
-    void Awake()
+    public override void OnInit()
     {
-        if (!Debug.isDebugBuild)
+        DontDestroyOnLoad(gameObject);
+
+        if (Debug.isDebugBuild)
         {
-            Destroy(consoleDebugger);
-        }
-        else
-        {
-            consoleDebugger.gameObject.SetActive(true);
+            consoleDebugger = Instantiate(consoleDebugger);
         }
     }
 }

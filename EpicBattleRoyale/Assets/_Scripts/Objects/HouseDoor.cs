@@ -10,7 +10,6 @@ public class HouseDoor : Interactable
         Outer
     }
     public HouseDoorType doorType;
-    public Vector2Int mapCoords;
     public int houseIndex;
     public MapsController.HouseType houseType;
 
@@ -23,7 +22,7 @@ public class HouseDoor : Interactable
 
     public override bool CanInteract(CharacterBase cb)
     {
-        if (doorType != HouseDoorType.Inner && !CompareEntities(cb.worldPosition))
+        if (doorType != HouseDoorType.Inner && !CompareEntitiesPositions(cb.worldPosition))
             return false;
 
         return true;

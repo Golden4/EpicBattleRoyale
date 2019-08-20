@@ -89,45 +89,68 @@ public class CharacterBase : EntityBase
     }
 
     float jumpDelay;
-    float t;
     float lerpSpeed = .1f;
 
     void Update()
     {
         jumpDelay -= Time.deltaTime;
         hitCooldown -= Time.deltaTime;
-        if (t > 0)
-        {
-            t -= Time.deltaTime / lerpSpeed;
+        // if (t > 0)
+        // {
+        //     t -= Time.deltaTime / lerpSpeed;
 
-            Timer();
+        //     Timer();
 
-        }
-        else if (t <= -0.01f)
-        {
-            t = 0;
+        // }
+        // else if (t <= -0.01f)
+        // {
+        //     t = 0;
 
-            TimerEnd();
-        }
+        //     TimerEnd();
+        // }
     }
 
-    public void Timer()
-    {
-        LerpCharacter(t, Color.red, Color.white);
-    }
+    // public void Timer()
+    // {
+    //     LerpCharacter(t, Color.red, Color.white);
+    // }
 
-    public void TimerEnd()
-    {
-        LerpCharacter(1, Color.red, Color.white);
-    }
+    // public void TimerEnd()
+    // {
+    //     LerpCharacter(1, Color.red, Color.white);
+    // }
 
-    public void LerpCharacter(float persent, Color fadeColor = default, Color origColor = default)
+    public void LerpCharacter()
     {
         foreach (Renderer item in renderers)
         {
-            //Color color = Color.Lerp(origColor, fadeColor, persent);
-            item.material.SetFloat("_FillAlpha", t);
-            // item.color = color;
+            if (item.material.shader.name == "Spine/SkeletonFill")
+            {
+                item.material.SetColor("_FillColor", Color.white);
+                item.material.DOFloat(0, "_FillAlpha", .1f).ChangeStartValue(1);//.SetFloat("_FillAlpha", t);
+            }
+        }
+    }
+
+    public void FadeCharacter(Action OnEndFade)
+    {
+        bool endFade = true;
+
+        foreach (Renderer item in renderers)
+        {
+            if (item.material.shader.name == "Spine/SkeletonFill")
+            {
+                if (endFade)
+                {
+                    endFade = false;
+                    item.material.DOColor(Color.clear, "_FillColor", 2f).SetDelay(1f).ChangeStartValue(Color.white).OnComplete(() => { OnEndFade(); });
+                }
+                else
+                {
+                    item.material.DOColor(Color.clear, "_FillColor", 2f).SetDelay(1f).ChangeStartValue(Color.white);
+                }
+                item.material.SetFloat("FillAlpha", 0);
+            }
         }
     }
 
@@ -140,17 +163,6 @@ public class CharacterBase : EntityBase
             isGrounded = false;
         else
             isGrounded = true;
-
-        // RaycastHit2D[] hit = Physics2D.RaycastAll(groundCheck.position, Vector3.down, .2f);
-        // for (int i = 0; i < hit.Length; i++)
-        // {
-        //     if (hit[i].collider != null && hit[i].collider.gameObject != gameObject && !hit[i].collider.isTrigger)
-        //     {
-        //         isGrounded = true;
-        //         isJumping = false;
-        //         break;
-        //     }
-        // }
 
         //если приземлились
         if (curJumpPos < 0)
@@ -207,6 +219,12 @@ public class CharacterBase : EntityBase
         //      World.Ins.allCharacters.Remove(this);
         //      Destroy(gameObject);
         //  });
+
+        FadeCharacter(delegate
+         {
+             World.Ins.allCharacters.Remove(this);
+             Destroy(gameObject);
+         });
 
         if (OnDie != null)
             OnDie(this, EventArgs.Empty);
@@ -323,10 +341,10 @@ public class CharacterBase : EntityBase
         {
             if (houseInfo != null)
             {
-                MapsController.Ins.EnterHouse(houseInfo);
+                MapsController.Ins.EnterHouseWithFade(houseInfo);
             }
         }
-        else MapsController.Ins.ExitHouse(this);
+        else MapsController.Ins.ExitHouseWithFade(this);
     }
 
     void OnEnterHouse(HouseDoor house)
@@ -348,10 +366,9 @@ public class CharacterBase : EntityBase
     public void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
     {
         damage = Mathf.RoundToInt((float)damage * HitBox.GetDamagePersent(hitBoxType));
-        Debug.Log(this.name + "   " + hitBoxType + "   " + damage);
         healthSystem.Damage(damage);
 
-        t = 1;
+        LerpCharacter();
 
         hitCooldown = .3f;
 
@@ -513,5 +530,6 @@ public class CharacterBase : EntityBase
     void OnDestroy()
     {
         MapsController.Ins.OnChangingMap -= OnChangingMap;
+        MapsController.Ins.OnEnterHouseEvent -= OnEnterHouse;
     }
 }

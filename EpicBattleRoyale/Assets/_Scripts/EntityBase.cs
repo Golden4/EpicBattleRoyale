@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class EntityBase : MonoBehaviour
 {
+    [HideInInspector]
+    public Vector2Int mapCoords;
     SpriteRenderer shadow;
-    Vector2 pivotOffset;
+    public Vector2 pivotOffset;
 
     protected List<Renderer> renderers = new List<Renderer>();
     List<int> originalSortingOrders = new List<int>();
@@ -152,12 +154,14 @@ public class EntityBase : MonoBehaviour
 
     void UpdateSortingOrder(int index)
     {
-        renderers[index].sortingOrder = GetCurrentSortingOrder() + originalSortingOrders[index];
+        if (renderers[index] != null)
+            renderers[index].sortingOrder = GetCurrentSortingOrder() + originalSortingOrders[index];
     }
 
     public void UpdateSortingOrder(int index, float yPosition)
     {
-        renderers[index].sortingOrder = GetSortingOrder(yPosition) + originalSortingOrders[index];
+        if (renderers[index] != null)
+            renderers[index].sortingOrder = GetSortingOrder(yPosition) + originalSortingOrders[index];
     }
 
     public int GetSortingOrder(float yPosition)
@@ -170,11 +174,9 @@ public class EntityBase : MonoBehaviour
         return Mathf.Abs((int)(-worldPosition.y * 10 + MapsController.Ins.GetCurrentWorldUpDownEndPoints().y) * 10);
     }
 
-    float compareOffset = 0.5f;
-
-    public bool CompareEntities(Vector3 worldPosition)
+    public bool CompareEntitiesPositions(Vector3 worldPosition, float yPositionOffset = .5f)
     {
-        if (Mathf.Abs(this.worldPosition.y - worldPosition.y) < compareOffset)
+        if (Mathf.Abs(this.worldPosition.y - worldPosition.y) < yPositionOffset)
             return true;
 
         return false;

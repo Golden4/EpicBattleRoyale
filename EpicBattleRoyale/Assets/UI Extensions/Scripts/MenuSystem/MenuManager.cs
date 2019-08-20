@@ -63,14 +63,28 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
 
+                foreach (var menu in menuStack)
+                {
+
+                    if (menu == instance)
+                    {
+                        menu.gameObject.GetComponent<GraphicRaycaster>().enabled = true;
+                    }
+                    else
+                    {
+                        menu.gameObject.GetComponent<GraphicRaycaster>().enabled = false;
+                    }
+
+                }
+
                 var topCanvas = instance.GetComponent<Canvas>();
                 var previousCanvas = menuStack.Peek().GetComponent<Canvas>();
                 topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;
             }
 
             instance.gameObject.SetActive(true);
-
             menuStack.Push(instance);
+            instance.OnShow();
         }
 
         private GameObject GetPrefab(string PrefabName)
@@ -117,6 +131,7 @@ namespace UnityEngine.UI.Extensions
             }
 
             CloseTopMenu();
+            menu.OnClose();
         }
 
         public void CloseTopMenu()

@@ -37,7 +37,7 @@ public class WeaponController : MonoBehaviour
     public Sound weaponSwitchSound;
     float switchingWeapon;
 
-    Animator weaponAnimator;
+    public Animator weaponAnimator;
     WeaponSounds weaponSounds;
 
     public event EventHandler OnWeaponSwitch;
@@ -419,11 +419,13 @@ public class WeaponController : MonoBehaviour
             if (weaponsInInventory[i] != null)
                 DropWeaponFromInventory(i);
         }
+        weaponAnimator.enabled = false;
     }
 
     public void SetWeaponAnimationType(RuntimeAnimatorController runtimeAnimatorController, WeaponController.SlotType type)
     {
         weaponAnimator.runtimeAnimatorController = runtimeAnimatorController;
+
         // if (type != WeaponController.SlotType.Melee)
         // {
         //     weaponAnimator.enabled = true;
@@ -471,7 +473,6 @@ public class WeaponController : MonoBehaviour
             weaponAnimator.SetFloat("ReloadTime", 2 / reloadTime);
             weaponAnimator.SetBool("isReloading", true);
             weaponAnimator.Play("Reload");
-
         }
     }
 

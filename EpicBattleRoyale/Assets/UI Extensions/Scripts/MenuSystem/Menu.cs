@@ -4,14 +4,16 @@
     {
         public static T Instance { get; private set; }
 
-        protected virtual void Awake()
+        protected void Awake()
         {
             Instance = (T)this;
+            OnInit();
         }
 
-        protected virtual void OnDestroy()
+        protected void OnDestroy()
         {
             Instance = null;
+            OnCleanUp();
         }
 
         protected static void Open()
@@ -34,7 +36,10 @@
             }
 
             MenuManager.Instance.CloseMenu(Instance);
+
         }
+
+
 
         public override void OnBackPressed()
         {
@@ -51,5 +56,25 @@
         public bool DisableMenusUnderneath = true;
 
         public abstract void OnBackPressed();
+
+        public virtual void OnShow()
+        {
+
+        }
+
+        public virtual void OnClose()
+        {
+
+        }
+
+        public virtual void OnCleanUp()
+        {
+
+        }
+
+        public virtual void OnInit()
+        {
+
+        }
     }
 }

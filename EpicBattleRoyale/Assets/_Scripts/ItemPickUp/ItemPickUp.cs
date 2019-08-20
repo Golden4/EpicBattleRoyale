@@ -86,7 +86,7 @@ public class ItemPickUp : Interactable
 
     public override bool CanInteract(CharacterBase cb)
     {
-        if (!CompareEntities(cb.worldPosition))
+        if (!CompareEntitiesPositions(cb.worldPosition))
             return false;
 
         if (cantPickUpDelay == 0)

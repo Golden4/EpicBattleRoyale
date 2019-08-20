@@ -5,17 +5,13 @@ using UnityEngine.UI.Extensions;
 
 public class ScreenUI : SimpleMenu<ScreenUI>
 {
-    public static ScreenUI Ins;
     public HealthArmorUI healthArmorUI;
     public WeaponsUI weaponsUI;
     public MobileInputsUI mobileInputsUI;
 
-    protected override void Awake()
+    public override void OnInit()
     {
-        base.Awake();
-        Ins = this;
         World.OnPlayerSpawn += World_OnPlayerSpawn;
-
     }
 
     void World_OnPlayerSpawn(Player player)

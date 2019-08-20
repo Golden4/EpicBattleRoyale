@@ -9,6 +9,7 @@ public class World : MonoBehaviour
     public List<ItemPickUp> itemsPickUp = new List<ItemPickUp>();
     public Player player;
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
+    public Dictionary<Vector2Int, EntityBase> entities = new Dictionary<Vector2Int, EntityBase>();
     GameObject itemsHolder;
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;

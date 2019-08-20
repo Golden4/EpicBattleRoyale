@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace UnityEngine.UI.Extensions
 {
-    [AddComponentMenu("UI/Effects/Extensions/Gradient")]
+    [AddComponentMenu("UI/Extensions/Effects/Gradient")]
     public class Gradient : BaseMeshEffect
     {
         [SerializeField]
