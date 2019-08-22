@@ -58,7 +58,6 @@ public class Enemy : MonoBehaviour
             targetCharacter = hitCharacter;
             curTargetState = TargetState.TargetCharacter;
             hittedRageTime = 2;
-            Debug.Log("SDADSADA");
         }
     }
 
@@ -256,14 +255,14 @@ public class Enemy : MonoBehaviour
             if (weaponController.GetCurrentWeapon().GetType() == typeof(MeleeWeapon))
             {
                 jumpDelay -= Time.fixedDeltaTime;
-
                 if (jumpDelay < 0)
                 {
-                    if (UnityEngine.Random.Range(0, 10) == 0)
+                    if (UnityEngine.Random.Range(0, 3) == 0)
                     {
                         characterBase.Jump();
                     }
-                    jumpDelay = .5f;
+
+                    jumpDelay = UnityEngine.Random.Range(3, 10f);
                 }
             }
 

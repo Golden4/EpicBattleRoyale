@@ -9,11 +9,15 @@ public class HealthArmorUI : MonoBehaviour
     [System.Serializable]
     public class BarUI
     {
+        public bool needBlinkWhenLowAmount;
+        public Color blinkColor;
+        Color origBgColor;
+
         HealthSystem healthSystem;
         public Image barImage;
         public Image barDamageImage;
         public Image barHealImage;
-
+        public Image barBg;
         float targetAmount;
         float targetDamagedAmount;
         float targetHealedAmount;
@@ -32,6 +36,7 @@ public class HealthArmorUI : MonoBehaviour
         public void Init(int maxAmount)
         {
             this.maxAmount = maxAmount;
+            origBgColor = barBg.color;
         }
 
         public void SetAmount(int amount)
@@ -53,16 +58,16 @@ public class HealthArmorUI : MonoBehaviour
 
             if (oldAmount - curAmount > 0)
             {
-                OnDamage(oldAmount, amount, oldAmount - curAmount);
+                OnDamage(amount);
             }
 
             if (oldAmount - curAmount < 0)
             {
-                OnHeal(oldAmount, amount, -oldAmount + curAmount);
+                OnHeal(amount);
             }
         }
 
-        void OnDamage(int oldAmount, int curAmount, int damage)
+        void OnDamage(int curAmount)
         {
             targetAmount = curAmount;
             targetHealedAmount = curAmount;
@@ -71,7 +76,7 @@ public class HealthArmorUI : MonoBehaviour
             barHealImage.fillAmount = GetPersent(0);
         }
 
-        void OnHeal(int oldAmount, int curAmount, int heal)
+        void OnHeal(int curAmount)
         {
             targetHealedAmount = curAmount;
             targetDamagedAmount = curAmount;
@@ -137,6 +142,18 @@ public class HealthArmorUI : MonoBehaviour
                     barHealImage.fillAmount = GetPersent((int)targetHealedAmount);
                 }
             }
+
+            if (needBlinkWhenLowAmount && curAmount < 20)
+            {
+                barBg.color = Color.Lerp(origBgColor, blinkColor, Mathf.PingPong(Time.time * 1.5f, 1f));
+            }
+            else
+            {
+                if (barBg.color != origBgColor)
+                {
+                    barBg.color = origBgColor;
+                }
+            }
         }
     }
 
@@ -170,21 +187,23 @@ public class HealthArmorUI : MonoBehaviour
         bars[1].SetAnimatedAmount(healthSystem.GetArmor());
     }
 
-
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Debug.isDebugBuild)
         {
-            healthSystem.Damage(Random.Range(5, 20));
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            healthSystem.HealHealth(Random.Range(5, 20));
-        }
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                healthSystem.Damage(Random.Range(5, 20));
+            }
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                healthSystem.HealHealth(Random.Range(5, 20));
+            }
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            healthSystem.HealArmor(Random.Range(5, 20));
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                healthSystem.HealArmor(Random.Range(5, 20));
+            }
         }
 
         for (int i = 0; i < bars.Length; i++)

@@ -3185,12 +3185,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bars:
-  - barImage: {fileID: 1547595454535834415}
+  - needBlinkWhenLowAmount: 1
+    blinkColor: {r: 0.5377358, g: 0, b: 0, a: 0.6}
+    barImage: {fileID: 1547595454535834415}
     barDamageImage: {fileID: 1547595454489116596}
     barHealImage: {fileID: 1547595455264917033}
-  - barImage: {fileID: 1547595454607081638}
+    barBg: {fileID: 1547595455274665050}
+  - needBlinkWhenLowAmount: 0
+    blinkColor: {r: 0, g: 0, b: 0, a: 0}
+    barImage: {fileID: 1547595454607081638}
     barDamageImage: {fileID: 1547595453405163492}
     barHealImage: {fileID: 1547595455228662365}
+    barBg: {fileID: 1547595453985736852}
 --- !u!114 &1547595454537319630
 MonoBehaviour:
   m_ObjectHideFlags: 0

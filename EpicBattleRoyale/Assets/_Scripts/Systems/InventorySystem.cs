@@ -8,7 +8,7 @@ public class InventorySystem
     public CharacterBase characterBase;
     public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
     public List<ItemPickUp> pickedUpItems = new List<ItemPickUp>();
-    public List<Bullets> bullets = new List<Bullets>();
+    public List<InventoryBullets> bullets = new List<InventoryBullets>();
 
     public event EventHandler OnPickUp;
 
@@ -79,17 +79,17 @@ public class InventorySystem
         for (int i = 0; i < Enum.GetNames(typeof(Weapon.WeaponType)).Length; i++)
         {
 
-            bullets.Add(new Bullets((Weapon.WeaponType)i, 0));
+            bullets.Add(new InventoryBullets((Weapon.WeaponType)i, 0));
         }
 
     }
 
-    public class Bullets
+    public class InventoryBullets
     {
         public Weapon.WeaponType bulletType;
         public int count;
 
-        public Bullets(Weapon.WeaponType bulletType, int count)
+        public InventoryBullets(Weapon.WeaponType bulletType, int count)
         {
             this.bulletType = bulletType;
             this.count = count;

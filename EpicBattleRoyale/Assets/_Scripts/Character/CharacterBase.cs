@@ -6,6 +6,7 @@ using DG.Tweening;
 
 public class CharacterBase : EntityBase
 {
+    public bool isPlayer;
     public GameAssets.CharacterList characterName;
     bool isInit;
     public Vector2 maxSpeed;
@@ -33,6 +34,7 @@ public class CharacterBase : EntityBase
     bool isDead;
     public HealthSystem healthSystem;
     public InventorySystem inventorySystem;
+    public CharacterMapNavigate characterMapNavigate;
 
     float curJumpPos;
     float curJumpVelocity;
@@ -41,6 +43,7 @@ public class CharacterBase : EntityBase
     public event EventHandler OnDie;
 
     List<Interactable> interactableObjects = new List<Interactable>();
+
     public event Action<Interactable> OnCanInteractEvent;
     public event Action<Interactable> OnCantInteractEvent;
     public event Action<Interactable> OnInteractEvent;
@@ -50,11 +53,13 @@ public class CharacterBase : EntityBase
         if (!isInit)
             Setup();
     }
+
     protected override void Start()
     {
         Init();
         StartCoroutine(InitRenederersCoroutine());
     }
+
     protected IEnumerator InitRenederersCoroutine()
     {
         yield return new WaitForSeconds(1);
@@ -67,8 +72,6 @@ public class CharacterBase : EntityBase
             return;
         healthSystem = new HealthSystem(100, 0);
         healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
-        MapsController.Ins.OnChangingMap += OnChangingMap;
-        MapsController.Ins.OnEnterHouseEvent += OnEnterHouse;
 
         groundCheck = transform.Find("GroundCheck");
         anim = GetComponentInChildren<Animator>();
@@ -77,48 +80,21 @@ public class CharacterBase : EntityBase
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
 
         inventorySystem = new InventorySystem(this);
+        characterMapNavigate = GetComponent<CharacterMapNavigate>();
 
         foreach (var item in renderers)
         {
             item.sharedMaterial = mat;
         }
 
-        MapsController.Ins.ChangeMap(this, Vector2Int.zero, Direction.Right);
-
         isInit = true;
     }
-
-    float jumpDelay;
     float lerpSpeed = .1f;
 
     void Update()
     {
-        jumpDelay -= Time.deltaTime;
         hitCooldown -= Time.deltaTime;
-        // if (t > 0)
-        // {
-        //     t -= Time.deltaTime / lerpSpeed;
-
-        //     Timer();
-
-        // }
-        // else if (t <= -0.01f)
-        // {
-        //     t = 0;
-
-        //     TimerEnd();
-        // }
     }
-
-    // public void Timer()
-    // {
-    //     LerpCharacter(t, Color.red, Color.white);
-    // }
-
-    // public void TimerEnd()
-    // {
-    //     LerpCharacter(1, Color.red, Color.white);
-    // }
 
     public void LerpCharacter()
     {
@@ -204,21 +180,7 @@ public class CharacterBase : EntityBase
     {
         isDead = true;
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
-        //collider.enabled = false;
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
-        // collider.offset = new Vector2(.89f, .34f);
-        // collider.size = new Vector2(1.8f, .8f);
-        // collider.direction = CapsuleDirection2D.Horizontal;
-        // StartCoroutine(FadeCharacter(2, 3, Color.clear, delegate
-        //          {
-        //              World.Ins.allCharacters.Remove(this);
-        //              Destroy(gameObject);
-        //          }));
-        // Utility.LerpSprite(this, srs, 2, 3, Color.clear, delegate
-        //  {
-        //      World.Ins.allCharacters.Remove(this);
-        //      Destroy(gameObject);
-        //  });
 
         FadeCharacter(delegate
          {
@@ -300,18 +262,14 @@ public class CharacterBase : EntityBase
             float yPos = worldPosition.y + moveDir.y * curSpeed.y * Time.fixedDeltaTime;
 
             MoveTo(new Vector2(xPos, yPos), curJumpPos);
-
-            // rb.velocity = new Vector2(moveDir * curSpeed, rb.velocity.y);
-
         }
     }
 
     public void Jump()
     {
-        if (isGrounded && !anim.GetBool("Jump") && (jumpDelay <= 0))
+        if (isGrounded && !anim.GetBool("Jump"))
         {
             isGrounded = false;
-            jumpDelay = .2f;
             isJumping = true;
             curJumpVelocity = jumpForce;
         }
@@ -333,27 +291,6 @@ public class CharacterBase : EntityBase
     public bool CanPickUp()
     {
         return !IsDead();
-    }
-
-    public void EnterOrExitDoor(HouseDoor houseInfo)
-    {
-        if (MapsController.Ins.mapState == MapsController.State.Map)
-        {
-            if (houseInfo != null)
-            {
-                MapsController.Ins.EnterHouseWithFade(houseInfo);
-            }
-        }
-        else MapsController.Ins.ExitHouseWithFade(this);
-    }
-
-    void OnEnterHouse(HouseDoor house)
-    {
-        MoveToPosition(new Vector3(MapsController.Ins.GetHouseData(house.houseType).worldEndPoints.x + 2, -4), true);
-
-        //transform.SetParent(MapsController.Ins.GetHouseGO(house).transform);
-
-        ClearInteractableObjects();
     }
 
     public bool CanHit()
@@ -403,7 +340,6 @@ public class CharacterBase : EntityBase
     {
         MoveTo(position);
         isJumping = false;
-        //rb.velocity = Vector3.zero;
         curJumpVelocity = 0;
         curJumpPos = 0;
         Flip(isFacingRight);
@@ -413,14 +349,15 @@ public class CharacterBase : EntityBase
     {
         Interactable interactable = col.GetComponent<Interactable>();
         if (interactable != null)
+        {
             if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
             {
-                //Debug.Log("OnTriggerEnter2D" + interactable.name);
                 interactableObjects.Add(interactable);
 
                 if (OnCanInteractEvent != null)
                     OnCanInteractEvent(interactable);
             }
+        }
     }
 
     void OnTriggerStay2D(Collider2D col)
@@ -431,7 +368,6 @@ public class CharacterBase : EntityBase
         {
             if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
             {
-                //Debug.Log("OnTriggerEnter2D" + interactable.name);
                 interactableObjects.Add(interactable);
 
                 if (OnCanInteractEvent != null)
@@ -440,7 +376,6 @@ public class CharacterBase : EntityBase
 
             if (interactableObjects.Contains(interactable) && !interactable.CanInteract(this))
             {
-                //Debug.Log("OnTriggerExit2D" + interactable.name);
                 interactable.AwayInteract(this);
                 interactableObjects.Remove(interactable);
 
@@ -457,7 +392,6 @@ public class CharacterBase : EntityBase
         if (interactable != null)
             if (interactableObjects.Contains(interactable))
             {
-                //Debug.Log("OnTriggerExit2D" + interactable.name);
                 interactable.AwayInteract(this);
                 interactableObjects.Remove(interactable);
 
@@ -466,55 +400,7 @@ public class CharacterBase : EntityBase
             }
     }
 
-    void OnChangingMap(CharacterBase characterBase, MapsController.MapInfo mapInfo, Direction dir)
-    {
-        if (characterBase == this)
-        {
-            //если вышли из дома
-            if (dir == Direction.None)
-            {
-                Vector3 pos = MapsController.Ins.GetCurrentMapInfo().houses[MapsController.Ins.curHouseIndex].GetDoorPosition(mapInfo) + Vector3.up;
-                MoveToPosition(pos, false);
-            }
-            else
-            {
-                int index = -1;
-
-                index = MapsController.Ins.GetSpawnDirection(mapInfo, dir);
-
-                if (index != -1)
-                {
-                    bool isFacingRight = true;
-
-                    Vector3 pos = default;
-
-                    if (index == 1)
-                    {
-                        isFacingRight = false;
-                        pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, worldPosition.y);
-                    }
-
-                    if (index == 0)
-                    {
-                        pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, worldPosition.y);
-                    }
-
-                    if (index == 2)
-                    {
-                        pos = new Vector3(0, MapsController.Ins.GetCurrentWorldUpDownEndPoints().y);
-                    }
-
-                    MoveToPosition(pos, isFacingRight);
-                }
-            }
-
-            //transform.SetParent(MapsController.Ins.curMaps[mapInfo.coord].transform);
-
-            ClearInteractableObjects();
-        }
-    }
-
-    void ClearInteractableObjects()
+    public void ClearInteractableObjects()
     {
         for (int i = 0; i < interactableObjects.Count; i++)
         {
@@ -526,10 +412,13 @@ public class CharacterBase : EntityBase
         interactableObjects.Clear();
     }
 
-
-    void OnDestroy()
+    public void Enable()
     {
-        MapsController.Ins.OnChangingMap -= OnChangingMap;
-        MapsController.Ins.OnEnterHouseEvent -= OnEnterHouse;
+        gameObject.SetActive(true);
+    }
+
+    public void Disable()
+    {
+        gameObject.SetActive(false);
     }
 }

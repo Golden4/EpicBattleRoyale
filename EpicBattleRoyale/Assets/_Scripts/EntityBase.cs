@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EntityBase : MonoBehaviour
 {
-    [HideInInspector]
     public Vector2Int mapCoords;
     SpriteRenderer shadow;
     public Vector2 pivotOffset;

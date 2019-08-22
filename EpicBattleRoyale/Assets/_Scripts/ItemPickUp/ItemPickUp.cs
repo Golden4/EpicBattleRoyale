@@ -7,63 +7,6 @@ using TMPro;
 
 public class ItemPickUp : Interactable
 {
-    /*	public enum ItemPickUpType {
-		Armor,
-		Health,
-		Weapon,
-		Ammo
-	}
-
-	public ItemPickUpType type;*/
-
-    /*	public void Setup (ItemPickUpType itemPickUpType, int amount)
-	{
-		type = itemPickUpType;
-		this.amount = amount;
-		switch (itemPickUpType) {
-		case ItemPickUpType.Ammo:
-			
-			break;
-		case ItemPickUpType.Armor:
-			
-			break;
-		case ItemPickUpType.Health:
-			
-			break;
-		case ItemPickUpType.Weapon:
-			
-			break;
-		default:
-			break;
-		}
-
-	}*/
-
-    /*	public void SetupHealth (int healthAmount)
-	{
-		type = ItemPickUpType.Health;
-		amount = healthAmount;
-	}
-
-	public void SetupWeapon (GameAssets.WeaponsList weapon)
-	{
-		type = ItemPickUpType.Weapon;
-		amount = (int)weapon;
-	}
-
-	public void SetupAmmo (int ammoAmount)
-	{
-		type = ItemPickUpType.Ammo;
-		amount = ammoAmount;
-	}*/
-
-    /*	public static ItemPickUp Create (ItemPickUp itemPickUpGO, Vector2 position, Vector2 throwForce)
-	{
-		GameObject go = Instantiate (itemPickUpGO.gameObject);
-		go.transform.position = position;
-		return go.GetComponent<ItemPickUp> ();
-	}*/
-
     public int chanceForSpawn = 5;
     bool autoPickUp = false;
     float cantPickUpDelay = 1;
@@ -73,12 +16,11 @@ public class ItemPickUp : Interactable
         Init();
         InitRenederers();
         MoveTo(position, 0);
-        //AddForce((Vector3.up + Vector3.right) * 150);
     }
 
     protected override void Start()
     {
-        Utility.Invoke(this, cantPickUpDelay, delegate
+        DOVirtual.DelayedCall(cantPickUpDelay, delegate
         {
             cantPickUpDelay = 0;
         });

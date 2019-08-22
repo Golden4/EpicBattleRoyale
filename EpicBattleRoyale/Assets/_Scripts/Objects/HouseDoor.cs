@@ -9,9 +9,10 @@ public class HouseDoor : Interactable
         Inner,
         Outer
     }
+
     public HouseDoorType doorType;
-    public int houseIndex;
     public MapsController.HouseType houseType;
+    public int houseIndex;
 
     public void Setup(Vector2Int mapCoords, MapsController.HouseType houseType, int houseIndex)
     {
@@ -30,7 +31,15 @@ public class HouseDoor : Interactable
 
     public override bool Interact(CharacterBase cb)
     {
-        cb.EnterOrExitDoor(this);
+        if (doorType == HouseDoorType.Inner)
+        {
+            MapsController.Ins.ExitHouse(cb, this);
+        }
+        else
+        if (doorType == HouseDoorType.Outer)
+        {
+            MapsController.Ins.EnterHouse(cb, this);
+        }
         return true;
     }
 
@@ -38,13 +47,4 @@ public class HouseDoor : Interactable
     {
         return InteractableType.HouseDoor;
     }
-
-    // void OnDisable()
-    // {
-    //     for (int i = 0; i < cbs.Count; i++)
-    //     {
-    //         cbs[i].AwayDoor();
-    //     }
-    //     cbs.Clear();
-    // }
 }

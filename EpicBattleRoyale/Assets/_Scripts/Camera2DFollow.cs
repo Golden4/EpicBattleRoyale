@@ -48,7 +48,8 @@ public class Camera2DFollow : MonoBehaviour
         float screenSizeY = Vector2.Distance(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)), Camera.main.ScreenToWorldPoint(new Vector2(Screen.height, 0))) * 0.5f;
 
         newPos.x = Mathf.Clamp(newPos.x, MapsController.Ins.GetCurrentWorldEndPoints().x + screenSizeX, MapsController.Ins.GetCurrentWorldEndPoints().y - screenSizeX);
-        newPos.y = Mathf.Clamp(newPos.y, -6f + screenSizeY, 7.2f - screenSizeY);
+
+        newPos.y = Mathf.Clamp(newPos.y, MapsController.Ins.GetCurrentScreenUpDownEndPoints().x + screenSizeY, MapsController.Ins.GetCurrentScreenUpDownEndPoints().y - screenSizeY);
 
         transform.position = newPos;
     }

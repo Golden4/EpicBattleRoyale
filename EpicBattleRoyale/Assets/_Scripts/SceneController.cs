@@ -80,12 +80,15 @@ public class SceneController : SingletonResourse<SceneController>
         }
     }
 
-    public void FadeIn(Action actionAfterFade = null, float duration = .5f)
+    public void FadeIn(Action actionAfterFade = null, float duration = .5f, bool needFadeOut = false)
     {
         fadeImage.DOFade(1f, duration).SetEase(Ease.InQuad).OnComplete(delegate
         {
             if (actionAfterFade != null)
                 actionAfterFade();
+
+            if (needFadeOut)
+                FadeOut();
         });
     }
 

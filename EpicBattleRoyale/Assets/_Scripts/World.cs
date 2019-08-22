@@ -9,8 +9,7 @@ public class World : MonoBehaviour
     public List<ItemPickUp> itemsPickUp = new List<ItemPickUp>();
     public Player player;
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
-    public Dictionary<Vector2Int, EntityBase> entities = new Dictionary<Vector2Int, EntityBase>();
-    GameObject itemsHolder;
+    public Dictionary<Vector2Int, List<EntityBase>> entities = new Dictionary<Vector2Int, List<EntityBase>>();
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
 
@@ -21,45 +20,20 @@ public class World : MonoBehaviour
 
     void Start()
     {
-        if (itemsHolder == null)
-            itemsHolder = new GameObject("ItemsHolder");
+        SpawnCharacterPlayer(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
+        SpawnCharacterEnemy(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
+        SpawnCharacterEnemy(Vector2Int.right, GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
 
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.MP5, new Vector3(-5, -3f));
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.Beretta, new Vector3(5, -3f));
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(3, -3f));
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.ShotGun, new Vector3(6, -3f));
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.SniperRiffle, new Vector3(-6, -3f));
-        // SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthPickUpList.Big, new Vector3(-3, -3f));
-        // SpawnItemPickUpWeapon(GameAssets.WeaponsList.AK12, new Vector3(-12, -3f));
-        // SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorPickUpList.Big, new Vector3(8, -3f));
-        SpawnCharacterPlayer(GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-        SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
-
-        // for (int i = -2; i <= 2; i++)
-        // {
-        //     if (i != 0)
-        //         SpawnCharacterEnemy(GameAssets.CharacterList.Soldier, new Vector3(i * 5, -3));
-        // }
-
-        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.AutomaticWeapon, new Vector3(1 * 3, -3f));
-        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.PistolWeapon, new Vector3(2 * 3, -3f));
-        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.ShotGunWeapon, new Vector3(3 * 3, -3f));
-        // SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoPickUpList.SniperWeapon, new Vector3(4 * 3, -3f));
-
-
-        // enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.SniperRiffle);
-        //   enemy.weaponController.GiveWeapon(GameAssets.WeaponsList.MP5);
-        //SpawnItemPickUp (ItemPickUp.ItemPickUpType.Weapon, );
     }
 
-    public Enemy SpawnCharacterEnemy(GameAssets.CharacterList characterName, Vector3 position)
+    public Enemy SpawnCharacterEnemy(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector3 position)
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
         character.transform.name = "CharacterEnemy" + allCharacters.Count;
 
         foreach (Component item in character.GetComponents<Component>())
         {
-            if (item.GetType() == typeof(Player))
+            if (item.GetType() == typeof(Player) || item.GetType() == typeof(Enemy))
             {
                 Destroy(item);
             }
@@ -69,6 +43,8 @@ public class World : MonoBehaviour
         enemy.Setup(position);
         allCharacters.Add(enemy.characterBase);
 
+        enemy.characterBase.characterMapNavigate.ChangeMap(mapCoords);
+
         if (OnEnemySpawn != null)
         {
             OnEnemySpawn(enemy);
@@ -77,7 +53,7 @@ public class World : MonoBehaviour
         return enemy;
     }
 
-    public Player SpawnCharacterPlayer(GameAssets.CharacterList characterName, Vector3 position)
+    public Player SpawnCharacterPlayer(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector3 position)
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
         character.transform.name = "CharacterPlayer";
@@ -92,7 +68,10 @@ public class World : MonoBehaviour
         Player player = character.AddComponent<Player>();
         player.Setup(position);
         this.player = player;
+
         allCharacters.Add(player.characterBase);
+
+        MapsController.Ins.GoToMap(player.characterBase, mapCoords, false);
 
         if (OnPlayerSpawn != null)
         {
@@ -229,4 +208,13 @@ public class World : MonoBehaviour
         }
     }
 
+    public void AddEntity(Vector2Int mapCoords, EntityBase entity)
+    {
+        entities[mapCoords].Add(entity);
+    }
+
+    public void RemoveEntity(Vector2Int mapCoords, EntityBase entity)
+    {
+        entities[mapCoords].Remove(entity);
+    }
 }

@@ -294,6 +294,7 @@ MonoBehaviour:
       type: 3}
     worldEndPoints: {x: -20, y: 20}
     worldUpDownEndPoints: {x: -5, y: -2}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 1
     pfOuterHouse: {fileID: 1489081602486382168, guid: 7bcc622bdb246114abe8956a32bfcb59,
       type: 3}
@@ -301,6 +302,7 @@ MonoBehaviour:
       type: 3}
     worldEndPoints: {x: -20, y: 20}
     worldUpDownEndPoints: {x: -5, y: -2}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 2
     pfOuterHouse: {fileID: 736430939249677253, guid: 1e9db935500cc23448ac760c02d6d9e8,
       type: 3}
@@ -308,6 +310,7 @@ MonoBehaviour:
       type: 3}
     worldEndPoints: {x: -20, y: 20}
     worldUpDownEndPoints: {x: -5, y: -2}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 3
     pfOuterHouse: {fileID: 8350344444179269163, guid: e8ca64920e36ce344aebacc9e1db5b81,
       type: 3}
@@ -315,6 +318,7 @@ MonoBehaviour:
       type: 3}
     worldEndPoints: {x: -20, y: 20}
     worldUpDownEndPoints: {x: -5, y: -2}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 4
     pfOuterHouse: {fileID: 8880845573897302798, guid: 95c917366712ba1439a2a4b30a9f13bb,
       type: 3}
@@ -322,140 +326,16 @@ MonoBehaviour:
       type: 3}
     worldEndPoints: {x: -20, y: 20}
     worldUpDownEndPoints: {x: -5, y: -2}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   pfMaps:
   - mapType: 0
     pfMap: {fileID: 8231321016298368354, guid: 9966a1fe71ebd6945875c0a301b86dcf, type: 3}
     worldEndPoints: {x: -37, y: 37}
     worldUpDownEndPoints: {x: -6, y: -1}
+    screenUpDownEndPoints: {x: -6, y: 7.2}
   mapState: 0
-  characterSpawnPoints:
-  - {x: -36, y: -4.5, z: -0}
-  - {x: 36, y: -4.5, z: 0}
-  - {x: 0, y: -4.5, z: 0}
   mapSize: 5
-  mapInfo:
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 0, y: 0}
-    roads: 0100000003000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses:
-    - houseSpawnPositionsX: 0
-      houseType: 0
-    - houseSpawnPositionsX: -10
-      houseType: 1
-    - houseSpawnPositionsX: 10
-      houseType: 2
-    - houseSpawnPositionsX: 20
-      houseType: 3
-    - houseSpawnPositionsX: -20
-      houseType: 4
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 1, y: 0}
-    roads: 020000000300000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 2, y: 0}
-    roads: 020000000300000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 3, y: 0}
-    roads: 0200000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 0, y: 1}
-    roads: 0000000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 1, y: 1}
-    roads: 0000000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 2, y: 1}
-    roads: 000000000100000003000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 3, y: 1}
-    roads: 000000000100000002000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 0, y: 2}
-    roads: 000000000100000003000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 1, y: 2}
-    roads: 0000000002000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 2, y: 2}
-    roads: 0000000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 3, y: 2}
-    roads: 0000000001000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 0, y: 3}
-    roads: 0000000003000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 1, y: 3}
-    roads: 0200000003000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 2, y: 3}
-    roads: 020000000300000000000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
-  - mapType: 0
-    isFirstEntry: 0
-    coord: {x: 3, y: 3}
-    roads: 0200000000000000
-    centerRoad: 4
-    centerRoadPositionX: 0
-    houses: []
+  curMapCoords: {x: 0, y: 0}
   curHouseIndex: 0
 --- !u!4 &1209955566
 Transform:
