@@ -20,9 +20,13 @@ public class HitBox : MonoBehaviour
         characterBase = GetComponentInParent<CharacterBase>();
     }
 
-    public void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
+    public void TakeHit(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
     {
-        characterBase.OnHitted(hitCharacter, hitWeapon, damage, hitBoxType);
+
+        characterBase.TakeHit(hitCharacter, hitWeapon, damage, hitBoxType);
+
+        hitCharacter.GiveHit(characterBase, hitWeapon, damage, hitBoxType);
+
     }
 
     public bool CanHit()

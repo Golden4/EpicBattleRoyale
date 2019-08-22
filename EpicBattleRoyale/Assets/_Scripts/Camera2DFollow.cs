@@ -53,5 +53,10 @@ public class Camera2DFollow : MonoBehaviour
 
         transform.position = newPos;
     }
+
+    void OnDestroy()
+    {
+        World.OnPlayerSpawn -= World_OnPlayerSpawn;
+    }
 }
 

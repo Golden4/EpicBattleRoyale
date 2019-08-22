@@ -59,9 +59,10 @@ public class BulletHandler : EntityBase
         {
             if (damagable.CanHit())
             {
-                damagable.OnHitted(cb, weapon, damage);
+                damagable.TakeHit(cb, weapon, damage);
 
-                Debug.Log("Hitted" + hit.collider.name + " damage =" + damage + "  hitBoxType = " + damagable.hitBoxType);
+                Debug.Log("Hitted with Bullet " + damagable.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType + " weapon = " + weapon.weaponName);
+
                 DestroyBullet();
             }
         }

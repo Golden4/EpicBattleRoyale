@@ -134,8 +134,6 @@ public class AutomaticWeapon : Weapon
             if (OnReload != null)
                 OnReload(reloadTime);
 
-
-            Debug.Log("Reloading " + reloadTime + "s.");
             return true;
         }
         else
@@ -236,8 +234,6 @@ public class AutomaticWeapon : Weapon
         if (OnReload != null)
             OnReload(reloadTime);
 
-        Debug.Log("Reloading " + reloadTime + "s.");
-
         yield return new WaitForSeconds(reloadTime);
 
         if (curState == State.Reloading && isActive)
@@ -247,7 +243,6 @@ public class AutomaticWeapon : Weapon
             wc.StopReloadAnimation();
             if (OnReloadComplete != null)
                 OnReloadComplete();
-            Debug.Log("Reload was done");
         }
     }
 

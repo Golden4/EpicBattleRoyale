@@ -148,8 +148,9 @@ public class Weapon : MonoBehaviour
                 {
                     if (damagable.CanHit())
                     {
-                        damagable.OnHitted(wc.cb, this, damage);
-                        Debug.Log("Hitted with raycast" + hit[i].collider.name + " damage =" + damage + "  hitBoxType = " + damagable.hitBoxType);
+                        damagable.TakeHit(wc.cb, this, damage);
+
+                        Debug.Log("Hitted with raycast " + damagable.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType);
                         return true;
                     }
                 }

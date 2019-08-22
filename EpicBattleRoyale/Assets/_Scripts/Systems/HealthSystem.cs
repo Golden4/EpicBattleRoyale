@@ -74,7 +74,7 @@ public class HealthSystem
                 OnDamaged(this, EventArgs.Empty);
         }
 
-        Debug.Log("Damage " + damage + "  health" + health + "  armor " + armor);
+        // Debug.Log("Damage " + damage + "  health" + health + "  armor " + armor);
     }
 
     public void HealArmor(int heal)
@@ -89,8 +89,6 @@ public class HealthSystem
 
         if (OnHealed != null)
             OnHealed(this, EventArgs.Empty);
-
-        Debug.Log("Heal " + heal + "  armor " + armor);
     }
 
     public void HealHealth(int heal)
@@ -109,7 +107,7 @@ public class HealthSystem
                 OnHealed(this, EventArgs.Empty);
         }
 
-        Debug.Log("Heal " + heal + "  health " + health);
+        // Debug.Log("Heal " + heal + "  health " + health);
     }
 
     public float GetArmorPersent()
@@ -135,6 +133,11 @@ public class HealthSystem
         return health / (float)maxHealth;
     }
 
+    public bool HealthZero()
+    {
+        return GetHealth() <= 0;
+    }
+
     public HealthSystem(int health, int armor)
     {
         this.health = health;
@@ -142,6 +145,4 @@ public class HealthSystem
         maxHealth = 100;
         maxArmor = 100;
     }
-
-
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
@@ -11,7 +12,7 @@ public class Player : MonoBehaviour
     public CharacterBase characterBase;
     public WeaponController weaponController;
 
-    public void Setup(Vector3 position)
+    public void Setup(Vector2 position)
     {
         if (isInit)
             return;
@@ -19,7 +20,7 @@ public class Player : MonoBehaviour
         Setup(GetComponent<CharacterBase>(), GetComponent<WeaponController>(), position);
     }
 
-    public void Setup(CharacterBase characterBase, WeaponController weaponController, Vector3 position)
+    public void Setup(CharacterBase characterBase, WeaponController weaponController, Vector2 position)
     {
         if (isInit)
             return;
@@ -32,7 +33,7 @@ public class Player : MonoBehaviour
         this.weaponController = weaponController;
         weaponController.Setup();
 
-        transform.position = position;
+        characterBase.MoveToPosition(position, true);
         isInit = true;
     }
 

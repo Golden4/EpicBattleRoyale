@@ -38,6 +38,7 @@ public class MapsController : MonoBehaviour
     void Awake()
     {
         Ins = this;
+
     }
 
     void Start()
@@ -51,7 +52,6 @@ public class MapsController : MonoBehaviour
                 curMaps[maps[i, j].coord] = SpawnMap(maps[i, j]);
             }
         }
-
     }
 
     void GenerateMap()
@@ -323,7 +323,6 @@ public class MapsController : MonoBehaviour
 
     }
 
-
     public event Action<CharacterBase, HouseDoor> OnEnterHouseEvent;
 
     void EnterHouse(CharacterBase characterBase, HouseDoor house)
@@ -466,6 +465,16 @@ public class MapsController : MonoBehaviour
         }
 
         return spawnDirection;
+    }
+
+    public Vector2 GetValidRandomSpawnPoint(Vector2Int mapCoords)
+    {
+        Vector2 pos = Vector2.zero;
+
+        pos.x = UnityEngine.Random.Range(GetMapData(GetMapInfo(mapCoords).mapType).worldEndPoints.x, GetMapData(GetMapInfo(mapCoords).mapType).worldEndPoints.y);
+
+        pos.y = UnityEngine.Random.Range(GetMapData(GetMapInfo(mapCoords).mapType).worldUpDownEndPoints.x, GetMapData(GetMapInfo(mapCoords).mapType).worldUpDownEndPoints.y);
+        return pos;
     }
 
     public enum HouseType

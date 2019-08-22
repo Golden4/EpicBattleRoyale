@@ -36,16 +36,16 @@ public class Enemy : MonoBehaviour
         curEnemyState = EnemyState.Waiting;
     }
 
-    public void Setup(Vector3 position)
+    public void Setup(Vector2 position)
     {
         Setup(GetComponent<CharacterBase>(), GetComponent<WeaponController>(), position);
     }
 
-    public void Setup(CharacterBase characterBase, WeaponController weaponController, Vector3 position)
+    public void Setup(CharacterBase characterBase, WeaponController weaponController, Vector2 position)
     {
         this.characterBase = characterBase;
         this.weaponController = weaponController;
-        transform.position = position;
+        characterBase.MoveToPosition(position, true);
         characterBase.maxSpeed -= Vector2.one * .5f;
         characterBase.OnDie += OnDie;
         characterBase.OnHittedEvent += OnHitted;
@@ -61,19 +61,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnDie(object obj, EventArgs args)
+    void OnDie(CharacterBase characterBase)
     {
 
     }
 
     public bool FindClosestTargetItem()
     {
-        ItemPickUp closeItemPickUp = World.Ins.GetClosestItem(transform.position);
+        ItemPickUp closeItemPickUp = World.Ins.GetClosestItem(characterBase.mapCoords, characterBase.worldPosition);
 
         if (closeItemPickUp == null)
             return false;
 
-        float closeItemDistance = Vector3.Distance(closeItemPickUp.transform.position, transform.position);
+        float closeItemDistance = Vector2.Distance(closeItemPickUp.worldPosition, characterBase.worldPosition);
 
         if (closeItemDistance < targetInRangeDistance)
         {
@@ -86,7 +86,7 @@ public class Enemy : MonoBehaviour
 
     public bool FindClosestTargetCharacter()
     {
-        CharacterBase closeCharacter = World.Ins.GetClosestCharacter(characterBase.worldPosition, characterBase);
+        CharacterBase closeCharacter = World.Ins.GetClosestCharacter(characterBase.mapCoords, characterBase.worldPosition, characterBase);
 
         if (closeCharacter == null)
             return false;

@@ -201,8 +201,8 @@ MonoBehaviour:
   _gradientMode: 1
   _gradientDir: 3
   _overwriteAllColor: 0
-  _vertex1: {r: 0.3207547, g: 0.15162933, b: 0, a: 1}
-  _vertex2: {r: 0, g: 0, b: 0, a: 1}
+  _vertex1: {r: 0.047169805, g: 0.047169805, b: 0.047169805, a: 1}
+  _vertex2: {r: 0.18867922, g: 0.03197953, b: 0, a: 1}
 --- !u!223 &7872395677189721193
 Canvas:
   m_ObjectHideFlags: 0
@@ -404,37 +404,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gradientType: 0
-  _blendMode: 0
+  _blendMode: 2
   _offset: 0
   _effectGradient:
     serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0, a: 1}
-    key1: {r: 0.27647075, g: 0.27647075, b: 0.27647075, a: 1}
-    key2: {r: 1, g: 0.6307739, b: 0, a: 1}
-    key3: {r: 0.007352948, g: 0.007352948, b: 0.007352948, a: 1}
-    key4: {r: 1, g: 1, b: 1, a: 0}
+    key0: {r: 0.084905684, g: 0.084905684, b: 0.084905684, a: 1}
+    key1: {r: 0.8301887, g: 0.17251068, b: 0, a: 1}
+    key2: {r: 1, g: 1, b: 1, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 4819
-    ctime2: 36044
-    ctime3: 60331
-    ctime4: 65535
+    ctime1: 33924
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
     ctime5: 0
     ctime6: 0
     ctime7: 0
     atime0: 0
-    atime1: 18119
-    atime2: 50693
-    atime3: 65535
+    atime1: 65535
+    atime2: 0
+    atime3: 0
     atime4: 0
     atime5: 0
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 5
-    m_NumAlphaKeys: 4
+    m_NumColorKeys: 3
+    m_NumAlphaKeys: 2
 --- !u!1 &7872395678492267520
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,8 +549,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ff5dfa9f93fe3d4ba9aff3bb70f5738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DestroyWhenClosed: 1
-  DisableMenusUnderneath: 1
   loadingText: {fileID: 7872395678352851023}
   loadingBar: {fileID: 7872395677708936120}
 --- !u!1 &7872395678769831027

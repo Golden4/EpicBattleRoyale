@@ -38,15 +38,23 @@ public class CharacterBase : EntityBase
 
     float curJumpPos;
     float curJumpVelocity;
-
-    public event Action<CharacterBase, Weapon, int, HitBox.HitBoxType> OnHittedEvent;
-    public event EventHandler OnDie;
-
     List<Interactable> interactableObjects = new List<Interactable>();
+
+    #region Stats
+    public int killsCount;
+    #endregion
+
+    #region Events
+    public event Action<CharacterBase, Weapon, int, HitBox.HitBoxType> OnHittedEvent;
+    public event Action<CharacterBase> OnDie;
+
+    public event Action<CharacterBase, CharacterBase, Weapon> OnKill;
+    public static event Action<CharacterBase, CharacterBase, Weapon> OnKillStatic;
 
     public event Action<Interactable> OnCanInteractEvent;
     public event Action<Interactable> OnCantInteractEvent;
     public event Action<Interactable> OnInteractEvent;
+    #endregion
 
     void Awake()
     {
@@ -189,7 +197,7 @@ public class CharacterBase : EntityBase
          });
 
         if (OnDie != null)
-            OnDie(this, EventArgs.Empty);
+            OnDie(this);
     }
 
     // IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
@@ -300,19 +308,44 @@ public class CharacterBase : EntityBase
 
     float hitCooldown;
 
-    public void OnHitted(CharacterBase hitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
+    public void TakeHit(CharacterBase givedHitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
     {
         damage = Mathf.RoundToInt((float)damage * HitBox.GetDamagePersent(hitBoxType));
+
         healthSystem.Damage(damage);
 
         LerpCharacter();
 
         hitCooldown = .3f;
 
-        SpawnDamagePopUpText(hitCharacter, hitWeapon, damage);
+        SpawnDamagePopUpText(givedHitCharacter, hitWeapon, damage);
 
         if (OnHittedEvent != null)
-            OnHittedEvent(hitCharacter, hitWeapon, damage, hitBoxType);
+            OnHittedEvent(givedHitCharacter, hitWeapon, damage, hitBoxType);
+    }
+
+    public void GiveHit(CharacterBase takeHitCharacter, Weapon weapon, int damage, HitBox.HitBoxType hitBoxType)
+    {
+        if (takeHitCharacter.IsDead())
+        {
+            OnKillCharacter(takeHitCharacter, weapon);
+        }
+    }
+
+    public void OnKillCharacter(CharacterBase killedCharacter, Weapon weapon)
+    {
+
+        killsCount++;
+
+        if (OnKill != null)
+        {
+            OnKill(this, killedCharacter, weapon);
+        }
+
+        if (OnKillStatic != null)
+        {
+            OnKillStatic(this, killedCharacter, weapon);
+        }
     }
 
     void SpawnDamagePopUpText(CharacterBase hitCharacter, Weapon hitWeapon, int damage)

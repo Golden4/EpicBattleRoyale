@@ -143,6 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MenuScreens:
   - {fileID: 1547595454994600351, guid: 4c4dbd0178798bb418fadd5a67dcc538, type: 3}
+  - {fileID: 1188942619580068331, guid: bf1692df322e9a1479eff0a06f55264e, type: 3}
   StartScreen: 0
 --- !u!4 &455467476
 Transform:
@@ -265,8 +266,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1209955566}
-  - component: {fileID: 1209955565}
   - component: {fileID: 1209955567}
+  - component: {fileID: 1209955568}
+  - component: {fileID: 1209955565}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -292,7 +294,7 @@ MonoBehaviour:
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
-    worldEndPoints: {x: -20, y: 20}
+    worldEndPoints: {x: -10, y: 10}
     worldUpDownEndPoints: {x: -5, y: -2}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 1
@@ -300,7 +302,7 @@ MonoBehaviour:
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
-    worldEndPoints: {x: -20, y: 20}
+    worldEndPoints: {x: -10, y: 10}
     worldUpDownEndPoints: {x: -5, y: -2}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 2
@@ -308,7 +310,7 @@ MonoBehaviour:
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
-    worldEndPoints: {x: -20, y: 20}
+    worldEndPoints: {x: -10, y: 10}
     worldUpDownEndPoints: {x: -5, y: -2}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 3
@@ -316,7 +318,7 @@ MonoBehaviour:
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
-    worldEndPoints: {x: -20, y: 20}
+    worldEndPoints: {x: -10, y: 10}
     worldUpDownEndPoints: {x: -5, y: -2}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   - houseType: 4
@@ -324,7 +326,7 @@ MonoBehaviour:
       type: 3}
     pfInnerHouse: {fileID: 1551194918440886258, guid: 3b805c012c87d3c4398cd3ba0e3791bc,
       type: 3}
-    worldEndPoints: {x: -20, y: 20}
+    worldEndPoints: {x: -10, y: 10}
     worldUpDownEndPoints: {x: -5, y: -2}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   pfMaps:
@@ -366,6 +368,18 @@ MonoBehaviour:
   itemsPickUp: []
   player: {fileID: 0}
   allCharacters: []
+--- !u!114 &1209955568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1209955564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50841ca1ada5a7043986b4eb4d630af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1525223802
 GameObject:
   m_ObjectHideFlags: 0

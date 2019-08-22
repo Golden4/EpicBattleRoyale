@@ -8,8 +8,10 @@ public class World : MonoBehaviour
     public static World Ins;
     public List<ItemPickUp> itemsPickUp = new List<ItemPickUp>();
     public Player player;
+
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
     public Dictionary<Vector2Int, List<EntityBase>> entities = new Dictionary<Vector2Int, List<EntityBase>>();
+
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
 
@@ -21,12 +23,23 @@ public class World : MonoBehaviour
     void Start()
     {
         SpawnCharacterPlayer(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-        SpawnCharacterEnemy(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
-        SpawnCharacterEnemy(Vector2Int.right, GameAssets.CharacterList.Soldier, new Vector3(-10, -5f));
+
+        int spawnedEnemyCount = 0;
+
+        while (spawnedEnemyCount < GameController.CHARACTERS_COUNT_MAX)
+        {
+            Vector2Int mapCoords = new Vector2Int(UnityEngine.Random.Range(0, MapsController.Ins.mapSize), UnityEngine.Random.Range(0, MapsController.Ins.mapSize));
+
+            Vector2 pos = MapsController.Ins.GetValidRandomSpawnPoint(mapCoords);
+
+            SpawnCharacterEnemy(mapCoords, GameAssets.CharacterList.Soldier, pos);
+
+            spawnedEnemyCount++;
+        }
 
     }
 
-    public Enemy SpawnCharacterEnemy(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector3 position)
+    public Enemy SpawnCharacterEnemy(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector2 position)
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
         character.transform.name = "CharacterEnemy" + allCharacters.Count;
@@ -44,6 +57,7 @@ public class World : MonoBehaviour
         allCharacters.Add(enemy.characterBase);
 
         enemy.characterBase.characterMapNavigate.ChangeMap(mapCoords);
+        enemy.characterBase.MoveToPosition(position, true);
 
         if (OnEnemySpawn != null)
         {
@@ -53,7 +67,7 @@ public class World : MonoBehaviour
         return enemy;
     }
 
-    public Player SpawnCharacterPlayer(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector3 position)
+    public Player SpawnCharacterPlayer(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector2 position)
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
         character.transform.name = "CharacterPlayer";
@@ -72,6 +86,8 @@ public class World : MonoBehaviour
         allCharacters.Add(player.characterBase);
 
         MapsController.Ins.GoToMap(player.characterBase, mapCoords, false);
+
+        player.characterBase.MoveToPosition(position, true);
 
         if (OnPlayerSpawn != null)
         {
@@ -159,7 +175,7 @@ public class World : MonoBehaviour
         return ammoItemPickUp;
     }
 
-    public ItemPickUp GetClosestItem(Vector3 position)
+    public ItemPickUp GetClosestItem(Vector2Int mapCoords, Vector3 position)
     {
         int closeItemIndex = -1;
         float closeDistance = Mathf.Infinity;
@@ -181,14 +197,14 @@ public class World : MonoBehaviour
         }
     }
 
-    public CharacterBase GetClosestCharacter(Vector2 position, CharacterBase cbExclude)
+    public CharacterBase GetClosestCharacter(Vector2Int mapCoords, Vector2 position, CharacterBase cbExclude)
     {
         int closeCharacterIndex = -1;
         float closeDistance = Mathf.Infinity;
 
         for (int i = 0; i < allCharacters.Count; i++)
         {
-            if (cbExclude == allCharacters[i] || allCharacters[i].IsDead())
+            if (cbExclude == allCharacters[i] || allCharacters[i].IsDead() || allCharacters[i].mapCoords != mapCoords)
                 continue;
 
             float distance = Vector2.Distance((Vector2)allCharacters[i].worldPosition, position);

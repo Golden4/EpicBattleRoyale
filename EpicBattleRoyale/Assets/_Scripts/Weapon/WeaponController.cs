@@ -412,7 +412,7 @@ public class WeaponController : MonoBehaviour
         return -1;
     }
 
-    void OnDie(object obj, EventArgs args)
+    void OnDie(CharacterBase characterBase)
     {
         for (int i = 0; i < weaponsInInventory.Length; i++)
         {

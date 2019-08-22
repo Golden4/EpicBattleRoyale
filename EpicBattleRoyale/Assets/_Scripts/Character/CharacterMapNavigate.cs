@@ -22,7 +22,7 @@ public class CharacterMapNavigate : MonoBehaviour
         ChangeMap(characterBase.mapCoords + MapsController.directions[(int)direction], direction);
     }
 
-    public void ChangeMap(Vector2Int targetMapCoords, Direction direction = Direction.None)
+    public void ChangeMap(Vector2Int targetMapCoords, Direction direction = Direction.None, Vector2 postition = default)
     {
         int index = -1;
 
@@ -39,12 +39,12 @@ public class CharacterMapNavigate : MonoBehaviour
             if (index == 1)
             {
                 isFacingRight = false;
-                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 2, characterBase.worldPosition.y);
+                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().y - 1, characterBase.worldPosition.y);
             }
 
             if (index == 0)
             {
-                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 2, characterBase.worldPosition.y);
+                pos = new Vector3(MapsController.Ins.GetCurrentWorldEndPoints().x + 1, characterBase.worldPosition.y);
             }
 
             if (index == 2)
@@ -57,7 +57,10 @@ public class CharacterMapNavigate : MonoBehaviour
         else
         {
             //road center
-            characterBase.MoveToPosition(Vector2.up * MapsController.Ins.GetCurrentVerticalCenterPoint(), true);
+            if (postition == default)
+                characterBase.MoveToPosition(Vector2.up * MapsController.Ins.GetCurrentVerticalCenterPoint(), true);
+
+            else characterBase.MoveToPosition(postition, true);
         }
 
 
@@ -84,7 +87,7 @@ public class CharacterMapNavigate : MonoBehaviour
         {
             if (houseInfo != null)
             {
-                Vector3 pos = new Vector3(MapsController.Ins.GetHouseData(houseInfo.houseType).worldEndPoints.x + 2, -4);
+                Vector3 pos = new Vector3(MapsController.Ins.GetHouseData(houseInfo.houseType).worldEndPoints.x + 1, -4);
 
                 characterBase.MoveToPosition(pos, true);
                 characterBase.ClearInteractableObjects();
