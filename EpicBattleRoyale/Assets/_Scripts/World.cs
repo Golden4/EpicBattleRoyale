@@ -14,10 +14,11 @@ public class World : MonoBehaviour
 
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
-
+    RandomNameGen.RandomName names;
     void Awake()
     {
         Ins = this;
+        names = new RandomNameGen.RandomName(new System.Random());
     }
 
     void Start()
@@ -26,13 +27,13 @@ public class World : MonoBehaviour
 
         int spawnedEnemyCount = 0;
 
-        while (spawnedEnemyCount < GameController.CHARACTERS_COUNT_MAX)
+        while (spawnedEnemyCount < GameController.CHARACTERS_COUNT_MAX - 1)
         {
             Vector2Int mapCoords = new Vector2Int(UnityEngine.Random.Range(0, MapsController.Ins.mapSize), UnityEngine.Random.Range(0, MapsController.Ins.mapSize));
 
             Vector2 pos = MapsController.Ins.GetValidRandomSpawnPoint(mapCoords);
 
-            SpawnCharacterEnemy(mapCoords, GameAssets.CharacterList.Soldier, pos);
+            SpawnCharacterEnemy(mapCoords, GameAssets.CharacterList.Soldier, pos).weaponController.GiveWeapon((GameAssets.WeaponsList)UnityEngine.Random.Range(0, 6));
 
             spawnedEnemyCount++;
         }
@@ -42,7 +43,7 @@ public class World : MonoBehaviour
     public Enemy SpawnCharacterEnemy(Vector2Int mapCoords, GameAssets.CharacterList characterName, Vector2 position)
     {
         GameObject character = Instantiate<GameObject>(GameAssets.Get.GetCharacter(characterName).gameObject);
-        character.transform.name = "CharacterEnemy" + allCharacters.Count;
+        character.transform.name = names.Generate(RandomNameGen.Sex.Male, 0, true);// "CharacterEnemy" + allCharacters.Count;
 
         foreach (Component item in character.GetComponents<Component>())
         {

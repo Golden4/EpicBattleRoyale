@@ -18,7 +18,7 @@ public class KillsListUI : MonoBehaviour
 
         goKill.transform.DOScale(Vector3.one, .3f).ChangeStartValue(Vector3.zero);
 
-        DOVirtual.DelayedCall(5f, delegate
+        Utility.Invoke(goKill, 8f, delegate
         {
             if (goKill != null)
                 RemoveKillFromList(goKill);
@@ -41,7 +41,7 @@ public class KillsListUI : MonoBehaviour
         else
         {
             imageGO = image;
-            killsList.Remove(image);
+            killsList.Remove(imageGO);
         }
 
         imageGO.transform.DOScale(Vector3.zero, .3f).OnComplete(delegate
@@ -70,8 +70,9 @@ public class KillsListUI : MonoBehaviour
         {
             name2.color = Color.yellow;
         }
-
-        goKill.transform.GetChild(1).GetComponent<Image>().sprite = GameAssets.Get.GetWeapon(weaponName).sprite;
+        Image weaponImage = goKill.transform.GetChild(1).GetComponent<Image>();
+        weaponImage.material.SetColor("_FillColor", Color.white);
+        weaponImage.sprite = GameAssets.Get.GetWeapon(weaponName).sprite;
         goKill.transform.SetAsFirstSibling();
         return goKill.GetComponent<Image>();
     }

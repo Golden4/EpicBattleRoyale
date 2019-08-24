@@ -32,8 +32,8 @@ public class MobileInputsUI : MonoBehaviour
         HideCanEnterDoorBtn();
         HideCanGoMapBtn();
         wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
-        cb.OnCanInteractEvent += OnCanInteract;
-        cb.OnCantInteractEvent += OnCantInteract;
+        cb.characterInteractable.OnCanInteractEvent += OnCanInteract;
+        cb.characterInteractable.OnCantInteractEvent += OnCantInteract;
     }
 
     void Update()

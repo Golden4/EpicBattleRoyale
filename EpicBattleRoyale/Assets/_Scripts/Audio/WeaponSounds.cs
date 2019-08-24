@@ -9,6 +9,9 @@ public class WeaponSounds : MonoBehaviour
     void Reload(int num)
     {
         if (reloadSounds.Length > num)
-            AudioManager.PlaySound(reloadSounds[num]);
+        {
+            AudioManager.PlaySoundAtObject(reloadSounds[num], gameObject);
+        }
+        // AudioManager.PlaySound(reloadSounds[num]);
     }
 }

@@ -23,6 +23,15 @@ public class MeleeWeapon : Weapon
                     curState = State.Beating;
                     StartCoroutine("BeatCoroutine");
                 }
+                else
+                {
+                    if (wc.weaponAnimator.enabled)
+                    {
+                        wc.weaponAnimator.enabled = false;
+                    }
+                }
+                break;
+            case State.Beating:
                 break;
             default:
                 break;
@@ -49,7 +58,7 @@ public class MeleeWeapon : Weapon
 
     public void Beat(bool isFacingRight)
     {
-        HitWithRaycast(Vector3.right * firingRange * ((isFacingRight) ? 1 : -1), firingRange);
+        HitWithRaycast(Vector3.right * firingRange * ((isFacingRight) ? 1 : -1) + Vector3.up * Random.Range(-.5f, .5f), firingRange);
     }
 
     bool CanBeat()
@@ -66,14 +75,7 @@ public class MeleeWeapon : Weapon
     {
         base.OnWeaponSwitch(sender, e);
 
-        if (isActive)
-        {
-            wc.weaponAnimator.enabled = false;
-        }
-        else
-        {
-            wc.weaponAnimator.enabled = true;
-        }
+        wc.weaponAnimator.enabled = true;
 
         if (curState == State.Beating)
         {

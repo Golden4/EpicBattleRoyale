@@ -13,7 +13,6 @@ public class Camera2DFollow : MonoBehaviour
     // Use this for initialization
     private void Awake()
     {
-        //m_LastTargetPosition = target.transform.position;
         World.OnPlayerSpawn += World_OnPlayerSpawn;
     }
 

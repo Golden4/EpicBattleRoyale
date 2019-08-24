@@ -11,6 +11,7 @@ public class WeaponSlotUI : MonoBehaviour
     public bool isActive;
     public Button btn;
     BulletSystem bulletSystem;
+    Material fillableMaterial;
 
     void BulletSystem_OnBulletsChange(object sender, System.EventArgs e)
     {
@@ -19,11 +20,14 @@ public class WeaponSlotUI : MonoBehaviour
 
     public void Setup(bool enabled, bool isActive = false, System.Action onClick = null, Sprite sprite = null, BulletSystem bulletSystem = null)
     {
+        if (fillableMaterial == null)
+            fillableMaterial = Resources.Load<Material>("Materials/FillableSpriteMaterial");
+
         if (!enabled)
         {
             weaponSpriteImage.sprite = defaultSprite;
 
-            SetSpritesColor(.1f);
+            SetSpritesAlpha(.1f);
 
             if (bulletsText != null)
             {
@@ -35,6 +39,15 @@ public class WeaponSlotUI : MonoBehaviour
         else
         {
             gameObject.SetActive(true);
+        }
+
+
+        if (sprite != null && weaponSpriteImage != null)
+        {
+            weaponSpriteImage.sprite = sprite;
+            Material mat = new Material(fillableMaterial);
+            weaponSpriteImage.material = mat;
+            weaponSpriteImage.material.SetFloat("_FillAlpha", 1);
         }
 
         if (bulletSystem != null)
@@ -52,27 +65,23 @@ public class WeaponSlotUI : MonoBehaviour
             }
         }
 
-        if (sprite != null && weaponSpriteImage != null)
-        {
-            weaponSpriteImage.sprite = sprite;
-        }
 
         btn.onClick.RemoveAllListeners();
 
         if (!isActive)
         {
-            SetSpritesColor(.5f);
+            SetSpritesAlpha(.5f);
 
             btn.onClick.AddListener(() => onClick());
 
         }
         else
         {
-            SetSpritesColor(1);
+            SetSpritesAlpha(1);
         }
     }
 
-    void SetSpritesColor(float alpha)
+    void SetSpritesAlpha(float alpha)
     {
         Color color = weaponSpriteImage.color;
         color.a = alpha;
@@ -89,10 +98,17 @@ public class WeaponSlotUI : MonoBehaviour
     public void UpdateBullets(int bullets = -1, int bulletsStock = -1)
     {
         bulletsText.gameObject.SetActive(true);
+
         if ((bullets + bulletsStock) == 0)
+        {
             bulletsText.color = Color.red;
+            weaponSpriteImage.material.SetColor("_FillColor", Color.red);
+        }
         else
+        {
             bulletsText.color = Color.white;
+            weaponSpriteImage.material.SetColor("_FillColor", Color.white);
+        }
         bulletsText.text = "<size=10>" + bullets + "</size>/" + bulletsStock;
     }
 

@@ -16,6 +16,27 @@ public class EntityBase : MonoBehaviour
 
     public void Init()
     {
+        UpdatePivotOffsetFromCollider();
+    }
+
+    protected virtual void Start()
+    {
+        Init();
+        InitRenederers();
+    }
+
+    protected void InitRenederers()
+    {
+        Renderer[] renderersComps = GetComponentsInChildren<Renderer>(true);
+
+        for (int i = 0; i < renderersComps.Length; i++)
+        {
+            AddRenderer(renderersComps[i]);
+        }
+    }
+
+    void UpdatePivotOffsetFromCollider()
+    {
         Collider2D collider = GetComponentInChildren<Collider2D>();
 
         if (collider != null)
@@ -45,22 +66,6 @@ public class EntityBase : MonoBehaviour
                     }
                 }
             }
-        }
-    }
-
-    protected virtual void Start()
-    {
-        Init();
-        InitRenederers();
-    }
-
-    protected void InitRenederers()
-    {
-        Renderer[] renderersComps = GetComponentsInChildren<Renderer>(true);
-
-        for (int i = 0; i < renderersComps.Length; i++)
-        {
-            AddRenderer(renderersComps[i]);
         }
     }
 

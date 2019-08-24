@@ -141,10 +141,6 @@ public class SkinnedMeshCombiner : MonoBehaviour
         transform.rotation = l_rotation;
         transform.localScale = l_scale;
 
-    }
-
-    void OnWillRenderObject()
-    {
         if (cachedSkinnedRenderer)
         {
             if (materialPropertyBlock != null)
@@ -154,5 +150,6 @@ public class SkinnedMeshCombiner : MonoBehaviour
                 cachedSkinnedRenderer.SetPropertyBlock(materialPropertyBlock);
             }
         }
+
     }
 }

@@ -118,8 +118,12 @@ public class MapsController : MonoBehaviour
 
         for (int i = (int)GetMapData(map.mapType).worldEndPoints.x + 10; i < (int)GetMapData(map.mapType).worldEndPoints.y - 10; i = i + 3)
         {
-            float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
-            itemsSpawnPoints.Add(new Vector3(i, yPos));
+
+            if (UnityEngine.Random.Range(0, 10) == 0)
+            {
+                float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
+                itemsSpawnPoints.Add(new Vector3(i, yPos));
+            }
         }
 
         SpawnItems(map, itemsSpawnPoints, mapGo.transform);
@@ -151,7 +155,7 @@ public class MapsController : MonoBehaviour
         door.doorType = HouseDoor.HouseDoorType.Inner;
         door.mapCoords = map.coord;
 
-        for (int i = (int)houseData.worldEndPoints.x + 10; i < (int)houseData.worldEndPoints.y - 10; i = i + 3)
+        for (int i = (int)houseData.worldEndPoints.x + 3; i < (int)houseData.worldEndPoints.y - 3; i = i + 3)
         {
             float yPos = UnityEngine.Random.Range(houseData.worldUpDownEndPoints.x, houseData.worldUpDownEndPoints.y);
             itemsSpawnPoints.Add(new Vector3(i, yPos));
@@ -168,54 +172,52 @@ public class MapsController : MonoBehaviour
         //check spawn point
         for (int i = 0; i < itemsSpawnPoints.Count; i++)
         {
-            if (UnityEngine.Random.Range(0, 10) == 0)
+            int randNum = UnityEngine.Random.Range(0, 101);
+
+            //spawn weapon with ammo
+            if (randNum < 30)
             {
-                int randNum = UnityEngine.Random.Range(0, 101);
+                WeaponItemPickUp wa = World.Ins.SpawnItemPickUpWeapon(GameAssets.WeaponsList.Fists, itemsSpawnPoints[i], true);
+                wa.transform.SetParent(parent, false);
+                AutomaticWeapon aw = GameAssets.Get.GetWeapon(wa.weaponName) as AutomaticWeapon;
+                wa.mapCoords = map.coord;
 
-                //spawn weapon with ammo
-                if (randNum < 30)
+                if (aw != null)
                 {
-                    WeaponItemPickUp wa = World.Ins.SpawnItemPickUpWeapon(GameAssets.WeaponsList.Fists, itemsSpawnPoints[i], true);
-                    wa.transform.SetParent(parent, false);
-                    AutomaticWeapon aw = GameAssets.Get.GetWeapon(wa.weaponName) as AutomaticWeapon;
-                    wa.mapCoords = map.coord;
-
-                    if (aw != null)
+                    int itemPickUpAmmoAmount = UnityEngine.Random.Range(1, 5);
+                    for (int k = 0; k < itemPickUpAmmoAmount; k++)
                     {
-                        int itemPickUpAmmoAmount = UnityEngine.Random.Range(1, 5);
-                        for (int k = 0; k < itemPickUpAmmoAmount; k++)
-                        {
-                            AmmoItemPickUp ammo = World.Ins.SpawnItemPickUpAmmo(aw.bulletSystem.ammoType, itemsSpawnPoints[i] + (Vector3)UnityEngine.Random.insideUnitCircle * .5f);
-                            ammo.transform.SetParent(parent, false);
-                            ammo.mapCoords = map.coord;
-                        }
+                        AmmoItemPickUp ammo = World.Ins.SpawnItemPickUpAmmo(aw.bulletSystem.ammoType, itemsSpawnPoints[i] + (Vector3)UnityEngine.Random.insideUnitCircle * .5f);
+                        ammo.transform.SetParent(parent, false);
+                        ammo.mapCoords = map.coord;
                     }
                 }
-                else
-                //random Armor spawn
-                if (randNum - 30 < 20)
-                {
-                    ArmorItemPickUp newItem = World.Ins.SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorList.Big, itemsSpawnPoints[i], true);
-                    newItem.transform.SetParent(parent, false);
-                    newItem.mapCoords = map.coord;
-                }
-                else
-                //random Health spawn
-                if (randNum - 50 < 20)
-                {
-                    HealthItemPickUp newItem = World.Ins.SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthList.Big, itemsSpawnPoints[i], true);
-                    newItem.transform.SetParent(parent, false);
-                    newItem.mapCoords = map.coord;
-                }
-                else
-                //random Ammo spawn
-                if (randNum - 70 < 20)
-                {
-                    AmmoItemPickUp newItem = World.Ins.SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList.AutomaticWeapon, itemsSpawnPoints[i], true);
-                    newItem.transform.SetParent(parent, false);
-                    newItem.mapCoords = map.coord;
-                }
             }
+            else
+            //random Armor spawn
+            if (randNum - 30 < 20)
+            {
+                ArmorItemPickUp newItem = World.Ins.SpawnItemPickUpArmor(GameAssets.PickUpItemsData.ArmorList.Big, itemsSpawnPoints[i], true);
+                newItem.transform.SetParent(parent, false);
+                newItem.mapCoords = map.coord;
+            }
+            else
+            //random Health spawn
+            if (randNum - 50 < 20)
+            {
+                HealthItemPickUp newItem = World.Ins.SpawnItemPickUpHealth(GameAssets.PickUpItemsData.HealthList.Big, itemsSpawnPoints[i], true);
+                newItem.transform.SetParent(parent, false);
+                newItem.mapCoords = map.coord;
+            }
+            else
+            //random Ammo spawn
+            if (randNum - 70 < 20)
+            {
+                AmmoItemPickUp newItem = World.Ins.SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList.AutomaticWeapon, itemsSpawnPoints[i], true);
+                newItem.transform.SetParent(parent, false);
+                newItem.mapCoords = map.coord;
+            }
+
         }
     }
 

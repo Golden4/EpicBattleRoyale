@@ -35,10 +35,10 @@ public class CharacterBase : EntityBase
     public HealthSystem healthSystem;
     public InventorySystem inventorySystem;
     public CharacterMapNavigate characterMapNavigate;
+    public CharacterInteractable characterInteractable;
 
     float curJumpPos;
     float curJumpVelocity;
-    List<Interactable> interactableObjects = new List<Interactable>();
 
     #region Stats
     public int killsCount;
@@ -50,10 +50,8 @@ public class CharacterBase : EntityBase
 
     public event Action<CharacterBase, CharacterBase, Weapon> OnKill;
     public static event Action<CharacterBase, CharacterBase, Weapon> OnKillStatic;
+    public static event Action<CharacterBase> OnDieStatic;
 
-    public event Action<Interactable> OnCanInteractEvent;
-    public event Action<Interactable> OnCantInteractEvent;
-    public event Action<Interactable> OnInteractEvent;
     #endregion
 
     void Awake()
@@ -74,6 +72,11 @@ public class CharacterBase : EntityBase
         InitRenederers();
     }
 
+    void Update()
+    {
+        hitCooldown -= Time.deltaTime;
+    }
+
     public void Setup()
     {
         if (isInit)
@@ -89,6 +92,7 @@ public class CharacterBase : EntityBase
 
         inventorySystem = new InventorySystem(this);
         characterMapNavigate = GetComponent<CharacterMapNavigate>();
+        characterInteractable = GetComponentInChildren<CharacterInteractable>();
 
         foreach (var item in renderers)
         {
@@ -98,11 +102,6 @@ public class CharacterBase : EntityBase
         isInit = true;
     }
     float lerpSpeed = .1f;
-
-    void Update()
-    {
-        hitCooldown -= Time.deltaTime;
-    }
 
     public void LerpCharacter()
     {
@@ -189,15 +188,18 @@ public class CharacterBase : EntityBase
         isDead = true;
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
+        World.Ins.allCharacters.Remove(this);
 
         FadeCharacter(delegate
          {
-             World.Ins.allCharacters.Remove(this);
              Destroy(gameObject);
          });
 
         if (OnDie != null)
             OnDie(this);
+
+        if (OnDieStatic != null)
+            OnDieStatic(this);
     }
 
     // IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
@@ -376,73 +378,6 @@ public class CharacterBase : EntityBase
         curJumpVelocity = 0;
         curJumpPos = 0;
         Flip(isFacingRight);
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        Interactable interactable = col.GetComponent<Interactable>();
-        if (interactable != null)
-        {
-            if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
-            {
-                interactableObjects.Add(interactable);
-
-                if (OnCanInteractEvent != null)
-                    OnCanInteractEvent(interactable);
-            }
-        }
-    }
-
-    void OnTriggerStay2D(Collider2D col)
-    {
-        Interactable interactable = col.GetComponent<Interactable>();
-
-        if (interactable != null)
-        {
-            if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
-            {
-                interactableObjects.Add(interactable);
-
-                if (OnCanInteractEvent != null)
-                    OnCanInteractEvent(interactable);
-            }
-
-            if (interactableObjects.Contains(interactable) && !interactable.CanInteract(this))
-            {
-                interactable.AwayInteract(this);
-                interactableObjects.Remove(interactable);
-
-                if (OnCantInteractEvent != null)
-                    OnCantInteractEvent(interactable);
-            }
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-        Interactable interactable = col.GetComponent<Interactable>();
-
-        if (interactable != null)
-            if (interactableObjects.Contains(interactable))
-            {
-                interactable.AwayInteract(this);
-                interactableObjects.Remove(interactable);
-
-                if (OnCantInteractEvent != null)
-                    OnCantInteractEvent(interactable);
-            }
-    }
-
-    public void ClearInteractableObjects()
-    {
-        for (int i = 0; i < interactableObjects.Count; i++)
-        {
-            interactableObjects[i].AwayInteract(this);
-
-            if (OnCantInteractEvent != null)
-                OnCantInteractEvent(interactableObjects[i]);
-        }
-        interactableObjects.Clear();
     }
 
     public void Enable()

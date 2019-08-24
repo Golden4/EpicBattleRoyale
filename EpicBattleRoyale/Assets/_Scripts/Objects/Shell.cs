@@ -24,8 +24,15 @@ public class Shell : MonoBehaviour
         rb.AddTorque(rotForce * curForce / 25);
 
         Shell shell = newShell.GetComponent<Shell>();
-        DG.Tweening.DOVirtual.DelayedCall(.6f, delegate { AudioManager.PlaySound(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)]); });
+
+        DG.Tweening.DOVirtual.DelayedCall(.6f, delegate
+        {
+            AudioManager.PlaySoundAtObject(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)], shell.gameObject);
+
+            //AudioManager.PlaySound(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)]); 
+        });
         Destroy(newShell, 1);
+
     }
 
     static Vector3 GetShellSize(Weapon.WeaponType type)

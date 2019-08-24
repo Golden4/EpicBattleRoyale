@@ -67,7 +67,7 @@ public class CharacterMapNavigate : MonoBehaviour
         characterBase.mapCoords = targetMapCoords;
         houseIndex = -1;
         state = MapsController.State.Map;
-        characterBase.ClearInteractableObjects();
+        characterBase.characterInteractable.ClearInteractableObjects();
 
 
         if (MapsController.Ins.curMapCoords != this.characterBase.mapCoords)
@@ -90,7 +90,7 @@ public class CharacterMapNavigate : MonoBehaviour
                 Vector3 pos = new Vector3(MapsController.Ins.GetHouseData(houseInfo.houseType).worldEndPoints.x + 1, -4);
 
                 characterBase.MoveToPosition(pos, true);
-                characterBase.ClearInteractableObjects();
+                characterBase.characterInteractable.ClearInteractableObjects();
 
                 houseIndex = houseInfo.houseIndex;
                 state = MapsController.State.House;
@@ -119,7 +119,7 @@ public class CharacterMapNavigate : MonoBehaviour
 
                 characterBase.MoveToPosition(pos, false);
 
-                characterBase.ClearInteractableObjects();
+                characterBase.characterInteractable.ClearInteractableObjects();
                 houseIndex = -1;
                 state = MapsController.State.Map;
 

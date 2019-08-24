@@ -27,12 +27,6 @@ public class WeaponController : MonoBehaviour
     public Slot[] slotsVisual;
 
     public State curState;
-    // public Transform weaponHandHolder;
-    // public int orderInLayerHandWeapon;
-    // public Transform weaponBackHolder;
-    // public int orderInLayerBackWeapon;
-    // public Transform pistolBackHolder;
-    // public int orderInLayerPistolWeapon;
     public float switchingWeaponTime = .5f;
     public Sound weaponSwitchSound;
     float switchingWeapon;
@@ -263,12 +257,8 @@ public class WeaponController : MonoBehaviour
 
         PlaySwitchAnimation();
 
-        /*if (GetCurrentWeapon () == null)
-			cb.isWeapon = false;
-		else
-			cb.isWeapon = GetCurrentWeapon ().GetWeaponType () != Weapon.WeaponType.Melee;*/
-
-        AudioManager.PlaySound(weaponSwitchSound);
+        AudioManager.PlaySoundAtObject(weaponSwitchSound, gameObject);
+        //AudioManager.PlaySound(weaponSwitchSound);
 
         if (OnWeaponSwitch != null)
             OnWeaponSwitch(weaponsInInventory[weaponIndex], EventArgs.Empty);
@@ -318,6 +308,16 @@ public class WeaponController : MonoBehaviour
             if (spriteRenderer != null)
                 cb.ChangeSortingOrder((Renderer)spriteRenderer, slotsVisual[2].orderInLayerWeapon);
             slotsVisual[2].isEmpty = false;
+
+        }
+        else if (slotIndex == 3)
+        {
+            weapon.transform.SetParent(slotsVisual[3].weaponHolder, false);
+
+            if (spriteRenderer != null)
+                cb.ChangeSortingOrder((Renderer)spriteRenderer, slotsVisual[3].orderInLayerWeapon);
+
+            slotsVisual[3].isEmpty = false;
         }
         else
         {
@@ -382,6 +382,7 @@ public class WeaponController : MonoBehaviour
                 }
                 break;
             case WeaponController.SlotType.Melee:
+
                 if (weaponsInInventory[3] == null)
                 {
                     return false;

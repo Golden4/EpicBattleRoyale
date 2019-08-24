@@ -93,8 +93,6 @@ public class Enemy : MonoBehaviour
 
         float closeCharacterDistance = Vector2.Distance(closeCharacter.worldPosition, characterBase.worldPosition);
 
-
-
         if (closeCharacterDistance < targetInRangeDistance)
         {
             targetCharacter = closeCharacter;
@@ -112,9 +110,9 @@ public class Enemy : MonoBehaviour
     float curWaitingTime;
     float hittedRageTime;
 
-    bool IsInRange(Transform target, float range)
+    bool IsInRange(EntityBase target, float range)
     {
-        float distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
+        float distanceToTarget = Vector2.Distance(characterBase.worldPosition, target.worldPosition);
         return (distanceToTarget < range);
     }
 
@@ -160,7 +158,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (IsInRange(targetCharacter.transform, targetInRangeDistance) || hittedRageTime > 0)
+                    if (IsInRange(targetCharacter, targetInRangeDistance) || hittedRageTime > 0)
                     {
                         hittedRageTime -= Time.fixedDeltaTime;
                         awayFromTargetTimeCur = awayFromTargetTime;
@@ -185,7 +183,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (IsInRange(targetItem.transform, targetInRangeDistance))
+                    if (IsInRange(targetItem, targetInRangeDistance))
                     {
                         curTargetState = TargetState.TargetItem;
                     }
@@ -240,12 +238,14 @@ public class Enemy : MonoBehaviour
         characterBase.moveInput.x = 0;
         weaponController.GetCurrentWeapon().firingSideInput = 0;
     }
+
     float jumpDelay;
+
     void HandleEnemyMoving()
     {
         if (curTargetState == TargetState.Finding || curTargetState == TargetState.TargetItem)
         {
-            HandleMovingToTargetPosition(targetPosition, .5f, delegate
+            HandleMovingToTargetPosition(targetPosition, new Vector2(.5f, .05f), delegate
              {
                  curEnemyState = EnemyState.Waiting;
              });
@@ -266,7 +266,7 @@ public class Enemy : MonoBehaviour
                 }
             }
 
-            HandleMovingToTargetPosition(targetCharacter.worldPosition, GetFiringDistanceForCurrentWeapon(), delegate
+            HandleMovingToTargetPosition(targetCharacter.worldPosition, new Vector2(GetFiringDistanceForCurrentWeapon(), .05f), delegate
               {
                   curEnemyState = EnemyState.Attacking;
               });
@@ -274,6 +274,7 @@ public class Enemy : MonoBehaviour
 
         weaponController.GetCurrentWeapon().firingSideInput = 0;
     }
+
     float curAttackingTime;
     void HandleEnemyAttacking()
     {
@@ -352,22 +353,29 @@ public class Enemy : MonoBehaviour
         return distanceToAttack;
     }
 
-    void HandleMovingToTargetPosition(Vector2 position, float stopDistance = .5f, Action OnReachedTargetPosition = null)
+    void HandleMovingToTargetPosition(Vector2 position, Vector2 stopDistance, Action OnReachedTargetPosition = null)
     {
         Vector2 dir = (-(Vector2)characterBase.worldPosition + position).normalized;
-        float distance = Mathf.Abs(characterBase.worldPosition.x - position.x);
+        float distanceX = Mathf.Abs(characterBase.worldPosition.x - position.x);
+        float distanceY = Mathf.Abs(characterBase.worldPosition.y - position.y);
 
-        if (distance > stopDistance)
+        Vector2 moveInput = default;
+
+        if (distanceX > stopDistance.x)
+            moveInput.x = (dir.x > 0) ? 1 : -1;
+
+        if (distanceY > stopDistance.y)
+            moveInput.y = (dir.y > 0) ? 1 : -1;
+
+        characterBase.Move(moveInput);
+
+        if (distanceY <= stopDistance.y && distanceX <= stopDistance.x)
         {
-            characterBase.Move(new Vector2(Mathf.RoundToInt(dir.x), Mathf.RoundToInt(dir.y)));
-        }
-        else
-        {
-            characterBase.Move(Vector2.zero);
             if (OnReachedTargetPosition != null)
             {
                 OnReachedTargetPosition();
             }
         }
+
     }
 }

@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
         this.characterBase = characterBase;
         characterBase.Setup();
 
+        gameObject.AddComponent<AudioListener>();
+
         this.weaponController = weaponController;
         weaponController.Setup();
 

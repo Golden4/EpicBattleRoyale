@@ -52,6 +52,8 @@ public class SceneController : SingletonResourse<SceneController>
 
         ao.allowSceneActivation = false;
 
+        DOTween.KillAll();
+
         while (ao.progress <= .89f || loadingTime <= minLoadingTime)
         {
             loadingTime += Time.deltaTime;

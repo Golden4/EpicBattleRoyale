@@ -37,7 +37,8 @@ public class GameAssets : ScriptableObject
         Beretta,
         SniperRiffle,
         ShotGun,
-        AK12
+        AK12,
+        FryingPan
     }
 
     public Weapon GetWeapon(WeaponsList weapon)

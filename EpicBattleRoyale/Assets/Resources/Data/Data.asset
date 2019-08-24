@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 8042397154463595244, guid: 7b297bf9744d7c84db585463c026a9fd, type: 3}
   - {fileID: 1458164135185642534, guid: a6974dc42b0d15544a83d594a743a5be, type: 3}
   - {fileID: 8042397154463595244, guid: dfd4e3f1bf80b0047891f932c5aa03c1, type: 3}
+  - {fileID: 8693376153587513151, guid: 7482901e8f6e4204290d9099e71bbdc9, type: 3}
   characters:
   - {fileID: 3467985088730004138, guid: 3cef86f51334e734690b1983da7f4bf1, type: 3}
   - {fileID: 1702081579081645956, guid: 96c9b75018637df4ead3389bd4dba493, type: 3}
@@ -29,6 +30,7 @@ MonoBehaviour:
     - {fileID: 3531299976100205070, guid: fd550bef75066b64fbeff7506b6c9fcc, type: 3}
     - {fileID: 3531299976100205070, guid: c0b0e556559d8e54cbf077c9238ab3e8, type: 3}
     - {fileID: 3531299976100205070, guid: d7fd1fb2e3333a04888d91a1ac8b8aaa, type: 3}
+    - {fileID: 876598837550525492, guid: 481fe40da9c6b9a4995b53b94031b6c0, type: 3}
     armorPickUpItems:
     - {fileID: 5116918898465032884, guid: 7a3aba71a88baed48ac38e2071590cec, type: 3}
     healthPickUpItems:

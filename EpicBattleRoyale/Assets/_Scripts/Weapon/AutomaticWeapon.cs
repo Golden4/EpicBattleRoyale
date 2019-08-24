@@ -176,7 +176,8 @@ public class AutomaticWeapon : Weapon
         Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
 
         muzzleFlash.Emit(1);
-        AudioManager.PlaySound(fireSound);
+        AudioManager.PlaySoundAtObject(fireSound, gameObject);
+        //AudioManager.PlaySound(fireSound);
     }
 
     protected void SpawnBullet(bool isFacingRight, Vector2 direction = default, int bulletDamage = -1)
@@ -187,7 +188,7 @@ public class AutomaticWeapon : Weapon
         Vector2 position = (Vector2)wc.cb.worldPosition + Vector2.right * (-wc.cb.worldPosition.x + muzzlePoint.transform.position.x) + Vector2.right * (isFacingRight ? 1 : -1) * .3f;
 
         float zPosition = /*-(wc.cb.worldPosition.y) */ (-wc.cb.worldPosition.y + muzzlePoint.transform.position.y);
-        bh.worldPosition = position;
+        bh.MoveTo(position, zPosition);
         // bh.MoveTo(position, zPosition);
         //bullet.transform.position = muzzlePoint.transform.position + Vector3.right * (isFacingRight ? 1 : -1) * .3f;
 

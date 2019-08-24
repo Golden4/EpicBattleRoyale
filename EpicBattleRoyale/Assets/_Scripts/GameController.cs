@@ -11,7 +11,6 @@ public class GameController : MonoBehaviour
         World.OnPlayerSpawn += World_OnPlayerSpawn;
     }
 
-
     void World_OnPlayerSpawn(Player player)
     {
         Player.Ins.characterBase.OnDie += OnPlayerDead;
@@ -24,6 +23,8 @@ public class GameController : MonoBehaviour
 
     void OnDestroy()
     {
+        World.OnPlayerSpawn -= World_OnPlayerSpawn;
+
         if (Player.Ins != null)
         {
             Player.Ins.characterBase.OnDie -= OnPlayerDead;

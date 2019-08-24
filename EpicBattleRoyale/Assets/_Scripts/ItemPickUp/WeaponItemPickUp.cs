@@ -15,8 +15,10 @@ public class WeaponItemPickUp : ItemPickUp
         if (wc != null)
         {
             Weapon weapon = wc.FindWeaponInInventory(weaponName);
+
             if (weapon == null)
             {
+                Debug.Log(GameAssets.Get.GetWeapon(weaponName));
                 if (wc.InventoryFull(GameAssets.Get.GetWeapon(weaponName).slotType))
                 {
                     if (clickedPickUp)

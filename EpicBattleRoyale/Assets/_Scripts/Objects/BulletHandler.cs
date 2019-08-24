@@ -10,9 +10,9 @@ public class BulletHandler : EntityBase
     float destroyDistance = 3;
     Vector2 direction;
     float zPosition;
+    public LayerMask hitLayers;
     public CharacterBase cb;
     public Weapon weapon;
-    public LayerMask hitLayers;
 
     void FixedUpdate()
     {
@@ -23,16 +23,16 @@ public class BulletHandler : EntityBase
             DestroyBullet();
         }
 
-        MoveTo((Vector2)worldPosition + direction * Time.fixedDeltaTime * speed, zPosition);
+        MoveTo((Vector2)worldPosition + direction * Time.fixedDeltaTime * speed, zPosition, false);
 
         RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position - (direction * bulletSize), direction, bulletSize * 2, hitLayers);
 
         if (hit.collider != null)
         {
             HitBox damagable = hit.collider.GetComponent<HitBox>();
+
             if (damagable != null)
                 OnHit(hit, damagable);
-
             else if (!hit.collider.isTrigger) DestroyBullet();
         }
     }

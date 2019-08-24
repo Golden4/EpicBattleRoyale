@@ -6,7 +6,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SoundLibrary))]
 public class AudioManager : SingletonResourse<AudioManager>
 {
-
     const int sourceCount = 10;
     AudioSource[] source = new AudioSource[sourceCount];
 
@@ -98,16 +97,13 @@ public class AudioManager : SingletonResourse<AudioManager>
             name = "sound";
         }
 
-        GameObject go = new GameObject(name, typeof(AudioSource));
+        GameObject go = new GameObject(name);
 
         go.transform.SetParent(obj.transform, false);
 
-        AudioSource source = go.GetComponent<AudioSource>();
-
-        source.clip = sound.clip;
-        source.loop = sound.loop;
-
-        source.Play();
+        AudioSource source = go.AddComponent<AudioSource>();
+        sound.PlaySound(source);
+        Destroy(go, sound.clip.length + .1f);
     }
 
 }
