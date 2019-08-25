@@ -73,7 +73,7 @@ public class MobileInputsUI : MonoBehaviour
         switch (interactable.GetInteractableType())
         {
             case Interactable.InteractableType.ItemPickUp:
-                if (characterBase.inventorySystem.canPickUpItems.Count == 0)
+                if (characterBase.characterInventory.canPickUpItems.Count == 0)
                     HidePickUpBtn();
                 break;
             case Interactable.InteractableType.HouseDoor:

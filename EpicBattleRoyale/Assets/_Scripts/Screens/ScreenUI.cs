@@ -14,6 +14,7 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     public Text killText;
     public Text infoText;
     public Text alifeAmount;
+    public Text killsAmount;
 
     public override void OnInit()
     {
@@ -21,6 +22,7 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         CharacterBase.OnKillStatic += OnKillStatic;
         CharacterBase.OnDieStatic += OnDieStatic;
         UpdateAlifeAmount(GameController.CHARACTERS_COUNT_MAX);
+        UpdateKillsAmount(0);
     }
 
     void World_OnPlayerSpawn(Player player)
@@ -32,10 +34,11 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     }
 
 
-    void OnKill(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon)
+    void OnKill(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
         ShowKilledText("Killed: " + characterBase.killsCount);
         ShowInfoText("YOU kills " + characterBaseKilled.name + " using " + weapon.weaponName);
+        UpdateKillsAmount(characterBase.killsCount);
     }
 
     void ShowInfoText(string text)
@@ -44,7 +47,7 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
         infoText.DOFade(1, .1f);
 
-        DOVirtual.DelayedCall(2f, delegate
+        DOVirtual.DelayedCall(5f, delegate
         {
             infoText.DOFade(0, .5f);
         });
@@ -58,7 +61,7 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
         killText.DOFade(1, .1f);
 
-        DOVirtual.DelayedCall(2f, delegate
+        DOVirtual.DelayedCall(5f, delegate
         {
             killText.DOFade(0, .5f);
         });
@@ -78,9 +81,9 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         }
     }
 
-    void OnKillStatic(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon)
+    void OnKillStatic(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
-        killsListUI.AddKillToList(Player.Ins.characterBase, characterBase, characterBaseKilled, weapon.weaponName);
+        killsListUI.AddKillToList(Player.Ins.characterBase, characterBase, characterBaseKilled, weapon.weaponName, hitBoxType);
     }
 
     void OnDieStatic(CharacterBase characterBase)
@@ -93,6 +96,11 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     void UpdateAlifeAmount(int count)
     {
         alifeAmount.text = string.Format("<color=white>{0}</color> <size=14>ALIFE</size>", count);
+    }
+
+    void UpdateKillsAmount(int count)
+    {
+        killsAmount.text = string.Format("<color=white>{0}</color> <size=14>KILLS</size>", count);
     }
 
     void Update()

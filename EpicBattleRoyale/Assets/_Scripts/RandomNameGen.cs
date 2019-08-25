@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace RandomNameGen
 {
@@ -38,23 +37,37 @@ namespace RandomNameGen
         {
             this.rand = rand;
 
-            string filePath = Path.Combine(UnityEngine.Application.streamingAssetsPath, "names.json");
-
+            string dataAsJson;
+            string fileName = "names.json";
             NameList loadedData = new NameList();
 
+            string filePath = Path.Combine(UnityEngine.Application.streamingAssetsPath, fileName);
+
+#if UNITY_EDITOR
             if (File.Exists(filePath))
             {
-                string jsonDataString = File.ReadAllText(filePath);
 
-                loadedData = UnityEngine.JsonUtility.FromJson<NameList>(jsonDataString);
+                dataAsJson = File.ReadAllText(filePath);
+
+#elif UNITY_ANDROID
+            UnityEngine.WWW reader = new UnityEngine.WWW (filePath);
+            while (!reader.isDone) {
+            }
+            dataAsJson = reader.text;
+#endif
+
+                loadedData = UnityEngine.JsonUtility.FromJson<NameList>(dataAsJson);
                 Male = new List<string>(loadedData.boys);
                 Female = new List<string>(loadedData.girls);
+#if UNITY_EDITOR
             }
             else
             {
-                UnityEngine.Debug.LogError("loadedData file not founded");
+                UnityEngine.Debug.LogError("Cannot find file!");
             }
+#endif
         }
+
 
         /// <summary>
         /// Returns a new random name

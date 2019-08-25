@@ -53,6 +53,7 @@ public class WeaponController : MonoBehaviour
         weaponAnimator = transform.GetChild(0).GetChild(0).GetComponentInChildren<Animator>();
         cb = GetComponent<CharacterBase>();
         weaponSounds = GetComponentInChildren<WeaponSounds>();
+        weaponSounds.weaponController = this;
         GiveWeapon(GameAssets.WeaponsList.Fists);
         cb.OnDie += OnDie;
     }
@@ -491,14 +492,4 @@ public class WeaponController : MonoBehaviour
         public int orderInLayerWeapon;
         public bool isEmpty;
     }
-
-    /*	void OnEnable ()
-	{
-		EventManager.OnClickSelectWeaponEvent += (int arg1, GameObject arg2) => switchWeapon (arg1);
-	}
-
-	void OnDisable ()
-	{
-		EventManager.OnClickSelectWeaponEvent -= (int arg1, GameObject arg2) => switchWeapon (arg1);
-	}*/
 }

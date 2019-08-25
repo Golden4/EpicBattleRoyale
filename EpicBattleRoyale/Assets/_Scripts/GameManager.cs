@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 
 public class GameManager : SingletonResourse<GameManager>
 {
@@ -13,6 +14,21 @@ public class GameManager : SingletonResourse<GameManager>
         if (Debug.isDebugBuild)
         {
             consoleDebugger = Instantiate(consoleDebugger);
+            transform.GetChild(0).gameObject.SetActive(false);
+        }
+        else
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+        }
+
+        if (Application.isMobilePlatform)
+        {
+            CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Touch);
+        }
+        else
+        {
+
+            CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Hardware);
         }
     }
 }

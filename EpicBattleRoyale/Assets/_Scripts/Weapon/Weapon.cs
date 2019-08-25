@@ -132,7 +132,7 @@ public class Weapon : MonoBehaviour
 
     }
 
-    public bool HitWithRaycast(Vector2 direction, float distance)
+    public bool HitWithRaycast(Vector2 direction, float distance, int raycastDamage = -1)
     {
         RaycastHit2D[] hit = Physics2D.RaycastAll(wc.cb.GetCharacterCenter(), direction, distance);
 
@@ -148,9 +148,14 @@ public class Weapon : MonoBehaviour
                 {
                     if (damagable.CanHit())
                     {
-                        damagable.TakeHit(wc.cb, this, damage);
+                        if (raycastDamage != -1)
+                            damagable.TakeHit(wc.cb, this, raycastDamage);
+                        else
+                            damagable.TakeHit(wc.cb, this, damage);
 
-                        Debug.Log("Hitted with raycast " + damagable.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType);
+                        ParticlesController.Ins.PlayBloodSplashParticle(hit[i].point, direction);
+
+                        Debug.Log("Hitted with raycast " + damagable.characterBase.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType);
                         return true;
                     }
                 }

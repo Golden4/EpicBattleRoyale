@@ -10,19 +10,20 @@ public class KillsListUI : MonoBehaviour
     public Image pfKills;
     public List<Image> killsList = new List<Image>();
 
-    public void AddKillToList(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName)
+    public void AddKillToList(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName, HitBox.HitBoxType hitBoxType)
     {
-        Image goKill = SpawnKillInfo(player, characterKillName, characterKilledName, weaponName);
+        Image goKill = SpawnKillInfo(player, characterKillName, characterKilledName, weaponName, hitBoxType);
 
         killsList.Add(goKill);
 
         goKill.transform.DOScale(Vector3.one, .3f).ChangeStartValue(Vector3.zero);
 
-        Utility.Invoke(goKill, 8f, delegate
-        {
-            if (goKill != null)
-                RemoveKillFromList(goKill);
-        });
+        if (goKill.isActiveAndEnabled)
+            Utility.Invoke(goKill, 10f, delegate
+            {
+                if (goKill != null)
+                    RemoveKillFromList(goKill);
+            });
 
         if (killsList.Count > MAX_KILLS)
         {
@@ -44,19 +45,28 @@ public class KillsListUI : MonoBehaviour
             killsList.Remove(imageGO);
         }
 
-        imageGO.transform.DOScale(Vector3.zero, .3f).OnComplete(delegate
+        imageGO.DOFade(0, .3f).OnComplete(delegate
         {
             Destroy(imageGO.gameObject);
         });
+
+        imageGO.transform.GetChild(1).GetComponent<Image>().DOFade(0, .3f);
+        imageGO.transform.GetChild(0).GetComponent<Text>().DOFade(0, .3f);
+        imageGO.transform.GetChild(2).GetComponent<Text>().DOFade(0, .3f);
+
+        // imageGO.transform.DOScale(Vector3.zero, .3f).OnComplete(delegate
+        // {
+        //     Destroy(imageGO.gameObject);
+        // });
     }
 
-    Image SpawnKillInfo(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName)
+    Image SpawnKillInfo(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName, HitBox.HitBoxType hitBoxType)
     {
         GameObject goKill = Instantiate(pfKills.gameObject);
         goKill.gameObject.SetActive(true);
         goKill.transform.SetParent(transform, false);
         Text name1 = goKill.transform.GetChild(0).GetComponent<Text>();
-        Text name2 = goKill.transform.GetChild(2).GetComponent<Text>();
+        Text name2 = goKill.transform.GetChild(3).GetComponent<Text>();
 
         name1.text = "  " + characterKillName.name + "  ";
         name2.text = "  " + characterKilledName.name + "  ";
@@ -73,7 +83,13 @@ public class KillsListUI : MonoBehaviour
         Image weaponImage = goKill.transform.GetChild(1).GetComponent<Image>();
         weaponImage.material.SetColor("_FillColor", Color.white);
         weaponImage.sprite = GameAssets.Get.GetWeapon(weaponName).sprite;
-        goKill.transform.SetAsFirstSibling();
+
+        if (hitBoxType == HitBox.HitBoxType.Head)
+            goKill.transform.GetChild(2).gameObject.SetActive(true);
+        else
+            goKill.transform.GetChild(2).gameObject.SetActive(false);
+
+        //goKill.transform.SetAsFirstSibling();
         return goKill.GetComponent<Image>();
     }
 }

@@ -33,9 +33,10 @@ public class CharacterBase : EntityBase
     public Vector2 moveInput;
     bool isDead;
     public HealthSystem healthSystem;
-    public InventorySystem inventorySystem;
+    public CharacterInventory characterInventory;
     public CharacterMapNavigate characterMapNavigate;
     public CharacterInteractable characterInteractable;
+    public CharacterAudio characterAudio;
 
     float curJumpPos;
     float curJumpVelocity;
@@ -48,8 +49,8 @@ public class CharacterBase : EntityBase
     public event Action<CharacterBase, Weapon, int, HitBox.HitBoxType> OnHittedEvent;
     public event Action<CharacterBase> OnDie;
 
-    public event Action<CharacterBase, CharacterBase, Weapon> OnKill;
-    public static event Action<CharacterBase, CharacterBase, Weapon> OnKillStatic;
+    public event Action<CharacterBase, CharacterBase, Weapon, HitBox.HitBoxType> OnKill;
+    public static event Action<CharacterBase, CharacterBase, Weapon, HitBox.HitBoxType> OnKillStatic;
     public static event Action<CharacterBase> OnDieStatic;
 
     #endregion
@@ -90,9 +91,10 @@ public class CharacterBase : EntityBase
 
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
 
-        inventorySystem = new InventorySystem(this);
+        characterInventory = GetComponent<CharacterInventory>();
         characterMapNavigate = GetComponent<CharacterMapNavigate>();
         characterInteractable = GetComponentInChildren<CharacterInteractable>();
+        characterAudio = GetComponent<CharacterAudio>();
 
         foreach (var item in renderers)
         {
@@ -330,23 +332,23 @@ public class CharacterBase : EntityBase
     {
         if (takeHitCharacter.IsDead())
         {
-            OnKillCharacter(takeHitCharacter, weapon);
+            OnKillCharacter(takeHitCharacter, weapon, hitBoxType);
         }
     }
 
-    public void OnKillCharacter(CharacterBase killedCharacter, Weapon weapon)
+    public void OnKillCharacter(CharacterBase killedCharacter, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
 
         killsCount++;
 
         if (OnKill != null)
         {
-            OnKill(this, killedCharacter, weapon);
+            OnKill(this, killedCharacter, weapon, hitBoxType);
         }
 
         if (OnKillStatic != null)
         {
-            OnKillStatic(this, killedCharacter, weapon);
+            OnKillStatic(this, killedCharacter, weapon, hitBoxType);
         }
     }
 

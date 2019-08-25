@@ -94,6 +94,13 @@ namespace UnityStandardAssets.CrossPlatformInput
                 newPos.y = delta;
             }
 
+            Vector2 normalizedPos = newPos.normalized * MovementRange;
+
+            if (newPos.x > normalizedPos.x && newPos.x > 0 || newPos.x < normalizedPos.x && newPos.x < 0)
+                newPos.x = normalizedPos.x;
+            if (newPos.y > normalizedPos.y && newPos.y > 0 || newPos.y < normalizedPos.y && newPos.y < 0)
+                newPos.y = normalizedPos.y;
+
             rectTransform.anchoredPosition = new Vector3(m_StartPos.x + newPos.x, m_StartPos.y + newPos.y, m_StartPos.z + newPos.z);
 
             //transform.position = new Vector3(m_StartPos.x + newPos.x, m_StartPos.y + newPos.y, m_StartPos.z + newPos.z);

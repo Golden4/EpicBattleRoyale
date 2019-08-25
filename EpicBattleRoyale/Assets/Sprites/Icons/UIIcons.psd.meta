@@ -4,6 +4,7 @@ TextureImporter:
   fileIDToRecycleName:
     21300000: UIIcons_0
     21300002: UIIcons_1
+    21300004: UIIcons_2
   externalObjects: {}
   serializedVersion: 9
   mipmaps:
@@ -111,7 +112,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de26a92e4c3bdec49882d36c2e77c5ca
+      spriteID: 7df7e33c8c3354b4d9292f67d10aa93d
       vertices: []
       indices: 
       edges: []
@@ -131,7 +132,27 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8c9406fb51edcfc4981b4668680fa114
+      spriteID: 1c1dcb6de47075548987042bb4af2ce1
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UIIcons_2
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5b60eb03a7be5b49a4e6c945dedf3f1
       vertices: []
       indices: 
       edges: []

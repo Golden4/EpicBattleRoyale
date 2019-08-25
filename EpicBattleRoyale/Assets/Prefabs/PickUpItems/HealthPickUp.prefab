@@ -72,6 +72,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c176091f743441d42b1f7122d62f8436, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapCoords: {x: 0, y: 0}
+  pivotOffset: {x: 0, y: 0}
+  worldPosition: {x: 0, y: 0, z: 0}
+  item: {fileID: 11400000, guid: 7ccfc903f7ea09e488caadde88355475, type: 2}
   chanceForSpawn: 5
   healthPickUpType: 1
   healthAmount: 50

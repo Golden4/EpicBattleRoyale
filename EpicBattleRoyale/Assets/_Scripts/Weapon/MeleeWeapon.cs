@@ -25,10 +25,12 @@ public class MeleeWeapon : Weapon
                 }
                 else
                 {
+
                     if (wc.weaponAnimator.enabled)
                     {
                         wc.weaponAnimator.enabled = false;
                     }
+
                 }
                 break;
             case State.Beating:
@@ -75,7 +77,12 @@ public class MeleeWeapon : Weapon
     {
         base.OnWeaponSwitch(sender, e);
 
-        wc.weaponAnimator.enabled = true;
+        if (weaponName == GameAssets.WeaponsList.Fists && isActive)
+            wc.weaponAnimator.enabled = false;
+        else
+            wc.weaponAnimator.enabled = true;
+
+
 
         if (curState == State.Beating)
         {

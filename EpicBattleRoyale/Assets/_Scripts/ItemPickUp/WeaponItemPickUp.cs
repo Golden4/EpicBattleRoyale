@@ -18,7 +18,6 @@ public class WeaponItemPickUp : ItemPickUp
 
             if (weapon == null)
             {
-                Debug.Log(GameAssets.Get.GetWeapon(weaponName));
                 if (wc.InventoryFull(GameAssets.Get.GetWeapon(weaponName).slotType))
                 {
                     if (clickedPickUp)
@@ -40,17 +39,17 @@ public class WeaponItemPickUp : ItemPickUp
             }
             else
             {
-                if (weapon.WeaponIs(typeof(AutomaticWeapon)))
-                {
-                    AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
-                    /*if (bulletInfo != null)
-						automaticWeapon.bulletSystem = bulletInfo;
-					else*/
-                    automaticWeapon.bulletSystem.GiveBulletsStock(5);
-                    ShowPopUp("+" + 5 + "bullets");
-                    /*Debug.Log (bulletInfo.ToString ());*/
-                    return true;
-                }
+                // if (weapon.WeaponIs(typeof(AutomaticWeapon)))
+                // {
+                //     AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
+                //     /*if (bulletInfo != null)
+                // 		automaticWeapon.bulletSystem = bulletInfo;
+                // 	else*/
+                //     // automaticWeapon.bulletSystem.GiveBulletsStock(5);
+                //     ShowPopUp("+" + 5 + "bullets");
+                //     /*Debug.Log (bulletInfo.ToString ());*/
+                //     return true;
+                // }
             }
         }
         return false;
@@ -69,7 +68,7 @@ public class WeaponItemPickUp : ItemPickUp
             {
                 AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
                 automaticWeapon.bulletSystem.SetBullets(data.bulletSystem.curBullets);
-                automaticWeapon.bulletSystem.SetBulletsStock(data.bulletSystem.curBulletsStock);
+                // automaticWeapon.bulletSystem.SetBulletsStock(data.bulletSystem.curBulletsStock);
             }
         }
     }

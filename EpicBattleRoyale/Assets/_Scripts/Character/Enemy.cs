@@ -241,11 +241,13 @@ public class Enemy : MonoBehaviour
 
     float jumpDelay;
 
+    float yAttackingDistance = .1f;
+
     void HandleEnemyMoving()
     {
         if (curTargetState == TargetState.Finding || curTargetState == TargetState.TargetItem)
         {
-            HandleMovingToTargetPosition(targetPosition, new Vector2(.5f, .05f), delegate
+            HandleMovingToTargetPosition(targetPosition, new Vector2(.5f, yAttackingDistance), delegate
              {
                  curEnemyState = EnemyState.Waiting;
              });
@@ -266,7 +268,7 @@ public class Enemy : MonoBehaviour
                 }
             }
 
-            HandleMovingToTargetPosition(targetCharacter.worldPosition, new Vector2(GetFiringDistanceForCurrentWeapon(), .05f), delegate
+            HandleMovingToTargetPosition(targetCharacter.worldPosition, new Vector2(GetFiringDistanceForCurrentWeapon(), yAttackingDistance), delegate
               {
                   curEnemyState = EnemyState.Attacking;
               });
@@ -281,7 +283,8 @@ public class Enemy : MonoBehaviour
         if (curTargetState == TargetState.TargetCharacter)
         {
             Vector3 dirT = ((Vector2)characterBase.worldPosition - (Vector2)targetCharacter.worldPosition).normalized;
-            float distance = Mathf.Abs(characterBase.worldPosition.x - targetCharacter.worldPosition.x);
+            float distanceX = Mathf.Abs(characterBase.worldPosition.x - targetCharacter.worldPosition.x);
+            float distanceY = Mathf.Abs(characterBase.worldPosition.y - targetCharacter.worldPosition.y);
 
             weaponController.GetCurrentWeapon().firingSideInput = Mathf.RoundToInt(dirT.x);
 
@@ -295,7 +298,7 @@ public class Enemy : MonoBehaviour
                 }
             }
 
-            if (distance > GetFiringDistanceForCurrentWeapon())
+            if (distanceX > GetFiringDistanceForCurrentWeapon() || distanceY > yAttackingDistance)
             {
                 curAttackingTime -= Time.fixedDeltaTime;
 
@@ -314,9 +317,9 @@ public class Enemy : MonoBehaviour
         characterBase.moveInput = Vector2.zero;
     }
 
-    void OnPickUp(object obj, EventArgs arg)
+    void OnPickUp(ItemPickUp item)
     {
-        if (obj.GetType() == typeof(WeaponItemPickUp) || obj.GetType() == typeof(AmmoItemPickUp))
+        if (item.GetType() == typeof(WeaponItemPickUp) || item.GetType() == typeof(AmmoItemPickUp))
         {
             ChangeWeapon();
         }
@@ -330,8 +333,8 @@ public class Enemy : MonoBehaviour
             weaponController.SwitchWeapon(index, true);
         else
         {
-            characterBase.inventorySystem.OnPickUp -= OnPickUp;
-            characterBase.inventorySystem.OnPickUp += OnPickUp;
+            characterBase.characterInventory.OnPickUp -= OnPickUp;
+            characterBase.characterInventory.OnPickUp += OnPickUp;
             weaponController.SwitchWeapon(3, true);
         }
     }

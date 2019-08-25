@@ -70,12 +70,22 @@ public static class Utility
             if (!fixedUpdate)
                 yield return null;
             else yield return new WaitForFixedUpdate();
-
         }
 
         if (OnEndFade != null)
             OnEndFade();
     }
 
+    public static Quaternion DirectionToRotation(Vector2 direction, bool inverse = false)
+    {
+        float angle;
+
+        if (!inverse)
+            angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        else
+            angle = Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg;
+
+        return Quaternion.AngleAxis(angle, Vector3.forward);
+    }
 
 }

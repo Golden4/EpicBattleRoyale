@@ -12,6 +12,7 @@ namespace UnityEngine.UI.Extensions
     {
         [Tooltip("Having this enabled run the system in LateUpdate rather than in Update making it faster but less precise (more clunky)")]
         public bool fixedTime = true;
+        public Shader foundShader;
 
         private Transform _transform;
         private ParticleSystem pSystem;
@@ -70,11 +71,10 @@ namespace UnityEngine.UI.Extensions
                 if (pRenderer != null)
                     pRenderer.enabled = false;
 
-                Shader foundShader = Shader.Find("UI Extensions/Particles/Additive");
-                Material pMaterial = new Material(foundShader);
-
                 if (material == null)
-                    material = pMaterial;
+                {
+                    material = new Material(foundShader); ;
+                }
 
                 currentMaterial = material;
                 if (currentMaterial && currentMaterial.HasProperty("_MainTex"))

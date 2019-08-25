@@ -27,7 +27,7 @@ public class Shell : MonoBehaviour
 
         DG.Tweening.DOVirtual.DelayedCall(.6f, delegate
         {
-            AudioManager.PlaySoundAtObject(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)], shell.gameObject);
+            AudioManager.PlaySoundAtPosition(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)], shell.transform.position);
 
             //AudioManager.PlaySound(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)]); 
         });

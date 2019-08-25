@@ -69,7 +69,7 @@ MonoBehaviour:
     curBulletsStock: 0
     maxBullets: 10
     maxBulletsStock: 100
-    ammoType: 1
+    ammoType: 4
   mode: 0
   curState: 0
   reloadTime: 5

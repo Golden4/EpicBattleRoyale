@@ -40,14 +40,15 @@ MonoBehaviour:
     - {fileID: 1303756653334380520, guid: b57da03161d6fc046b697355104cc2ff, type: 3}
     - {fileID: 1303756653334380520, guid: f810d834b30118743841dc9914031185, type: 3}
     - {fileID: 1303756653334380520, guid: 542d27191e8ab40449df6a406543af88, type: 3}
+    - {fileID: 1303756653334380520, guid: fef435ee9bc38f84cb901409465e6353, type: 3}
   pfBullet: {fileID: 6231314855719747549, guid: 661b3c7bbb2462148bf6266985f79c6e,
     type: 3}
   pfShell: {fileID: 5995582103948625971, guid: dd88487e15616a847a9b1988b0bbe490, type: 3}
-  pfMuzzleFlash: {fileID: 8991777449462202936, guid: 9753acc767aef684dbb6c0bfa4852a57,
-    type: 3}
   pfPopUpDamage: {fileID: 8600508504053211702, guid: 5b7095c893bc4474d98df1809e67c1b8,
     type: 3}
   pfPopUpInfo: {fileID: 8739724906407221341, guid: b91a722d2a2f87c46bb500c3a5e7e8b6,
     type: 3}
   pfEntityShadow: {fileID: 3365628130517620994, guid: 71dfcd9083b81b049b6daa8109172c51,
+    type: 3}
+  pfMuzzleFlash: {fileID: 8991777449462202936, guid: 9753acc767aef684dbb6c0bfa4852a57,
     type: 3}

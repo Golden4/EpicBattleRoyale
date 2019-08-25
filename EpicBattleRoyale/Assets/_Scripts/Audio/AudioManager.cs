@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SoundLibrary))]
 public class AudioManager : SingletonResourse<AudioManager>
 {
-    const int sourceCount = 10;
+    const int sourceCount = 5;
     AudioSource[] source = new AudioSource[sourceCount];
 
     [HideInInspector]

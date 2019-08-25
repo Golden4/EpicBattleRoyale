@@ -47,7 +47,7 @@ MonoBehaviour:
   weaponType: 0
   slotType: 0
   sprite: {fileID: 21300000, guid: 19c21ec48b1f99e4ca3b88d788d0f81d, type: 3}
-  m_damage: {x: 3, y: 6}
+  m_damage: {x: 1, y: 5}
   animatorController: {fileID: 9100000, guid: 1e3882e2605cb644da142b9d8a4fb3be, type: 2}
   firingRange: 1
   fireRate: 0.5

@@ -5,13 +5,13 @@ using UnityEngine;
 public class WeaponSounds : MonoBehaviour
 {
     public Sound[] reloadSounds;
+    public WeaponController weaponController;
 
     void Reload(int num)
     {
         if (reloadSounds.Length > num)
         {
-            AudioManager.PlaySoundAtObject(reloadSounds[num], gameObject);
+            weaponController.cb.characterAudio.PlaySound(reloadSounds[num]);
         }
-        // AudioManager.PlaySound(reloadSounds[num]);
     }
 }

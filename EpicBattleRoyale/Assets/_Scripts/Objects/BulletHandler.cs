@@ -61,7 +61,9 @@ public class BulletHandler : EntityBase
             {
                 damagable.TakeHit(cb, weapon, damage);
 
-                Debug.Log("Hitted with Bullet " + damagable.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType + " weapon = " + weapon.weaponName);
+                ParticlesController.Ins.PlayBloodSplashParticle(hit.point, direction);
+
+                Debug.Log("Hitted with Bullet " + damagable.characterBase.name + " | damage = " + damage + " | hitBoxType = " + damagable.hitBoxType + " | weapon = " + weapon.weaponName);
 
                 DestroyBullet();
             }

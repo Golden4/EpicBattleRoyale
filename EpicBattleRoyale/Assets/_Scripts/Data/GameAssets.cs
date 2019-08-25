@@ -92,10 +92,11 @@ public class GameAssets : ScriptableObject
 
         public enum AmmoList
         {
-            AutomaticWeapon,
-            SniperWeapon,
-            PistolWeapon,
-            ShotGunWeapon,
+            Ammo556mm,
+            Ammo762mm,
+            Ammo9mm,
+            Ammo12Gauge,
+            Ammo300Magnum,
         }
 
         public ItemPickUp GetPickUpItem(WeaponsList item)
@@ -185,10 +186,10 @@ public class GameAssets : ScriptableObject
 
     public BulletHandler pfBullet;
     public Shell pfShell;
-    public ParticleSystem pfMuzzleFlash;
     public TMPro.TextMeshPro pfPopUpDamage;
     public TMPro.TextMeshPro pfPopUpInfo;
     public SpriteRenderer pfEntityShadow;
+    public ParticleSystem pfMuzzleFlash;
 
     /*	void OnValidate ()
     {

@@ -7,6 +7,7 @@ using TMPro;
 
 public class ItemPickUp : Interactable
 {
+    public Item item;
     public int chanceForSpawn = 5;
     bool autoPickUp = false;
     float cantPickUpDelay = 1;
@@ -42,12 +43,12 @@ public class ItemPickUp : Interactable
 
     public override void AwayInteract(CharacterBase cb)
     {
-        cb.inventorySystem.CanT_PickUpItem(this);
+        cb.characterInventory.CanT_PickUpItem(this);
     }
 
     public override bool Interact(CharacterBase cb)
     {
-        cb.inventorySystem.PickUp();
+        cb.characterInventory.PickUp();
         return true;
     }
 
@@ -110,7 +111,7 @@ public class ItemPickUp : Interactable
         {
             if (!autoPickUp || !PickUp(cb))
             {
-                cb.inventorySystem.CanPickUpItem(this);
+                cb.characterInventory.CanPickUpItem(this);
             }
             else
             {

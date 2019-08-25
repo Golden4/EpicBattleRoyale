@@ -14,14 +14,15 @@ public class ShotGunWeapon : AutomaticWeapon
         for (int i = 0; i < shootingBulletCount; i++)
         {
             Vector2 dir = Vector2.right + Vector2.up * Random.Range(-.1f, .1f);
-            if (!HitWithRaycast(((isFacingRight) ? 1 : -1) * Vector2.right + Vector2.up * Random.Range(-.1f, .1f), Vector3.Distance(wc.cb.GetCharacterCenter(), muzzlePoint.transform.position)))
+            if (!HitWithRaycast(((isFacingRight) ? 1 : -1) * Vector2.right + Vector2.up * Random.Range(-.1f, .1f), Vector3.Distance(wc.cb.GetCharacterCenter(), muzzlePoint.transform.position), curBulletDamage))
                 SpawnBullet(isFacingRight, dir, curBulletDamage);
         }
 
         bulletSystem.ShotBullet(1);
         Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
-        muzzleFlash.Emit(1);
-        AudioManager.PlaySoundAtObject(fireSound, gameObject);
+        muzzleFlash.Play(true);
+        wc.cb.characterAudio.PlaySound(fireSound);
+        //AudioManager.PlaySoundAtObject(fireSound, gameObject);
         //AudioManager.PlaySound(fireSound);
     }
 }

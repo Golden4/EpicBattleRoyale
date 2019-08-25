@@ -213,7 +213,7 @@ public class MapsController : MonoBehaviour
             //random Ammo spawn
             if (randNum - 70 < 20)
             {
-                AmmoItemPickUp newItem = World.Ins.SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList.AutomaticWeapon, itemsSpawnPoints[i], true);
+                AmmoItemPickUp newItem = World.Ins.SpawnItemPickUpAmmo(GameAssets.PickUpItemsData.AmmoList.Ammo556mm, itemsSpawnPoints[i], true);
                 newItem.transform.SetParent(parent, false);
                 newItem.mapCoords = map.coord;
             }

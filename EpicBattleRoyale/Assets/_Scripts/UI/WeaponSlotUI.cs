@@ -10,6 +10,7 @@ public class WeaponSlotUI : MonoBehaviour
     public Text bulletsText;
     public bool isActive;
     public Button btn;
+    public Text bulletType;
     BulletSystem bulletSystem;
     Material fillableMaterial;
 
@@ -33,6 +34,8 @@ public class WeaponSlotUI : MonoBehaviour
             {
                 bulletsText.gameObject.SetActive(false);
             }
+            if (bulletType != null)
+                bulletType.gameObject.SetActive(false);
 
             return;
         }
@@ -54,6 +57,30 @@ public class WeaponSlotUI : MonoBehaviour
         {
             this.bulletSystem = bulletSystem;
             UpdateBullets(bulletSystem.GetCurrentBullets(), bulletSystem.GetCurBulletsStock());
+
+            bulletType.gameObject.SetActive(true);
+
+            switch (bulletSystem.ammoType)
+            {
+                case GameAssets.PickUpItemsData.AmmoList.Ammo762mm:
+                    bulletType.text = "7.62mm";
+                    break;
+                case GameAssets.PickUpItemsData.AmmoList.Ammo9mm:
+                    bulletType.text = "9mm";
+                    break;
+                case GameAssets.PickUpItemsData.AmmoList.Ammo12Gauge:
+                    bulletType.text = "12 Gauge";
+                    break;
+                case GameAssets.PickUpItemsData.AmmoList.Ammo300Magnum:
+                    bulletType.text = ".300 Magnum";
+                    break;
+                case GameAssets.PickUpItemsData.AmmoList.Ammo556mm:
+                    bulletType.text = "5.56mm";
+                    break;
+                default:
+                    break;
+            }
+
             bulletSystem.OnBulletsChange -= BulletSystem_OnBulletsChange;
             bulletSystem.OnBulletsChange += BulletSystem_OnBulletsChange;
         }
@@ -62,7 +89,10 @@ public class WeaponSlotUI : MonoBehaviour
             if (bulletsText != null)
             {
                 bulletsText.gameObject.SetActive(false);
+
             }
+            if (bulletType != null)
+                bulletType.gameObject.SetActive(false);
         }
 
 
