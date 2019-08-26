@@ -213,7 +213,7 @@ public class AutomaticWeapon : Weapon
         while (curState == State.Shooting && isActive && Mathf.Abs(firingSideInput) > 0 && Bullets > 0)
         {
             bool side = firingSideInput < 0;
-            wc.PlayFireAnimation(shootAnimationTime, side);
+            wc.PlayFireAnimation(.167f, shootAnimationTime, side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
 
             if (OnShot != null)

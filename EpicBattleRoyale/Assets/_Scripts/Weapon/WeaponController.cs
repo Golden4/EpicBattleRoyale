@@ -50,7 +50,8 @@ public class WeaponController : MonoBehaviour
         if (isInit)
             return;
         isInit = true;
-        weaponAnimator = transform.GetChild(0).GetChild(0).GetComponentInChildren<Animator>();
+        // weaponAnimator = transform.GetChild(0).GetChild(0).GetComponentInChildren<Animator>();
+        weaponAnimator = transform.GetComponentInChildren<Animator>();
         cb = GetComponent<CharacterBase>();
         weaponSounds = GetComponentInChildren<WeaponSounds>();
         weaponSounds.weaponController = this;
@@ -224,7 +225,6 @@ public class WeaponController : MonoBehaviour
         if (cb.IsDead())
             return;
 
-
         switch (curState)
         {
             case State.Normal:
@@ -254,7 +254,7 @@ public class WeaponController : MonoBehaviour
         if (!GetCurrentWeapon().isFiring())
             switchingWeapon = switchingWeaponTime;
 
-        SetWeaponAnimationType(weaponsInInventory[weaponIndex].animatorController, weaponsInInventory[weaponIndex].slotType);
+        SetWeaponAnimationType(weaponsInInventory[weaponIndex].overrideController, weaponsInInventory[weaponIndex].slotType);
 
         PlaySwitchAnimation();
 
@@ -421,13 +421,12 @@ public class WeaponController : MonoBehaviour
             if (weaponsInInventory[i] != null)
                 DropWeaponFromInventory(i);
         }
-        weaponAnimator.enabled = false;
+        weaponAnimator.SetLayerWeight(1, 0);
     }
 
     public void SetWeaponAnimationType(RuntimeAnimatorController runtimeAnimatorController, WeaponController.SlotType type)
     {
         weaponAnimator.runtimeAnimatorController = runtimeAnimatorController;
-
         // if (type != WeaponController.SlotType.Melee)
         // {
         //     weaponAnimator.enabled = true;
@@ -443,18 +442,21 @@ public class WeaponController : MonoBehaviour
     public void PlaySwitchAnimation()
     {
         if (weaponAnimator.runtimeAnimatorController != null)
-            weaponAnimator.Play("Switch");
+            weaponAnimator.Play("Switch", 1);
     }
 
-    public void PlayFireAnimation(float fireRate = -1, bool shootingSide = false)
+    public void PlayFireAnimation(float animationDuration = 1, float fireRate = 1, bool shootingSide = false)
     {
         cb.Flip(shootingSide);
         cb.shootingSideRight = shootingSide;
+
         if (weaponAnimator.runtimeAnimatorController != null)
         {
-            if (fireRate > -1)
-                weaponAnimator.SetFloat("ShootingTime", 1f / fireRate);
-            weaponAnimator.Play("Shoot");
+            weaponAnimator.Play("Shoot", 1);
+
+            if (fireRate != 0)
+                weaponAnimator.SetFloat("ShootingTime", animationDuration / fireRate);
+
             weaponAnimator.SetBool("Fire", true);
         }
     }
@@ -474,7 +476,7 @@ public class WeaponController : MonoBehaviour
 
             weaponAnimator.SetFloat("ReloadTime", 2 / reloadTime);
             weaponAnimator.SetBool("isReloading", true);
-            weaponAnimator.Play("Reload");
+            weaponAnimator.Play("Reload", 1);
         }
     }
 

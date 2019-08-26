@@ -9,7 +9,7 @@ public class HealthItemPickUp : ItemPickUp
 
     public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
     {
-        cb.characterInventory.Add(item);
+        cb.characterInventory.AddItem(item);
         //cb.healthSystem.HealHealth(healthAmount);
         return true;
     }

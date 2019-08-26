@@ -7,6 +7,7 @@ public class CharacterInventory : MonoBehaviour
 {
     public CharacterBase characterBase;
     public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
+    //public Dictionary<Item, int> items = new Dictionary<Item, int>();
     public List<Item> items = new List<Item>();
 
     public event Action<ItemPickUp> OnPickUp;
@@ -58,17 +59,26 @@ public class CharacterInventory : MonoBehaviour
         }
     }
 
-    public void Add(Item item)
+    public void AddItem(Item item)
     {
         if (!items.Contains(item))
         {
             items.Add(item);
+            item.OnAddInventory();
+        }
+        else
+        {
+            item.OnAddInventory();
         }
 
-        item.OnAddInventory();
         if (OnAddItem != null)
             OnAddItem(item);
     }
+
+    // public int GetItemCount(Item item)
+    // {
+    //     return items[item];
+    // }
 
     public void Remove(Item item)
     {

@@ -92,12 +92,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1547595453307940924}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 344ac4f682d158e4eb87a7931b32b6a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pfLineRenderer: {fileID: 1547595454245748240}
+  pfLineRenderer: {fileID: 0}
   lineRendererHolder: {fileID: 1547595454732817965}
   gameMapPanel: {fileID: 1547595454732817965}
   pfHouse: {fileID: 1547595454163742477}

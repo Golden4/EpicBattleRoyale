@@ -52,6 +52,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: e9d95f2fd203b0240b56d896897f42f6, type: 3}
   m_damage: {x: 3, y: 7}
   animatorController: {fileID: 9100000, guid: 5b46347c6cf956146a468db1b7d7e5ae, type: 2}
+  overrideController: {fileID: 22100000, guid: 1a178e4ce08837e4d94fa3e4407373af, type: 2}
   firingRange: 13
   fireRate: 0.15
   fireSound:
@@ -66,10 +67,9 @@ MonoBehaviour:
   firingSideInput: 0
   bulletSystem:
     curBullets: 0
-    curBulletsStock: 0
     maxBullets: 20
-    maxBulletsStock: 100
     ammoType: 1
+    characterInventory: {fileID: 0}
   mode: 2
   curState: 0
   reloadTime: 2

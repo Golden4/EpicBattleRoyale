@@ -29,15 +29,15 @@ public abstract class Item : ScriptableObject
 
     public void AddAmount(int amount)
     {
-        CurCount += amount;
+        curCount += amount;
     }
 
     public bool RemoveAmount(int amount)
     {
-        if (amount > CurCount)
+        if (amount > curCount)
             return false;
 
-        CurCount -= amount;
+        curCount -= amount;
 
         return true;
     }

@@ -7,7 +7,7 @@ using UnityEngine.UI.Extensions;
 
 public class UIMap : MonoBehaviour
 {
-    [SerializeField] UILineRenderer pfLineRenderer;
+    [SerializeField] GameObject pfLineRenderer;
     [SerializeField] Transform lineRendererHolder;
     [SerializeField] RectTransform gameMapPanel;
     [SerializeField] Image pfHouse;
@@ -19,17 +19,18 @@ public class UIMap : MonoBehaviour
 
     IEnumerator Start()
     {
-        gameMapPanel.gameObject.AddComponent<Button>().onClick.AddListener(delegate
-        {
-            if (increasedMap)
-            {
-                ShowDecreaseMapBtn();
-            }
-            else
-            {
-                ShowIncreaseMapBtn();
-            }
-        });
+        // gameMapPanel.gameObject.AddComponent<Button>().onClick.AddListener(delegate
+        // {
+        //     if (increasedMap)
+        //     {
+        //         ShowDecreaseMapBtn();
+        //     }
+        //     else
+        //     {
+        //         ShowIncreaseMapBtn();
+        //     }
+        // });
+
         yield return new WaitForEndOfFrame();
         CreateLineRenderers();
         yield return new WaitForEndOfFrame();
@@ -49,13 +50,13 @@ public class UIMap : MonoBehaviour
 
     void CreateLineRenderer(MapsController.MapInfo data, Vector2Int coords)
     {
-        GameObject newLr = Instantiate(pfLineRenderer.gameObject);
+        GameObject newLr = Instantiate(pfLineRenderer);
         newLr.SetActive(true);
         newLr.transform.SetParent(lineRendererHolder, false);
 
-        newLr.GetComponent<RectTransform>().anchoredPosition = new Vector2(coords.x * 100, coords.y * -100) + new Vector2(25, -25);
+        newLr.GetComponent<RectTransform>().anchoredPosition = new Vector2(coords.x * 100, coords.y * -100);
 
-        UILineRenderer lr = newLr.GetComponent<UILineRenderer>();
+        UILineRenderer lr = newLr.GetComponentInChildren<UILineRenderer>();
 
         Vector2[] pointsList;
 
