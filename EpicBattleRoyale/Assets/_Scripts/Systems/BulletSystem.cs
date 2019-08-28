@@ -15,38 +15,48 @@ public class BulletSystem
     public GameAssets.PickUpItemsData.AmmoList ammoType;
     public CharacterInventory characterInventory;
 
-    public event EventHandler OnBulletsChange;
-    AmmoItem ammoItem;
+    public event Action<int> OnBulletsChange;
+    CharacterInventory.InventoryItem ammoItem;
 
     public void Setup(CharacterInventory characterInventory)
     {
         this.characterInventory = characterInventory;
-        FindAmmoItem();
-        characterInventory.OnAddItem += OnAddItem;
+
+        if (!FindAmmoItem())
+        {
+            characterInventory.OnPickUp += OnPickUp;
+        }
     }
 
-    void OnAddItem(Item item)
+    void OnPickUp(ItemPickUp item)
     {
-        if (item.GetType() == typeof(AmmoItem))
-            FindAmmoItem();
+        if (FindAmmoItem())
+        {
+            characterInventory.OnPickUp -= OnPickUp;
+        }
     }
 
-    void FindAmmoItem()
+    bool FindAmmoItem()
     {
         if (ammoItem == null)
+        {
             ammoItem = characterInventory.GetAmmoItem(ammoType);
 
-        if (ammoItem != null)
-        {
-            ammoItem.OnChangeAmount += OnAddAmount;
+            if (ammoItem != null)
+            {
+                ammoItem.OnChangeAmount += OnChangeAmount;
+                OnChangeAmount(curBullets);
+                return true;
+            }
         }
 
+        return false;
     }
 
-    void OnAddAmount(int amount)
+    void OnChangeAmount(int amount)
     {
         if (OnBulletsChange != null)
-            OnBulletsChange(this, EventArgs.Empty);
+            OnBulletsChange(curBullets);
     }
 
     public int GetCurrentBullets()
@@ -64,9 +74,6 @@ public class BulletSystem
 
     public bool GiveBullets(int bulletsAmount)
     {
-        // if (curBulletsStock == maxBulletsStock)
-        //     return false;
-
         curBullets += bulletsAmount;
 
         if (curBullets > maxBullets)
@@ -74,26 +81,10 @@ public class BulletSystem
         FindAmmoItem();
 
         if (OnBulletsChange != null)
-            OnBulletsChange(this, EventArgs.Empty);
+            OnBulletsChange(curBullets);
 
         return true;
     }
-
-    // public bool GiveBulletsStock(int stockBulletsAmount)
-    // {
-    //     // if (curBulletsStock == maxBulletsStock)
-    //     //     return false;
-
-    //     curBulletsStock += stockBulletsAmount;
-
-    //     // if (curBulletsStock > maxBulletsStock)
-    //     //     curBulletsStock = maxBulletsStock;
-
-    //     if (OnBulletsChange != null)
-    //         OnBulletsChange(this, EventArgs.Empty);
-
-    //     return true;
-    // }
 
     public void SetBullets(int bulletsAmount)
     {
@@ -103,19 +94,8 @@ public class BulletSystem
         FindAmmoItem();
 
         if (OnBulletsChange != null)
-            OnBulletsChange(this, EventArgs.Empty);
+            OnBulletsChange(curBullets);
     }
-
-    // public void SetBulletsStock(int stockBulletsAmount)
-    // {
-
-    //     curBulletsStock = stockBulletsAmount;
-
-    //     // curBulletsStock = Mathf.Clamp(curBulletsStock, 0, maxBulletsStock);
-
-    //     if (OnBulletsChange != null)
-    //         OnBulletsChange(this, EventArgs.Empty);
-    // }
 
     public bool ShotBullet(int bulletCount)
     {
@@ -128,7 +108,7 @@ public class BulletSystem
                 curBullets = 0;
 
             if (OnBulletsChange != null)
-                OnBulletsChange(this, EventArgs.Empty);
+                OnBulletsChange(curBullets);
             return true;
         }
         else
@@ -149,7 +129,7 @@ public class BulletSystem
         if (GetCurBulletsStock() == 0)
             return false;
 
-        AmmoItem ammoItem = characterInventory.GetAmmoItem(ammoType);
+        CharacterInventory.InventoryItem ammoItem = characterInventory.GetAmmoItem(ammoType);
 
         if (GetCurBulletsStock() < maxBullets - curBullets)
         {
@@ -166,10 +146,9 @@ public class BulletSystem
         }
 
         curBullets = Mathf.Clamp(curBullets, 0, maxBullets);
-        // curBulletsStock = Mathf.Clamp(curBulletsStock, 0, maxBulletsStock);
 
         if (OnBulletsChange != null)
-            OnBulletsChange(this, EventArgs.Empty);
+            OnBulletsChange(curBullets);
         return true;
     }
 
@@ -177,17 +156,4 @@ public class BulletSystem
     {
         return GetCurrentBullets() == 0 && GetCurBulletsStock() == 0;
     }
-
-    /*	public enum BulletType {
-		Automatic,
-		Sniper,
-		Pistol
-	}
-
-	public BulletType bulletType;
-
-	public BulletType GetBulletType ()
-	{
-		return bulletType;
-	}*/
 }

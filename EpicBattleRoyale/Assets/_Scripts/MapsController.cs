@@ -119,11 +119,11 @@ public class MapsController : MonoBehaviour
         for (int i = (int)GetMapData(map.mapType).worldEndPoints.x + 10; i < (int)GetMapData(map.mapType).worldEndPoints.y - 10; i = i + 3)
         {
 
-            if (UnityEngine.Random.Range(0, 10) == 0)
-            {
-                float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
-                itemsSpawnPoints.Add(new Vector3(i, yPos));
-            }
+            // if (UnityEngine.Random.Range(0, 10) == 0)
+            // {
+            float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
+            itemsSpawnPoints.Add(new Vector3(i, yPos));
+            // }
         }
 
         SpawnItems(map, itemsSpawnPoints, mapGo.transform);

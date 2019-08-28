@@ -9,7 +9,7 @@ public class AmmoItemPickUp : ItemPickUp
 
     public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
     {
-        cb.characterInventory.AddItem(item);
+        // cb.characterInventory.AddItem(item);
 
         return true;
 

@@ -12,20 +12,7 @@ public class CharacterInteractable : MonoBehaviour
 
     List<InteractableObject> interactableObjects = new List<InteractableObject>();
 
-    [System.Serializable]
-    public class InteractableObject
-    {
-        public Interactable interactable;
-        public bool canInteract;
-
-        public InteractableObject(Interactable interactable, bool canInteract)
-        {
-            this.interactable = interactable;
-            this.canInteract = canInteract;
-        }
-    }
-
-    void Start()
+    void Awake()
     {
         characterBase = GetComponentInParent<CharacterBase>();
     }
@@ -61,50 +48,10 @@ public class CharacterInteractable : MonoBehaviour
             {
                 // bool canInteract = interactable.CanInteract(this);
                 interactableObjects.Add(new InteractableObject(interactable, false));
-
-                // if (canInteract)
-                //     if (OnCanInteractEvent != null)
-                //         OnCanInteractEvent(interactable);
             }
         }
-
-        // Interactable interactable = col.GetComponent<Interactable>();
-        // if (interactable != null)
-        // {
-        //     if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
-        //     {
-        //         interactableObjects.Add(interactable);
-
-        //         if (OnCanInteractEvent != null)
-        //             OnCanInteractEvent(interactable);
-        //     }
-        // }
     }
 
-    // void OnTriggerStay2D(Collider2D col)
-    // {
-    //     Interactable interactable = col.GetComponent<Interactable>();
-
-    //     if (interactable != null)
-    //     {
-    //         if (!interactableObjects.Contains(interactable) && interactable.CanInteract(this))
-    //         {
-    //             interactableObjects.Add(interactable);
-
-    //             if (OnCanInteractEvent != null)
-    //                 OnCanInteractEvent(interactable);
-    //         }
-
-    //         if (interactableObjects.Contains(interactable) && !interactable.CanInteract(this))
-    //         {
-    //             interactable.AwayInteract(this);
-    //             interactableObjects.Remove(interactable);
-
-    //             if (OnCantInteractEvent != null)
-    //                 OnCantInteractEvent(interactable);
-    //         }
-    //     }
-    // }
 
     void OnTriggerExit2D(Collider2D col)
     {
@@ -135,5 +82,18 @@ public class CharacterInteractable : MonoBehaviour
                 OnCantInteractEvent(interactableObjects[i].interactable);
         }
         interactableObjects.Clear();
+    }
+
+    [System.Serializable]
+    public class InteractableObject
+    {
+        public Interactable interactable;
+        public bool canInteract;
+
+        public InteractableObject(Interactable interactable, bool canInteract)
+        {
+            this.interactable = interactable;
+            this.canInteract = canInteract;
+        }
     }
 }

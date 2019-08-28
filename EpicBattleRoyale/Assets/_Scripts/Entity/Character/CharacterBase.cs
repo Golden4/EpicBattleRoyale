@@ -11,6 +11,7 @@ public class CharacterBase : EntityBase
     bool isInit;
     public Vector2 maxSpeed;
     public Vector2 firingSpeed;
+    public Vector2 healingSpeed;
     Vector2 curSpeed;
     public float jumpForce = 500;
     public bool airControl = true;
@@ -20,7 +21,7 @@ public class CharacterBase : EntityBase
     Transform groundCheck;
     bool isGrounded;
     bool isJumping;
-    Animator anim;
+    public Animator animator;
     Rigidbody2D rb;
 
     [HideInInspector]
@@ -28,15 +29,21 @@ public class CharacterBase : EntityBase
     [HideInInspector]
     public bool isFiring;
     [HideInInspector]
+    public bool isHealing;
+    [HideInInspector]
     public bool shootingSideRight;
     [HideInInspector]
     public Vector2 moveInput;
     bool isDead;
     public HealthSystem healthSystem;
+
+    #region Components
     public CharacterInventory characterInventory;
     public CharacterMapNavigate characterMapNavigate;
     public CharacterInteractable characterInteractable;
     public CharacterAudio characterAudio;
+    public WeaponController weaponController;
+    #endregion
 
     float curJumpPos;
     float curJumpVelocity;
@@ -86,7 +93,7 @@ public class CharacterBase : EntityBase
         healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
 
         groundCheck = transform.Find("GroundCheck");
-        anim = GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
         Material mat = Resources.Load<Material>("Materials/FillableMaterial");
@@ -95,6 +102,7 @@ public class CharacterBase : EntityBase
         characterMapNavigate = GetComponent<CharacterMapNavigate>();
         characterInteractable = GetComponentInChildren<CharacterInteractable>();
         characterAudio = GetComponent<CharacterAudio>();
+        weaponController = GetComponent<WeaponController>();
 
         foreach (var item in renderers)
         {
@@ -141,7 +149,7 @@ public class CharacterBase : EntityBase
 
     private void FixedUpdate()
     {
-        if (anim.GetBool("Die") && isDead)
+        if (animator.GetBool("Die") && isDead)
             return;
 
         if (curJumpPos > 0)
@@ -167,10 +175,10 @@ public class CharacterBase : EntityBase
             isJumping = true;
         }
 
-        if (isGrounded && !anim.GetBool("Die") && isDead)
-            anim.SetBool("Die", true);
+        if (isGrounded && !animator.GetBool("Die") && isDead)
+            animator.SetBool("Die", true);
 
-        anim.SetBool("Jump", !isGrounded);
+        animator.SetBool("Jump", !isGrounded);
         Move(moveInput);
     }
 
@@ -237,6 +245,7 @@ public class CharacterBase : EntityBase
     //         OnEndFade();
 
     // }
+
     public void Move(Vector2 moveDir)
     {
         if (isGrounded || airControl)
@@ -244,25 +253,36 @@ public class CharacterBase : EntityBase
             moveDir = moveDir.normalized;
             float maginitude = Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude));
 
-            anim.SetFloat("Speed", maginitude);
+            animator.SetFloat("Speed", maginitude);
 
             if (isFiring)
             {
                 if (moveDir.x < 0 && shootingSideRight || moveDir.x > 0 && !shootingSideRight)
                 {
-                    anim.SetFloat("SpeedMultiplayer", -.7f);
+                    animator.SetFloat("SpeedMultiplayer", -.7f);
                     curSpeed = firingSpeed;
                 }
                 else
                 {
-                    anim.SetFloat("SpeedMultiplayer", .7f);
+                    animator.SetFloat("SpeedMultiplayer", .7f);
                     curSpeed = firingSpeed;
                 }
                 Flip(shootingSideRight);
+                if (isHealing)
+                    EndHeal();
+            }
+            else if (isHealing)
+            {
+
+                if (moveDir.x != 0)
+                    Flip(moveDir.x > 0);
+
+                animator.SetFloat("SpeedMultiplayer", .5f);
+                curSpeed = healingSpeed;
             }
             else
             {
-                anim.SetFloat("SpeedMultiplayer", 1);
+                animator.SetFloat("SpeedMultiplayer", 1);
 
                 if (moveDir.x != 0)
                     Flip(moveDir.x > 0);
@@ -279,11 +299,12 @@ public class CharacterBase : EntityBase
 
     public void Jump()
     {
-        if (isGrounded && !anim.GetBool("Jump"))
+        if (isGrounded && !animator.GetBool("Jump"))
         {
             isGrounded = false;
             isJumping = true;
             curJumpVelocity = jumpForce;
+            EndHeal();
         }
     }
 
@@ -324,6 +345,11 @@ public class CharacterBase : EntityBase
 
         SpawnDamagePopUpText(givedHitCharacter, hitWeapon, damage);
 
+        if (hitBoxType == HitBox.HitBoxType.Head)
+            characterAudio.PlaySound(characterAudio.headshotHitSound);
+        else
+            characterAudio.PlaySound(characterAudio.hitSound);
+
         if (OnHittedEvent != null)
             OnHittedEvent(givedHitCharacter, hitWeapon, damage, hitBoxType);
     }
@@ -338,7 +364,6 @@ public class CharacterBase : EntityBase
 
     public void OnKillCharacter(CharacterBase killedCharacter, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
-
         killsCount++;
 
         if (OnKill != null)
@@ -350,6 +375,19 @@ public class CharacterBase : EntityBase
         {
             OnKillStatic(this, killedCharacter, weapon, hitBoxType);
         }
+    }
+
+    public void Heal()
+    {
+        isHealing = true;
+        animator.SetBool("isHealing", true);
+        animator.SetLayerWeight(1, 1);
+    }
+
+    public void EndHeal()
+    {
+        animator.SetBool("isHealing", false);
+        isHealing = false;
     }
 
     void SpawnDamagePopUpText(CharacterBase hitCharacter, Weapon hitWeapon, int damage)

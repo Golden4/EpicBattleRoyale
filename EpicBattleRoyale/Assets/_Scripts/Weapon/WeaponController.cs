@@ -24,14 +24,14 @@ public class WeaponController : MonoBehaviour
         Switching,
     }
 
+    public bool canShooting = true;
+
     public Slot[] slotsVisual;
 
     public State curState;
     public float switchingWeaponTime = .5f;
     public Sound weaponSwitchSound;
     float switchingWeapon;
-
-    public Animator weaponAnimator;
     WeaponSounds weaponSounds;
 
     public event EventHandler OnWeaponSwitch;
@@ -50,8 +50,6 @@ public class WeaponController : MonoBehaviour
         if (isInit)
             return;
         isInit = true;
-        // weaponAnimator = transform.GetChild(0).GetChild(0).GetComponentInChildren<Animator>();
-        weaponAnimator = transform.GetComponentInChildren<Animator>();
         cb = GetComponent<CharacterBase>();
         weaponSounds = GetComponentInChildren<WeaponSounds>();
         weaponSounds.weaponController = this;
@@ -206,12 +204,8 @@ public class WeaponController : MonoBehaviour
                 }
                 break;
             case State.Normal:
-                if (Input.GetKeyDown(KeyCode.E))
-                    SwitchWeapon(0, true);
-
-                if (Input.GetKeyDown(KeyCode.Q))
-                    SwitchWeapon(1, true);
-
+                if (cb.isHealing)
+                    return;
                 if (weaponsInInventory[currentWeaponInHandIndex] != null)
                     weaponsInInventory[currentWeaponInHandIndex].OnUpdate();
                 break;
@@ -228,13 +222,15 @@ public class WeaponController : MonoBehaviour
         switch (curState)
         {
             case State.Normal:
+                if (cb.isHealing)
+                    return;
+
                 if (weaponsInInventory[currentWeaponInHandIndex] != null)
                     weaponsInInventory[currentWeaponInHandIndex].OnFixedUpdate();
                 break;
             default:
                 break;
         }
-
     }
 
     public void SwitchWeapon(int weaponIndex, bool checkCanSwitch = false)
@@ -260,6 +256,7 @@ public class WeaponController : MonoBehaviour
 
         AudioManager.PlaySoundAtObject(weaponSwitchSound, gameObject);
         //AudioManager.PlaySound(weaponSwitchSound);
+        cb.EndHeal();
 
         if (OnWeaponSwitch != null)
             OnWeaponSwitch(weaponsInInventory[weaponIndex], EventArgs.Empty);
@@ -421,12 +418,12 @@ public class WeaponController : MonoBehaviour
             if (weaponsInInventory[i] != null)
                 DropWeaponFromInventory(i);
         }
-        weaponAnimator.SetLayerWeight(1, 0);
+        cb.animator.SetLayerWeight(1, 0);
     }
 
     public void SetWeaponAnimationType(RuntimeAnimatorController runtimeAnimatorController, WeaponController.SlotType type)
     {
-        weaponAnimator.runtimeAnimatorController = runtimeAnimatorController;
+        cb.animator.runtimeAnimatorController = runtimeAnimatorController;
         // if (type != WeaponController.SlotType.Melee)
         // {
         //     weaponAnimator.enabled = true;
@@ -441,8 +438,8 @@ public class WeaponController : MonoBehaviour
 
     public void PlaySwitchAnimation()
     {
-        if (weaponAnimator.runtimeAnimatorController != null)
-            weaponAnimator.Play("Switch", 1);
+        if (cb.animator.runtimeAnimatorController != null)
+            cb.animator.Play("Switch", 1);
     }
 
     public void PlayFireAnimation(float animationDuration = 1, float fireRate = 1, bool shootingSide = false)
@@ -450,40 +447,40 @@ public class WeaponController : MonoBehaviour
         cb.Flip(shootingSide);
         cb.shootingSideRight = shootingSide;
 
-        if (weaponAnimator.runtimeAnimatorController != null)
+        if (cb.animator.runtimeAnimatorController != null)
         {
-            weaponAnimator.Play("Shoot", 1);
+            cb.animator.Play("Shoot", 1);
 
             if (fireRate != 0)
-                weaponAnimator.SetFloat("ShootingTime", animationDuration / fireRate);
+                cb.animator.SetFloat("ShootingTime", animationDuration / fireRate);
 
-            weaponAnimator.SetBool("Fire", true);
+            cb.animator.SetBool("Fire", true);
         }
     }
 
     public void StopFireAnimation()
     {
-        if (weaponAnimator.runtimeAnimatorController != null)
-            weaponAnimator.SetBool("Fire", false);
+        if (cb.animator.runtimeAnimatorController != null)
+            cb.animator.SetBool("Fire", false);
     }
 
     public void PlayReloadAnimation(float reloadTime)
     {
-        if (weaponAnimator.runtimeAnimatorController != null)
+        if (cb.animator.runtimeAnimatorController != null)
         {
             if (GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
                 weaponSounds.reloadSounds = (GetCurrentWeapon() as AutomaticWeapon).reloadSounds;
 
-            weaponAnimator.SetFloat("ReloadTime", 2 / reloadTime);
-            weaponAnimator.SetBool("isReloading", true);
-            weaponAnimator.Play("Reload", 1);
+            cb.animator.SetFloat("ReloadTime", 2 / reloadTime);
+            cb.animator.SetBool("isReloading", true);
+            cb.animator.Play("Reload", 1);
         }
     }
 
     public void StopReloadAnimation()
     {
-        if (weaponAnimator.runtimeAnimatorController != null)
-            weaponAnimator.SetBool("isReloading", false);
+        if (cb.animator.runtimeAnimatorController != null)
+            cb.animator.SetBool("isReloading", false);
         //anim.Play ("Reload" + weaponType.ToString ());
     }
 

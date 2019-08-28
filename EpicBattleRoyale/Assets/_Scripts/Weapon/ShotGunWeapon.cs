@@ -8,7 +8,6 @@ public class ShotGunWeapon : AutomaticWeapon
 
     public override void Shot(bool isFacingRight)
     {
-
         int curBulletDamage = Mathf.RoundToInt((float)damage / shootingBulletCount);
 
         for (int i = 0; i < shootingBulletCount; i++)

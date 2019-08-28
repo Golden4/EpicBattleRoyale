@@ -38,8 +38,6 @@ public class SoundLibrary : MonoBehaviour
 
             int randomIndex = Random.Range(0, array.clips.Length);
             return array.clips[randomIndex];
-
-
         }
         else
         {

@@ -68,7 +68,7 @@ MonoBehaviour:
   bulletSystem:
     curBullets: 0
     maxBullets: 10
-    ammoType: 4
+    ammoType: 0
     characterInventory: {fileID: 0}
   mode: 0
   curState: 0

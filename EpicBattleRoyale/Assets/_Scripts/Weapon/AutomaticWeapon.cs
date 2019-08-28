@@ -62,7 +62,7 @@ public class AutomaticWeapon : Weapon
         muzzleFlash = go.GetComponent<ParticleSystem>();
         muzzleFlash.transform.SetParent(muzzlePoint, false);
         muzzleFlash.transform.localPosition = Vector3.right * .2f;
-        bulletSystem.characterInventory = wc.cb.characterInventory;
+        bulletSystem.Setup(wc.cb.characterInventory);
         bulletSystem.GiveBullets(10);
     }
 

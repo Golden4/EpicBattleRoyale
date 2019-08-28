@@ -74,7 +74,6 @@ public class AudioManager : SingletonResourse<AudioManager>
                 PlaySound(sound);
             else
                 Debug.LogError(name + "Sound not found");
-
         }
         catch (System.Exception except)
         {
@@ -86,7 +85,7 @@ public class AudioManager : SingletonResourse<AudioManager>
 
     public static void PlaySoundAtPosition(Sound sound, Vector3 pos)
     {
-        AudioSource.PlayClipAtPoint(sound.clip, pos);
+        AudioSource.PlayClipAtPoint(sound.clip, pos, sound.volume);
     }
 
     public static void PlaySoundAtObject(Sound sound, GameObject obj)

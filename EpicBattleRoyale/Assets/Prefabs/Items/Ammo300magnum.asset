@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1694d5bc788ecf4b8f667dc21b806aa, type: 3}
   m_Name: Ammo300magnum
   m_EditorClassIdentifier: 
-  Count: 5
+  Count: 10
   bulletType: 4

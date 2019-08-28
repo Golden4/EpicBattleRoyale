@@ -25,11 +25,11 @@ public class MeleeWeapon : Weapon
                 }
                 else
                 {
-
-                    if (wc.weaponAnimator.GetLayerWeight(1) == 1)
+                    if (wc.cb.animator.GetLayerWeight(1) == 1)
                     {
-                        wc.weaponAnimator.SetLayerWeight(1, 0);
+                        wc.cb.animator.SetLayerWeight(1, 0);
                     }
+
                 }
                 break;
             case State.Beating:
@@ -42,7 +42,7 @@ public class MeleeWeapon : Weapon
     IEnumerator BeatCoroutine()
     {
         bool side = firingSideInput < 0;
-        wc.weaponAnimator.SetLayerWeight(1, 1);
+        wc.cb.animator.SetLayerWeight(1, 1);
         while (curState == State.Beating && isActive && Mathf.Abs(firingSideInput) > 0)
         {
             wc.PlayFireAnimation(animationTime, animationTime, side);
@@ -53,7 +53,7 @@ public class MeleeWeapon : Weapon
             yield return new WaitForSeconds(fireRate / 2f);
         }
         wc.StopFireAnimation();
-        wc.weaponAnimator.SetLayerWeight(1, 0);
+        wc.cb.animator.SetLayerWeight(1, 0);
         curState = State.Normal;
     }
 
@@ -77,9 +77,9 @@ public class MeleeWeapon : Weapon
         base.OnWeaponSwitch(sender, e);
 
         if (weaponName == GameAssets.WeaponsList.Fists && isActive)
-            wc.weaponAnimator.SetLayerWeight(1, 0);
+            wc.cb.animator.SetLayerWeight(1, 0);
         else
-            wc.weaponAnimator.SetLayerWeight(1, 1);
+            wc.cb.animator.SetLayerWeight(1, 1);
 
 
 

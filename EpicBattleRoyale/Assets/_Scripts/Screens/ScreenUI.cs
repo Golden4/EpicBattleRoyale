@@ -88,8 +88,6 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
     void OnDieStatic(CharacterBase characterBase)
     {
-        Debug.Log(characterBase.name + "   " + World.Ins.allCharacters.Count);
-
         UpdateAlifeAmount(World.Ins.allCharacters.Count);
     }
 

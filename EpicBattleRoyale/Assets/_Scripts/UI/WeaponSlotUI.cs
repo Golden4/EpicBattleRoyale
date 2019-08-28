@@ -14,7 +14,7 @@ public class WeaponSlotUI : MonoBehaviour
     BulletSystem bulletSystem;
     Material fillableMaterial;
 
-    void BulletSystem_OnBulletsChange(object sender, System.EventArgs e)
+    void BulletSystem_OnBulletsChange(int bullets)
     {
         UpdateBullets(bulletSystem.GetCurrentBullets(), bulletSystem.GetCurBulletsStock());
     }

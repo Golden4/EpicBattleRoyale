@@ -7,12 +7,12 @@ public class CharacterInventory : MonoBehaviour
 {
     public CharacterBase characterBase;
     public List<ItemPickUp> canPickUpItems = new List<ItemPickUp>();
-    //public Dictionary<Item, int> items = new Dictionary<Item, int>();
-    public List<Item> items = new List<Item>();
+
+    public Dictionary<Item, InventoryItem> items = new Dictionary<Item, InventoryItem>();
 
     public event Action<ItemPickUp> OnPickUp;
 
-    public event Action<Item> OnAddItem;
+    //  public event Action<InventoryItem> OnAddItem;
 
     void Awake()
     {
@@ -21,6 +21,9 @@ public class CharacterInventory : MonoBehaviour
 
     public void OnCharacterPickUp(ItemPickUp item)
     {
+        if (item.item != null)
+            AddItem(item.item);
+
         if (OnPickUp != null)
             OnPickUp(item);
     }
@@ -53,6 +56,7 @@ public class CharacterInventory : MonoBehaviour
 
             if (characterBase.CanPickUp() && canPickUpItems[i].PickUp(characterBase, true))
             {
+                characterBase.characterInventory.OnCharacterPickUp(canPickUpItems[i]);
                 canPickUpItems[i].DestroyItem();
                 break;
             }
@@ -61,45 +65,93 @@ public class CharacterInventory : MonoBehaviour
 
     public void AddItem(Item item)
     {
-        if (!items.Contains(item))
+        if (!items.ContainsKey(item))
         {
-            items.Add(item);
-            item.OnAddInventory();
-        }
-        else
-        {
-            item.OnAddInventory();
+            items[item] = new InventoryItem(item, 0);
         }
 
-        if (OnAddItem != null)
-            OnAddItem(item);
+        items[item].OnAddInventory();
     }
-
-    // public int GetItemCount(Item item)
-    // {
-    //     return items[item];
-    // }
 
     public void Remove(Item item)
     {
         items.Remove(item);
     }
 
-    public AmmoItem GetAmmoItem(GameAssets.PickUpItemsData.AmmoList ammoType)
+    public InventoryItem GetAmmoItem(GameAssets.PickUpItemsData.AmmoList ammoType)
     {
-        for (int i = 0; i < items.Count; i++)
+        foreach (Item item in items.Keys)
         {
-            AmmoItem ammoItem = items[i] as AmmoItem;
+            AmmoItem ammoItem = item as AmmoItem;
 
             if (ammoItem != null)
             {
                 if (ammoItem.bulletType == ammoType)
                 {
-                    return ammoItem;
+                    return items[ammoItem];
                 }
             }
         }
 
         return null;
+    }
+
+    [System.Serializable]
+    public class InventoryItem
+    {
+        public Item item;
+
+        public int CurCount
+        {
+            get
+            {
+                return curCount;
+            }
+            set
+            {
+                curCount = value;
+
+                if (OnChangeAmount != null)
+                    OnChangeAmount(curCount);
+            }
+        }
+
+        public int curCount;
+
+        public Action<int> OnChangeAmount;
+
+        public void AddAmount(int amount)
+        {
+            CurCount += amount;
+        }
+
+        public bool RemoveAmount(int amount)
+        {
+            if (amount > CurCount)
+                return false;
+
+            CurCount -= amount;
+
+            return true;
+        }
+
+        public virtual void OnAddInventory()
+        {
+            AddAmount(item.Count);
+        }
+
+        public virtual void OnRemoveInventory()
+        {
+        }
+
+        public virtual void Use()
+        {
+        }
+
+        public InventoryItem(Item item, int curCount)
+        {
+            this.item = item;
+            this.CurCount = curCount;
+        }
     }
 }
