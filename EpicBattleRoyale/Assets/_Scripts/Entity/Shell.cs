@@ -28,8 +28,6 @@ public class Shell : MonoBehaviour
         DG.Tweening.DOVirtual.DelayedCall(.6f, delegate
         {
             AudioManager.PlaySoundAtPosition(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)], shell.transform.position);
-
-            //AudioManager.PlaySound(shell.shellSounds[Random.Range(0, shell.shellSounds.Length)]); 
         });
         Destroy(newShell, 1);
 

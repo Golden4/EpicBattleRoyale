@@ -67,7 +67,6 @@ public class WeaponController : MonoBehaviour
         return newWeapon;
     }
 
-
     public Weapon GiveWeapon(GameAssets.WeaponsList weapon, int indexInInventory)
     {
         GameObject go = Instantiate(GameAssets.Get.GetWeapon(weapon).gameObject);
@@ -98,7 +97,6 @@ public class WeaponController : MonoBehaviour
             cb.AddRenderer(weaponRenderer);
 
         SwitchWeapon(indexWeapon);
-
 
         if (OnGiveWeapon != null)
             OnGiveWeapon(weapon, EventArgs.Empty);
@@ -252,9 +250,11 @@ public class WeaponController : MonoBehaviour
 
         SetWeaponAnimationType(weaponsInInventory[weaponIndex].overrideController, weaponsInInventory[weaponIndex].slotType);
 
-        PlaySwitchAnimation();
+        if (cb.animator.isActiveAndEnabled)
+            PlaySwitchAnimation();
 
-        AudioManager.PlaySoundAtObject(weaponSwitchSound, gameObject);
+        if (gameObject.activeInHierarchy)
+            cb.characterAudio.PlaySound(weaponSwitchSound);
         //AudioManager.PlaySound(weaponSwitchSound);
         cb.EndHeal();
 

@@ -45,14 +45,15 @@ public class KillsListUI : MonoBehaviour
             killsList.Remove(imageGO);
         }
 
+        imageGO.transform.GetChild(1).GetComponent<Image>().DOFade(0, .3f);
+        imageGO.transform.GetChild(0).GetComponent<Text>().DOFade(0, .3f);
+        imageGO.transform.GetChild(2).GetComponent<Text>().DOFade(0, .3f);
+
         imageGO.DOFade(0, .3f).OnComplete(delegate
         {
             Destroy(imageGO.gameObject);
         });
 
-        imageGO.transform.GetChild(1).GetComponent<Image>().DOFade(0, .3f);
-        imageGO.transform.GetChild(0).GetComponent<Text>().DOFade(0, .3f);
-        imageGO.transform.GetChild(2).GetComponent<Text>().DOFade(0, .3f);
 
         // imageGO.transform.DOScale(Vector3.zero, .3f).OnComplete(delegate
         // {

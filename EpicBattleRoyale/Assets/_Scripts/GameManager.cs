@@ -21,14 +21,14 @@ public class GameManager : SingletonResourse<GameManager>
             transform.GetChild(0).gameObject.SetActive(true);
         }
 
-        if (Application.isMobilePlatform)
-        {
-            CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Touch);
-        }
-        else
-        {
+        // if (Application.isMobilePlatform)
+        // {
+        //     CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Touch);
+        // }
+        // else
+        // {
 
-            CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Hardware);
-        }
+        //     CrossPlatformInputManager.SwitchActiveInputMethod(CrossPlatformInputManager.ActiveInputMethod.Hardware);
+        // }
     }
 }

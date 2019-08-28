@@ -13,7 +13,6 @@ public class CharacterAudio : MonoBehaviour
     void Awake()
     {
         characterBase = GetComponent<CharacterBase>();
-
         sources = GetComponents<AudioSource>();
     }
 

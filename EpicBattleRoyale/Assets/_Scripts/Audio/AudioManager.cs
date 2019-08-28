@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -158,10 +159,13 @@ public class Sound
 
     public void PlaySound(AudioSource source)
     {
+        if (!source.isActiveAndEnabled)
+            return;
         source.clip = clip;
         source.volume = volume * (1 + Random.Range(-randomVolume / 2f, randomVolume / 2f));
         source.pitch = pitch * (1 + Random.Range(-randomPitch / 2f, randomPitch / 2f));
         source.Play();
+
     }
 
 }

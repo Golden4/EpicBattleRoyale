@@ -41,31 +41,20 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         UpdateKillsAmount(characterBase.killsCount);
     }
 
+
     void ShowInfoText(string text)
     {
         infoText.gameObject.SetActive(true);
-
         infoText.DOFade(1, .1f);
-
-        DOVirtual.DelayedCall(5f, delegate
-        {
-            infoText.DOFade(0, .5f);
-        });
-
+        infoText.DOFade(0, .5f).SetDelay(5f);
         infoText.text = text;
     }
 
     void ShowKilledText(string text)
     {
         killText.gameObject.SetActive(true);
-
         killText.DOFade(1, .1f);
-
-        DOVirtual.DelayedCall(5f, delegate
-        {
-            killText.DOFade(0, .5f);
-        });
-
+        killText.DOFade(0, .5f).SetDelay(5f);
         killText.text = text;
     }
 
