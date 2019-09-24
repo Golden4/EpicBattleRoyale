@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthItemPickUp : ItemPickUp
-{
+public class HealthItemPickUp : ItemPickUp {
     public GameAssets.PickUpItemsData.HealthList healthPickUpType;
 
-    public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
-    {
+    public override bool PickUp (CharacterBase cb, bool clickedPickUp = false) {
         // cb.characterInventory.AddItem(item);
         //cb.healthSystem.HealHealth(healthAmount);
+        ShowPopUp ("Health");
         return true;
     }
 

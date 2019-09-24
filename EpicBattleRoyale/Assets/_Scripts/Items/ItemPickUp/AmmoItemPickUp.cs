@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AmmoItemPickUp : ItemPickUp
-{
+public class AmmoItemPickUp : ItemPickUp {
     public GameAssets.PickUpItemsData.AmmoList ammoType;
     public int ammoAmount;
 
-    public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
-    {
+    public override bool PickUp (CharacterBase cb, bool clickedPickUp = false) {
         // cb.characterInventory.AddItem(item);
+
+        ShowPopUp (WeaponSlotUI.GetAmmoTypeText (ammoType));
 
         return true;
 

@@ -2,43 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponItemPickUp : ItemPickUp
-{
+public class WeaponItemPickUp : ItemPickUp {
     public GameAssets.WeaponsList weaponName;
 
     WeaponItemPickUpData data = null;
     //public BulletSystem bulletInfo;
 
-    public override bool PickUp(CharacterBase cb, bool clickedPickUp = false)
-    {
-        WeaponController wc = cb.GetComponent<WeaponController>();
-        if (wc != null)
-        {
-            Weapon weapon = wc.FindWeaponInInventory(weaponName);
+    public override bool PickUp (CharacterBase cb, bool clickedPickUp = false) {
+        WeaponController wc = cb.GetComponent<WeaponController> ();
+        if (wc != null) {
+            Weapon weapon = wc.FindWeaponInInventory (weaponName);
 
-            if (weapon == null)
-            {
-                if (wc.InventoryFull(GameAssets.Get.GetWeapon(weaponName).slotType))
-                {
-                    if (clickedPickUp)
-                    {
-                        SetPickUpData(wc.GiveWeapon(weaponName)); ;
-                        ShowPopUp(weaponName.ToString());
+            if (weapon == null) {
+                if (wc.InventoryFull (GameAssets.Get.GetWeapon (weaponName).slotType)) {
+                    if (clickedPickUp) {
+                        SetPickUpData (wc.GiveWeapon (weaponName));;
+                        ShowPopUp (weaponName.ToString ());
                         return true;
-                    }
-                    else
-                    {
+                    } else {
                         return false;
                     }
-                }
-                else
-                {
-                    SetPickUpData(wc.GiveWeapon(weaponName));
+                } else {
+                    SetPickUpData (wc.GiveWeapon (weaponName));
+                    ShowPopUp (weaponName.ToString ());
                     return true;
                 }
-            }
-            else
-            {
+            } else {
                 // if (weapon.WeaponIs(typeof(AutomaticWeapon)))
                 // {
                 //     AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
@@ -55,30 +44,24 @@ public class WeaponItemPickUp : ItemPickUp
         return false;
     }
 
-    public void AddWeaponData(AutomaticWeapon weapon)
-    {
-        data = new WeaponItemPickUpData(weapon.bulletSystem);
+    public void AddWeaponData (AutomaticWeapon weapon) {
+        data = new WeaponItemPickUpData (weapon.bulletSystem);
     }
 
-    public void SetPickUpData(Weapon weapon)
-    {
-        if (data != null)
-        {
-            if (weapon.WeaponIs(typeof(AutomaticWeapon)))
-            {
-                AutomaticWeapon automaticWeapon = (AutomaticWeapon)weapon;
-                automaticWeapon.bulletSystem.SetBullets(data.bulletSystem.curBullets);
+    public void SetPickUpData (Weapon weapon) {
+        if (data != null) {
+            if (weapon.WeaponIs (typeof (AutomaticWeapon))) {
+                AutomaticWeapon automaticWeapon = (AutomaticWeapon) weapon;
+                automaticWeapon.bulletSystem.SetBullets (data.bulletSystem.curBullets);
                 // automaticWeapon.bulletSystem.SetBulletsStock(data.bulletSystem.curBulletsStock);
             }
         }
     }
 
     [System.Serializable]
-    public class WeaponItemPickUpData
-    {
+    public class WeaponItemPickUpData {
         public BulletSystem bulletSystem;
-        public WeaponItemPickUpData(BulletSystem bulletSystem)
-        {
+        public WeaponItemPickUpData (BulletSystem bulletSystem) {
             this.bulletSystem = bulletSystem;
         }
     }
