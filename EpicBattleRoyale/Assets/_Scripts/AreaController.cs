@@ -17,6 +17,8 @@ public class AreaController : MonoBehaviour {
 
     public AreasState curAreasState;
 
+    public static event Action OnChangeState;
+
     int curWaitingTicks;
 
     void Awake () {
@@ -32,6 +34,7 @@ public class AreaController : MonoBehaviour {
                 areas[i, j] = new Area (Area.AreaState.Normal);
             }
         }
+        curAreaSize = MapsController.Ins.mapSize - 1;
         SetAreaState (AreasState.Waiting);
     }
 
@@ -56,8 +59,6 @@ public class AreaController : MonoBehaviour {
             }
 
             ScreenUI.Instance.areaTimer.text = string.Format ("{0}:{1}", (curWaitingTicks / 60).ToString ("00"), (curWaitingTicks % 60).ToString ("00"));
-
-            Debug.Log (curWaitingTicks);
             yield return new WaitForSeconds (1);
             curWaitingTicks--;
         }
@@ -72,16 +73,60 @@ public class AreaController : MonoBehaviour {
 
         switch (state) {
             case AreasState.Waiting:
-                StartTimer (areaLevels[curAreaLevel].waitingTime, () => SetAreaState (AreasState.Decreasing));
+                SetAreaStateWaiting ();
                 break;
             case AreasState.Decreasing:
-                StartTimer (areaLevels[curAreaLevel].decreasingTime, () => { curAreaLevel++; SetAreaState (AreasState.Waiting); });
+                SetAreaStateDecreasing ();
                 break;
             default:
                 break;
         }
 
-        Debug.Log (curAreaLevel);
+        if (OnChangeState != null)
+            OnChangeState ();
+    }
+
+    void SetAreaStateWaiting () {
+        StartTimer (areaLevels[curAreaLevel].waitingTime, () => SetAreaState (AreasState.Decreasing));
+    }
+
+    void SetAreaStateDecreasing () {
+        CalculateAndChangeAreaStates ();
+        StartTimer (areaLevels[curAreaLevel].decreasingTime, () => { curAreaLevel++; SetAreaState (AreasState.Waiting); });
+    }
+
+    int curAreaSize;
+    Vector2Int curAreaStartOffset;
+
+    void CalculateAndChangeAreaStates () {
+        Vector2Int randomPoint = new Vector2Int (UnityEngine.Random.Range (curAreaStartOffset.x, curAreaStartOffset.x + curAreaSize), UnityEngine.Random.Range (curAreaStartOffset.y, curAreaStartOffset.y + curAreaSize));
+        bool top = UnityEngine.Random.Range (0, 2) == 0;
+        bool left = UnityEngine.Random.Range (0, 2) == 0;
+
+        if (top) {
+            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
+                areas[curAreaStartOffset.x, i].curAreaState = Area.AreaState.Decreasing;
+            }
+            curAreaStartOffset.x++;
+        } else {
+            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
+                areas[curAreaStartOffset.x + curAreaSize, i].curAreaState = Area.AreaState.Decreasing;
+            }
+
+        }
+
+        if (left) {
+            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
+                areas[i, curAreaStartOffset.y].curAreaState = Area.AreaState.Decreasing;
+            }
+            curAreaStartOffset.y++;
+        } else {
+            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
+                areas[i, curAreaStartOffset.y + curAreaSize].curAreaState = Area.AreaState.Decreasing;
+            }
+        }
+
+        curAreaSize--;
     }
 
     public class Area {

@@ -22,7 +22,10 @@ namespace UnityStandardAssets.CrossPlatformInput {
 			} else {
 				m_Axis = CrossPlatformInputManager.VirtualAxisReference (axisName);
 			}
-			FindPairedButton ();
+
+			if (m_PairedWith == null) {
+				FindPairedButton ();
+			}
 		}
 
 		void FindPairedButton () {

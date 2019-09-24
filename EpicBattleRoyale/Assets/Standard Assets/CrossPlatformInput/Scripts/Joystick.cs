@@ -22,15 +22,17 @@ namespace UnityStandardAssets.CrossPlatformInput {
         bool m_UseY; // Toggle for using the Y axis
         CrossPlatformInputManager.VirtualAxis m_HorizontalVirtualAxis; // Reference to the joystick in the cross platform input
         CrossPlatformInputManager.VirtualAxis m_VerticalVirtualAxis; // Reference to the joystick in the cross platform input
+        RectTransform rectTransform;
 
         void OnEnable () {
             CreateVirtualAxes ();
         }
-        RectTransform rectTransform;
+
         void Start () {
             scaler = GetComponentInParent<CanvasScaler> ();
             rectTransform = GetComponent<RectTransform> ();
             m_StartPos = rectTransform.anchoredPosition; // transform.position;
+
         }
 
         void UpdateVirtualAxes (Vector3 value) {
@@ -52,14 +54,28 @@ namespace UnityStandardAssets.CrossPlatformInput {
             m_UseX = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyHorizontal);
             m_UseY = (axesToUse == AxisOption.Both || axesToUse == AxisOption.OnlyVertical);
 
-            // create new axes based on axes to use
-            if (m_UseX) {
-                m_HorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (horizontalAxisName);
-                CrossPlatformInputManager.RegisterVirtualAxis (m_HorizontalVirtualAxis);
-            }
-            if (m_UseY) {
-                m_VerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (verticalAxisName);
-                CrossPlatformInputManager.RegisterVirtualAxis (m_VerticalVirtualAxis);
+            if (!CrossPlatformInputManager.AxisExists (horizontalAxisName)) {
+                // create new axes based on axes to use
+                if (m_UseX) {
+                    m_HorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (horizontalAxisName);
+                    CrossPlatformInputManager.RegisterVirtualAxis (m_HorizontalVirtualAxis);
+                }
+                if (m_UseY) {
+                    m_VerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (verticalAxisName);
+                    CrossPlatformInputManager.RegisterVirtualAxis (m_VerticalVirtualAxis);
+                }
+            } else {
+                if (m_UseX) {
+                    m_HorizontalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (horizontalAxisName);
+                    CrossPlatformInputManager.RegisterVirtualAxis (m_HorizontalVirtualAxis);
+                }
+                if (m_UseY) {
+                    m_VerticalVirtualAxis = new CrossPlatformInputManager.VirtualAxis (verticalAxisName);
+                    CrossPlatformInputManager.RegisterVirtualAxis (m_VerticalVirtualAxis);
+                }
+
+                m_HorizontalVirtualAxis = CrossPlatformInputManager.VirtualAxisReference (horizontalAxisName);
+                m_VerticalVirtualAxis = CrossPlatformInputManager.VirtualAxisReference (verticalAxisName);
             }
         }
 

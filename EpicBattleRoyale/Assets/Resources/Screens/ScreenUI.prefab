@@ -5125,7 +5125,6 @@ GameObject:
   - component: {fileID: 3397065187379228996}
   - component: {fileID: 2524232543969239862}
   - component: {fileID: 8687341805800338076}
-  - component: {fileID: 6141261446898852093}
   m_Layer: 5
   m_Name: Arrow
   m_TagString: Untagged
@@ -5187,27 +5186,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!223 &6141261446898852093
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2149430019425267423}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 1
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 29
-  m_TargetDisplay: 0
 --- !u!1 &2705103011096496273
 GameObject:
   m_ObjectHideFlags: 0
@@ -7582,7 +7560,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.105882354}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

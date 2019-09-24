@@ -19,15 +19,25 @@ public class UIMap : MonoBehaviour {
 
     void Awake () {
         MapsController.OnChangeMap += OnChangeMap;
+        AreaController.OnChangeState += OnChangeState;
     }
 
-    private void OnChangeMap (CharacterBase cb, Vector2Int mapCoords, Direction dir) {
+    private void OnChangeState () {
         if (grids != null)
             for (int i = 0; i < MapsController.Ins.mapSize; i++) {
                 for (int j = 0; j < MapsController.Ins.mapSize; j++) {
-                    UpdateGridColor (i, j, mapCoords == new Vector2Int (i, j));
+                    UpdateGridColor (i, j, AreaController.Ins.areas[i, j].curAreaState == AreaController.Area.AreaState.Decreasing);
                 }
             }
+    }
+
+    private void OnChangeMap (CharacterBase cb, Vector2Int mapCoords, Direction dir) {
+        // if (grids != null)
+        //     for (int i = 0; i < MapsController.Ins.mapSize; i++) {
+        //         for (int j = 0; j < MapsController.Ins.mapSize; j++) {
+        //             UpdateGridColor (i, j, mapCoords == new Vector2Int (i, j));
+        //         }
+        //     }
     }
 
     void UpdateGridColor (int i, int j, bool active) {
@@ -251,6 +261,7 @@ public class UIMap : MonoBehaviour {
     void OnDestroy () {
 
         MapsController.OnChangeMap -= OnChangeMap;
+        AreaController.OnChangeState -= OnChangeState;
     }
 
     float WorldPositionToPersent (float position) {
