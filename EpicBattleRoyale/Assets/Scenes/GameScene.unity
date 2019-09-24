@@ -262,6 +262,7 @@ GameObject:
   - component: {fileID: 1209955568}
   - component: {fileID: 1209955565}
   - component: {fileID: 1209955569}
+  - component: {fileID: 1209955570}
   m_Layer: 0
   m_Name: Controllers
   m_TagString: Untagged
@@ -390,6 +391,30 @@ MonoBehaviour:
     type: 3}
   pfHitEffect: {fileID: 5108121679525316238, guid: 3f5de4a17748c304b8faa95c0fbd9297,
     type: 3}
+--- !u!114 &1209955570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1209955564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32cfb4705d943664297ddda129d4e265, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  areaLevels:
+  - waitingTime: 60
+    decreasingTime: 20
+  - waitingTime: 45
+    decreasingTime: 15
+  - waitingTime: 30
+    decreasingTime: 8
+  - waitingTime: 15
+    decreasingTime: 5
+  - waitingTime: 10
+    decreasingTime: 5
+  curAreasState: 0
 --- !u!1 &1525223802
 GameObject:
   m_ObjectHideFlags: 0

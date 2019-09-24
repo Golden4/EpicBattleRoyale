@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
-{
-    public enum WeaponType
-    {
+public class Weapon : MonoBehaviour {
+    public enum WeaponType {
         Melee,
         Pistol,
         Automatic,
@@ -17,16 +15,14 @@ public class Weapon : MonoBehaviour
     public WeaponType weaponType;
     public WeaponController.SlotType slotType;
     public Sprite sprite;
-    public Vector2 m_damage = new Vector2(30, 50);
+    public Vector2 m_damage = new Vector2 (30, 50);
     public AnimatorOverrideController overrideController;
 
     public float firingRange = 2;
 
-    public int damage
-    {
-        get
-        {
-            return (int)Random.Range(m_damage.x, m_damage.y);
+    public int damage {
+        get {
+            return (int) Random.Range (m_damage.x, m_damage.y);
         }
     }
 
@@ -63,99 +59,80 @@ public class Weapon : MonoBehaviour
 		#endif
 	}*/
 
-    public virtual bool CanFiring()
-    {
+    public virtual bool CanFiring () {
         return false;
     }
 
-    public virtual void Setup(WeaponController wc)
-    {
+    public virtual void Setup (WeaponController wc) {
 
         this.wc = wc;
         wc.OnWeaponSwitch += OnWeaponSwitch;
     }
 
-    public virtual void OnWeaponSwitch(object sender, System.EventArgs e)
-    {
-    }
+    public virtual void OnWeaponSwitch (object sender, System.EventArgs e) { }
 
-    public virtual void OnUpdate()
-    {
+    public virtual void OnUpdate () {
 
     }
 
-    public virtual void OnFixedUpdate()
-    {
+    public virtual void OnFixedUpdate () {
 
     }
 
-    public virtual bool isFiring()
-    {
+    public virtual bool isFiring () {
         return false;
     }
 
-    public virtual float GetFiringRange()
-    {
+    public virtual float GetFiringRange () {
         return firingRange;
     }
 
-    public WeaponType GetWeaponType()
-    {
+    public WeaponType GetWeaponType () {
         return weaponType;
     }
 
-    public Sprite GetWeaponSprite()
-    {
+    public Sprite GetWeaponSprite () {
         return sprite;
     }
 
-    public WeaponController.SlotType GetSlotType()
-    {
+    public WeaponController.SlotType GetSlotType () {
         return slotType;
     }
 
-    public bool WeaponIs(System.Type type)
-    {
-        return (type.IsAssignableFrom(this.GetType()));
+    public bool WeaponIs (System.Type type) {
+        return (type.IsAssignableFrom (this.GetType ()));
     }
 
-    public T GetWeaponWithType<T>() where T : Weapon
-    {
-        if (WeaponIs(typeof(T)))
-            return (T)this;
+    public T GetWeaponWithType<T> () where T : Weapon {
+        if (WeaponIs (typeof (T)))
+            return (T) this;
 
         return null;
     }
 
-    public void OnPickUp()
-    {
+    public void OnPickUp () {
 
     }
 
-    public bool HitWithRaycast(Vector2 direction, float distance, int raycastDamage = -1)
-    {
-        RaycastHit2D[] hit = Physics2D.RaycastAll(wc.cb.GetCharacterCenter(), direction, distance);
+    public bool HitWithRaycast (Vector2 direction, float distance, int raycastDamage = -1) {
+        RaycastHit2D[] hit = Physics2D.RaycastAll (wc.cb.GetCharacterCenter (), direction, distance);
 
-        Debug.DrawRay(wc.cb.GetCharacterCenter(), direction, Color.red, distance);
+        Debug.DrawRay (wc.cb.GetCharacterCenter (), direction, Color.red, distance);
 
-        for (int i = 0; i < hit.Length; i++)
-        {
-            if (hit[i].collider != null)
-            {
-                HitBox damagable = hit[i].collider.GetComponent<HitBox>();
+        for (int i = 0; i < hit.Length; i++) {
+            if (hit[i].collider != null) {
+                HitBox damagable = hit[i].collider.GetComponent<HitBox> ();
 
-                if (damagable != null && damagable.characterBase != wc.cb && wc.cb.CompareEntitiesPositions(damagable.characterBase.worldPosition))
-                {
-                    if (damagable.CanHit())
-                    {
+                if (damagable != null && damagable.characterBase != wc.cb && wc.cb.CompareEntitiesPositions (damagable.characterBase.worldPosition)) {
+                    if (damagable.CanHit ()) {
                         if (raycastDamage != -1)
-                            damagable.TakeHit(wc.cb, this, raycastDamage);
+                            damagable.TakeHit (wc.cb, this, raycastDamage);
                         else
-                            damagable.TakeHit(wc.cb, this, damage);
+                            damagable.TakeHit (wc.cb, this, damage);
 
-                        ParticlesController.Ins.PlayBloodSplashParticle(hit[i].point, direction);
+                        ParticlesController.Ins.PlayBloodSplashParticle (hit[i].point, direction);
 
-                        Debug.Log("Hitted with raycast " + damagable.characterBase.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType);
+                        //                        Debug.Log("Hitted with raycast " + damagable.characterBase.name + " damage = " + damage + "  hitBoxType = " + damagable.hitBoxType);
                         return true;
                     }
                 }

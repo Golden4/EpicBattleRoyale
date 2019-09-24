@@ -45,7 +45,8 @@ public class Enemy : MonoBehaviour {
     }
 
     void OnHitted (CharacterBase hitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType) {
-        if (curTargetState != TargetState.TargetCharacter) {
+        //  if (curTargetState != TargetState.TargetCharacter) {
+        if (hittedRageTime < 0) {
             targetCharacter = hitCharacter;
             curTargetState = TargetState.TargetCharacter;
             hittedRageTime = 2;
@@ -194,7 +195,7 @@ public class Enemy : MonoBehaviour {
 
         if (curWaitingTime < 0 || curTargetState == TargetState.TargetCharacter) {
             curWaitingTime = .5f;
-            targetPosition = (Vector2) characterBase.worldPosition + UnityEngine.Random.insideUnitCircle * UnityEngine.Random.Range (-10f, 10f);
+            targetPosition = (Vector2) characterBase.worldPosition + UnityEngine.Random.insideUnitCircle * UnityEngine.Random.Range (-20f, 10f);
             targetPosition.x = Mathf.Clamp (targetPosition.x, MapsController.Ins.GetCurrentWorldEndPoints ().x, MapsController.Ins.GetCurrentWorldEndPoints ().y);
             targetPosition.y = Mathf.Clamp (targetPosition.y, MapsController.Ins.GetCurrentWorldUpDownEndPoints ().x, MapsController.Ins.GetCurrentWorldUpDownEndPoints ().y);
             curEnemyState = EnemyState.Moving;
@@ -328,6 +329,8 @@ public class Enemy : MonoBehaviour {
         curWaitingTime = 0;
         hittedRageTime = 0;
         curAttackingTime = 0;
+        targetCharacter = null;
+        targetItem = null;
     }
 
     void OnDisable () {
