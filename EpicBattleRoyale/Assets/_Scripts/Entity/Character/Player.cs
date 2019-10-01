@@ -47,9 +47,6 @@ public class Player : MonoBehaviour
         float shootingSideInput = CrossPlatformInputManager.GetAxisRaw("Shoot");
         weaponController.GetCurrentWeapon().firingSideInput = shootingSideInput;
 
-        if (weaponController.GetCurrentWeapon() != null)
-            characterBase.isFiring = weaponController.GetCurrentWeapon().isFiring();
-
         bool isJumping = CrossPlatformInputManager.GetButtonDown("Jump");
 
         if (!isJumping)

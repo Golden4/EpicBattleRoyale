@@ -24,12 +24,9 @@ namespace UnityStandardAssets.CrossPlatformInput
 
 #if MOBILE_INPUT
             activeInput = s_TouchInput;
-            Debug.Log("MOBILE_INPUT");
 #else
 			activeInput = s_HardwareInput;
-            Debug.Log("StandaloneInput");
 #endif
-            Debug.Log(activeInput.GetType());
         }
 
         public static void SwitchActiveInputMethod(ActiveInputMethod activeInputMethod)

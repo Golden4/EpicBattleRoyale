@@ -4,134 +4,228 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AreaController : MonoBehaviour {
+public class AreaController : MonoBehaviour
+{
     public static AreaController Ins;
-    public Area[, ] areas;
+    public Area[,] areas;
     public AreaLevel[] areaLevels;
-    int curAreaLevel;
+    public int curAreaLevel;
 
-    public enum AreasState {
+    public enum AreasState
+    {
         Waiting,
         Decreasing,
     }
 
     public AreasState curAreasState;
 
-    public static event Action OnChangeState;
+    public static event Action<Area[,]> OnChangeState;
+    public static event Action<int> OnStartDecresingArea;
+    public static event Action<int> OnNextDecreasingArea;
 
     int curWaitingTicks;
 
-    void Awake () {
+    void Awake()
+    {
         Ins = this;
-    }
+        areas = new Area[MapsController.mapSize, MapsController.mapSize];
 
-    void Start () {
-
-        areas = new Area[MapsController.Ins.mapSize, MapsController.Ins.mapSize];
-
-        for (int i = 0; i < MapsController.Ins.mapSize; i++) {
-            for (int j = 0; j < MapsController.Ins.mapSize; j++) {
-                areas[i, j] = new Area (Area.AreaState.Normal);
+        for (int i = 0; i < MapsController.mapSize; i++)
+        {
+            for (int j = 0; j < MapsController.mapSize; j++)
+            {
+                areas[i, j] = new Area(Area.AreaState.Normal);
             }
         }
-        curAreaSize = MapsController.Ins.mapSize - 1;
-        SetAreaState (AreasState.Waiting);
+        curAreaSize = MapsController.mapSize - 1;
+        SetAreaState(AreasState.Waiting);
     }
 
-    public Area GetArea (int x, int y) {
+    public Area GetArea(int x, int y)
+    {
         return areas[x, y];
     }
 
-    void Update () { }
-
-    void StartTimer (int timer, Action OnTimerEnd = null) {
-        curWaitingTicks = timer;
-        StartCoroutine (Timer (OnTimerEnd));
+    public int GetDamageAmount()
+    {
+        return curAreaLevel;
     }
 
-    IEnumerator Timer (Action OnTimerEnd) {
-        while (curWaitingTicks > 0) {
+    public float GetHitCoudown()
+    {
+        return 3f / curAreaLevel;
+    }
 
-            if (curAreasState == AreasState.Waiting) {
-                ScreenUI.Instance.areaTimer.color = Color.white;
-            } else {
-                ScreenUI.Instance.areaTimer.color = Color.red;
-            }
+    void Update() { }
 
-            ScreenUI.Instance.areaTimer.text = string.Format ("{0}:{1}", (curWaitingTicks / 60).ToString ("00"), (curWaitingTicks % 60).ToString ("00"));
-            yield return new WaitForSeconds (1);
+    void StartTimer(int timer, Action onTimerTick, Action OnTimerEnd = null)
+    {
+        curWaitingTicks = timer;
+        StartCoroutine(Timer(onTimerTick, OnTimerEnd));
+    }
+
+    IEnumerator Timer(Action onTimerTick, Action OnTimerEnd)
+    {
+        while (curWaitingTicks > 0)
+        {
+
+            if (onTimerTick != null)
+                onTimerTick();
+            yield return new WaitForSeconds(1);
             curWaitingTicks--;
         }
         if (OnTimerEnd != null)
-            OnTimerEnd ();
+            OnTimerEnd();
     }
 
-    void SetAreaState (AreasState state) {
+    void SetAreaState(AreasState state)
+    {
         curAreasState = state;
-        if (curAreaLevel >= areaLevels.Length)
-            return;
 
-        switch (state) {
-            case AreasState.Waiting:
-                SetAreaStateWaiting ();
-                break;
-            case AreasState.Decreasing:
-                SetAreaStateDecreasing ();
-                break;
-            default:
-                break;
+        if (curAreaLevel < areaLevels.Length)
+            switch (state)
+            {
+                case AreasState.Waiting:
+                    SetAreaStateWaiting();
+                    break;
+                case AreasState.Decreasing:
+                    SetAreaStateDecreasing();
+                    break;
+                default:
+                    break;
+            }
+        else
+        {
+            OnAllDamageableAreas();
         }
 
         if (OnChangeState != null)
-            OnChangeState ();
+            OnChangeState(areas);
     }
 
-    void SetAreaStateWaiting () {
-        StartTimer (areaLevels[curAreaLevel].waitingTime, () => SetAreaState (AreasState.Decreasing));
+    void OnAllDamageableAreas()
+    {
+        DamageabeAreaState();
+
+        ScreenUI.Instance.areaTimer.color = Color.white;
+        ScreenUI.Instance.areaTimer.text = "--:--";
     }
 
-    void SetAreaStateDecreasing () {
-        CalculateAndChangeAreaStates ();
-        StartTimer (areaLevels[curAreaLevel].decreasingTime, () => { curAreaLevel++; SetAreaState (AreasState.Waiting); });
+    void SetAreaStateWaiting()
+    {
+        DamageabeAreaState();
+
+        DecreasingAreaState();
+
+        StartTimer(areaLevels[curAreaLevel].waitingTime, () =>
+        {
+            ScreenUI.Instance.areaTimer.color = Color.white;
+            ScreenUI.Instance.areaTimer.text = string.Format("{0}:{1}", (curWaitingTicks / 60).ToString("00"), (curWaitingTicks % 60).ToString("00"));
+
+        }, () =>
+        {
+            SetAreaState(AreasState.Decreasing);
+        });
+
+
+        if (OnNextDecreasingArea != null)
+            OnNextDecreasingArea(areaLevels[curAreaLevel].waitingTime);
+    }
+
+    void SetAreaStateDecreasing()
+    {
+
+        StartTimer(areaLevels[curAreaLevel].decreasingTime,
+        () =>
+        {
+            ScreenUI.Instance.areaTimer.color = Color.red;
+            ScreenUI.Instance.areaTimer.text = TicksToTime(curWaitingTicks);
+        }, () =>
+        {
+            curAreaLevel++;
+            SetAreaState(AreasState.Waiting);
+        });
+
+        if (OnStartDecresingArea != null)
+            OnStartDecresingArea(areaLevels[curAreaLevel].decreasingTime);
     }
 
     int curAreaSize;
     Vector2Int curAreaStartOffset;
 
-    void CalculateAndChangeAreaStates () {
-        Vector2Int randomPoint = new Vector2Int (UnityEngine.Random.Range (curAreaStartOffset.x, curAreaStartOffset.x + curAreaSize), UnityEngine.Random.Range (curAreaStartOffset.y, curAreaStartOffset.y + curAreaSize));
-        bool top = UnityEngine.Random.Range (0, 2) == 0;
-        bool left = UnityEngine.Random.Range (0, 2) == 0;
+    void DecreasingAreaState()
+    {
+        Vector2Int randomPoint = new Vector2Int(UnityEngine.Random.Range(curAreaStartOffset.x, curAreaStartOffset.x + curAreaSize), UnityEngine.Random.Range(curAreaStartOffset.y, curAreaStartOffset.y + curAreaSize));
+        bool top = UnityEngine.Random.Range(0, 2) == 0;
+        bool left = UnityEngine.Random.Range(0, 2) == 0;
 
-        if (top) {
-            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
-                areas[curAreaStartOffset.x, i].curAreaState = Area.AreaState.Decreasing;
+        if (curAreaSize > 0)
+            if (left)
+            {
+
+                for (int i = curAreaStartOffset.x; i <= curAreaStartOffset.x + curAreaSize; i++)
+                {
+                    areas[i, curAreaStartOffset.y].ChangeState(Area.AreaState.Decreasing);
+                }
+
             }
-            curAreaStartOffset.x++;
-        } else {
-            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
-                areas[curAreaStartOffset.x + curAreaSize, i].curAreaState = Area.AreaState.Decreasing;
+            else
+            {
+                for (int i = curAreaStartOffset.x; i <= curAreaStartOffset.x + curAreaSize; i++)
+                {
+                    areas[i, curAreaStartOffset.y + curAreaSize].ChangeState(Area.AreaState.Decreasing);
+                }
+            }
+
+        if (top)
+        {
+            for (int i = curAreaStartOffset.y; i <= curAreaStartOffset.y + curAreaSize; i++)
+            {
+                areas[curAreaStartOffset.x, i].ChangeState(Area.AreaState.Decreasing);
             }
 
         }
-
-        if (left) {
-            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
-                areas[i, curAreaStartOffset.y].curAreaState = Area.AreaState.Decreasing;
-            }
-            curAreaStartOffset.y++;
-        } else {
-            for (int i = 0; i < MapsController.Ins.mapSize; i++) {
-                areas[i, curAreaStartOffset.y + curAreaSize].curAreaState = Area.AreaState.Decreasing;
+        else
+        {
+            for (int i = curAreaStartOffset.y; i <= curAreaStartOffset.y + curAreaSize; i++)
+            {
+                areas[curAreaStartOffset.x + curAreaSize, i].ChangeState(Area.AreaState.Decreasing);
             }
         }
+
+        if (top) curAreaStartOffset.x++;
+        if (left) curAreaStartOffset.y++;
 
         curAreaSize--;
     }
 
-    public class Area {
+    public bool IsOnArea(Vector2Int coords)
+    {
+        return areas[coords.x, coords.y].curAreaState != Area.AreaState.Damageable;
+    }
 
-        public enum AreaState {
+    void DamageabeAreaState()
+    {
+        for (int i = 0; i < MapsController.mapSize; i++)
+        {
+            for (int j = 0; j < MapsController.mapSize; j++)
+            {
+                if (areas[i, j].curAreaState == Area.AreaState.Decreasing)
+                    areas[i, j].ChangeState(Area.AreaState.Damageable);
+
+            }
+        }
+    }
+    public static string TicksToTime(int ticks)
+    {
+        return string.Format("{0}:{1}", (ticks / 60).ToString("00"), (ticks % 60).ToString("00"));
+    }
+
+    public class Area
+    {
+
+        public enum AreaState
+        {
             Normal,
             Decreasing,
             Damageable
@@ -139,15 +233,30 @@ public class AreaController : MonoBehaviour {
 
         public AreaState curAreaState;
 
-        public Area () { }
+        public void ChangeState(AreaState state)
+        {
+            if (curAreaState == AreaState.Damageable)
+            {
 
-        public Area (AreaState curAreaState) {
+            }
+            else
+            {
+                curAreaState = state;
+            }
+        }
+
+
+        public Area() { }
+
+        public Area(AreaState curAreaState)
+        {
             this.curAreaState = curAreaState;
         }
     }
 
     [System.Serializable]
-    public class AreaLevel {
+    public class AreaLevel
+    {
         public int waitingTime;
         public int decreasingTime;
     }

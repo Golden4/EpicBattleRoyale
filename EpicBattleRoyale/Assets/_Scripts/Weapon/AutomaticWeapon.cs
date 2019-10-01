@@ -130,6 +130,7 @@ public class AutomaticWeapon : Weapon
             curState = State.Reloading;
             // StartCoroutine("ReloadCoroutine");
             wc.PlayReloadAnimation(reloadTime);
+            wc.cb.EndHeal();
 
             if (OnReload != null)
                 OnReload(reloadTime);
@@ -248,14 +249,14 @@ public class AutomaticWeapon : Weapon
         }
     }
 
-    public override void OnWeaponSwitch(object sender, System.EventArgs e)
+    public override void OnWeaponSwitch(Weapon weapon)
     {
-        base.OnWeaponSwitch(sender, e);
+        base.OnWeaponSwitch(weapon);
 
-        // if (curState == State.Reloading)
-        // {
-        //     StopCoroutine("ReloadCoroutine");
-        // }
+        if (curState == State.Reloading)
+        {
+            StopCoroutine("ReloadCoroutine");
+        }
 
         if (curState == State.Shooting)
         {

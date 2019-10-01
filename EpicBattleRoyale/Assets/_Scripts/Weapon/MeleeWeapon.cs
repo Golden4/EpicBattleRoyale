@@ -72,9 +72,9 @@ public class MeleeWeapon : Weapon
         return curState == State.Beating;
     }
 
-    public override void OnWeaponSwitch(object sender, System.EventArgs e)
+    public override void OnWeaponSwitch(Weapon weapon)
     {
-        base.OnWeaponSwitch(sender, e);
+        base.OnWeaponSwitch(weapon);
 
         if (weaponName == GameAssets.WeaponsList.Fists && isActive)
             wc.cb.animator.SetLayerWeight(1, 0);

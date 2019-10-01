@@ -22,7 +22,7 @@ public class MapsController : MonoBehaviour
     [HideInInspector]
     public State mapState;
 
-    public int mapSize = 4;
+    public static int mapSize = 5;
 
     public MapInfo[,] maps;
 
@@ -119,10 +119,10 @@ public class MapsController : MonoBehaviour
         for (int i = (int)GetMapData(map.mapType).worldEndPoints.x + 10; i < (int)GetMapData(map.mapType).worldEndPoints.y - 10; i = i + 3)
         {
 
-             if (UnityEngine.Random.Range(0, 10) == 0)
-             {
-            float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
-            itemsSpawnPoints.Add(new Vector3(i, yPos));
+            if (UnityEngine.Random.Range(0, 10) == 0)
+            {
+                float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
+                itemsSpawnPoints.Add(new Vector3(i, yPos));
             }
         }
 
@@ -301,6 +301,17 @@ public class MapsController : MonoBehaviour
             worldUpDownEndPoints = GetMapData(GetCurrentMapInfo().mapType).worldUpDownEndPoints;
         }
 
+    }
+
+    public Vector2 GetWorldEndPoints(MapType type)
+    {
+        return GetMapData(type).worldEndPoints;
+    }
+
+    public Vector2 GetWorldUpDownEndPoints(MapType type)
+    {
+
+        return GetMapData(type).worldUpDownEndPoints;
     }
 
     Vector2 screenUpDownEndPoints;

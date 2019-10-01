@@ -330,7 +330,6 @@ MonoBehaviour:
     worldUpDownEndPoints: {x: -6, y: -1}
     screenUpDownEndPoints: {x: -6, y: 7.2}
   mapState: 0
-  mapSize: 5
   curMapCoords: {x: 0, y: 0}
   curHouseIndex: 0
 --- !u!4 &1209955566
@@ -404,16 +403,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   areaLevels:
-  - waitingTime: 5
-    decreasingTime: 4
-  - waitingTime: 5
-    decreasingTime: 5
-  - waitingTime: 5
-    decreasingTime: 5
-  - waitingTime: 5
-    decreasingTime: 5
-  - waitingTime: 10
-    decreasingTime: 5
+  - waitingTime: 90
+    decreasingTime: 25
+  - waitingTime: 60
+    decreasingTime: 15
+  - waitingTime: 60
+    decreasingTime: 10
+  - waitingTime: 60
+    decreasingTime: 10
+  - waitingTime: 60
+    decreasingTime: 10
+  curAreaLevel: 0
   curAreasState: 0
 --- !u!1 &1525223802
 GameObject:

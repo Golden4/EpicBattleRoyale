@@ -17,12 +17,11 @@ public class WeaponsUI : MonoBehaviour
     public void Setup(WeaponController wc)
     {
         this.weaponController = wc;
-        WeaponController_OnWeaponSwitch(null, EventArgs
-        .Empty);
+        WeaponController_OnWeaponSwitch(null);
         weaponController.OnWeaponSwitch += WeaponController_OnWeaponSwitch;
     }
 
-    void WeaponController_OnWeaponSwitch(object sender, System.EventArgs e)
+    void WeaponController_OnWeaponSwitch(Weapon weaponS)
     {
         for (int i = 0; i < weaponController.WEAPON_COUNT; i++)
         {

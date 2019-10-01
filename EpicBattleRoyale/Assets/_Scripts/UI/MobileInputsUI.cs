@@ -5,15 +5,17 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MobileInputsUI : MonoBehaviour {
+public class MobileInputsUI : MonoBehaviour
+{
     public static MobileInputsUI Ins;
 
-    public enum ButtonTypes {
+    public enum ButtonTypes
+    {
         Reload,
         Health
     }
 
-    public List<TimerButton> timerButtons = new List<TimerButton> ();
+    public List<TimerButton> timerButtons = new List<TimerButton>();
     public Text healthCountText;
 
     public Button pickUpBtn;
@@ -24,158 +26,198 @@ public class MobileInputsUI : MonoBehaviour {
     WeaponController wc;
     CharacterBase characterBase;
 
-    void Awake () {
+    void Awake()
+    {
         Ins = this;
     }
 
-    public void Setup (WeaponController wc, CharacterBase cb) {
+    public void Setup(WeaponController wc, CharacterBase cb)
+    {
         this.wc = wc;
         characterBase = cb;
-        GetTimerButton (ButtonTypes.Reload).Hide ();
-        GetTimerButton (ButtonTypes.Health).Hide ();
-        ShowPickUpBtn (false);
-        ShowCanEnterDoorBtn (false);
-        ShowCanGoMapBtn (false);
+        GetTimerButton(ButtonTypes.Reload).Hide();
+        GetTimerButton(ButtonTypes.Health).Hide();
+        ShowPickUpBtn(false);
+        ShowCanEnterDoorBtn(false);
+        ShowCanGoMapBtn(false);
         wc.OnWeaponSwitch += Wc_OnWeaponSwitch;
         cb.characterInteractable.OnCanInteractEvent += OnCanInteract;
         cb.characterInteractable.OnCantInteractEvent += OnCantInteract;
         cb.characterInventory.OnPickUp += OnPickUp;
     }
 
-    public TimerButton GetTimerButton (ButtonTypes types) {
-        return timerButtons[(int) types];
+    public TimerButton GetTimerButton(ButtonTypes types)
+    {
+        return timerButtons[(int)types];
     }
 
-    void Update () {
-        if (aw != null) {
-            if (aw.CanReload ()) {
-                if (!GetTimerButton (ButtonTypes.Reload).isShow)
-                    GetTimerButton (ButtonTypes.Reload).Show (aw.reloadTime, () => aw.Reload (), null);
-            } else if (aw.curState != AutomaticWeapon.State.Reloading) {
-                if (GetTimerButton (ButtonTypes.Reload).isShow) {
-                    GetTimerButton (ButtonTypes.Reload).Hide ();
-                }
-            } else if (GetTimerButton (ButtonTypes.Reload).isShow && !GetTimerButton (ButtonTypes.Reload).isUsing) {
-                GetTimerButton (ButtonTypes.Reload).Hide ();
+    void Update()
+    {
+        if (aw != null)
+        {
+            if (aw.CanReload())
+            {
+                if (!GetTimerButton(ButtonTypes.Reload).isShow)
+                    GetTimerButton(ButtonTypes.Reload).Show(aw.reloadTime, () => aw.Reload(), null);
             }
-        } else if (GetTimerButton (ButtonTypes.Reload).isShow) {
-            GetTimerButton (ButtonTypes.Reload).Hide ();
+            else if (aw.curState != AutomaticWeapon.State.Reloading)
+            {
+                if (GetTimerButton(ButtonTypes.Reload).isShow)
+                {
+                    GetTimerButton(ButtonTypes.Reload).Hide();
+                }
+            }
+            else if (GetTimerButton(ButtonTypes.Reload).isShow && !GetTimerButton(ButtonTypes.Reload).isUsing)
+            {
+                GetTimerButton(ButtonTypes.Reload).Hide();
+            }
+        }
+        else if (GetTimerButton(ButtonTypes.Reload).isShow)
+        {
+            GetTimerButton(ButtonTypes.Reload).Hide();
         }
 
-        if (!characterBase.isHealing && GetTimerButton (ButtonTypes.Health).isUsing) {
-            GetTimerButton (ButtonTypes.Health).Cancel ();
+        if (!characterBase.isHealing && GetTimerButton(ButtonTypes.Health).isUsing)
+        {
+            GetTimerButton(ButtonTypes.Health).Cancel();
         }
 
-        for (int i = 0; i < timerButtons.Count; i++) {
-            timerButtons[i].OnUpdate ();
+        for (int i = 0; i < timerButtons.Count; i++)
+        {
+            timerButtons[i].OnUpdate();
         }
     }
 
-    void FixedUpdate () {
-        for (int i = 0; i < timerButtons.Count; i++) {
-            timerButtons[i].OnFixedUpdate ();
+    void FixedUpdate()
+    {
+        for (int i = 0; i < timerButtons.Count; i++)
+        {
+            timerButtons[i].OnFixedUpdate();
         }
     }
 
-    void OnPickUp (ItemPickUp item) {
+    void OnPickUp(ItemPickUp item)
+    {
         if (item.item == null)
             return;
 
         HealthItem healthItem = item.item as HealthItem;
 
-        if (healthItem != null) {
+        if (healthItem != null)
+        {
             characterBase.characterInventory.items[item.item].OnChangeAmount -= OnChangeHealthCount;
             characterBase.characterInventory.items[item.item].OnChangeAmount += OnChangeHealthCount;
-            if (!GetTimerButton (ButtonTypes.Health).isShow)
-                GetTimerButton (ButtonTypes.Health).Show (healthItem.usingTime, () => characterBase.Heal (), delegate {
-                    characterBase.EndHeal ();
-                    healthItem.Use (characterBase);
+            if (!GetTimerButton(ButtonTypes.Health).isShow)
+                GetTimerButton(ButtonTypes.Health).Show(healthItem.usingTime, () => characterBase.Heal(), delegate
+                {
+                    characterBase.EndHeal();
+                    healthItem.Use(characterBase);
                 });
 
-            OnChangeHealthCount (characterBase.characterInventory.items[item.item].CurCount);
+            OnChangeHealthCount(characterBase.characterInventory.items[item.item].CurCount);
         }
     }
 
-    private void OnChangeHealthCount (int amount) {
-        healthCountText.text = amount.ToString ();
+    private void OnChangeHealthCount(int amount)
+    {
+        healthCountText.text = amount.ToString();
 
         if (amount <= 0)
-            if (GetTimerButton (ButtonTypes.Health).isShow)
-                GetTimerButton (ButtonTypes.Health).Hide ();
+            if (GetTimerButton(ButtonTypes.Health).isShow)
+                GetTimerButton(ButtonTypes.Health).Hide();
     }
 
-    void OnCanInteract (Interactable interactable) {
-        switch (interactable.GetInteractableType ()) {
+    void OnCanInteract(Interactable interactable)
+    {
+        switch (interactable.GetInteractableType())
+        {
             case Interactable.InteractableType.ItemPickUp:
-                ShowPickUpBtn (true, () => {
-                    interactable.Interact (characterBase);
+                ShowPickUpBtn(true, () =>
+                {
+                    interactable.Interact(characterBase);
                 });
                 break;
             case Interactable.InteractableType.HouseDoor:
 
-                ShowCanEnterDoorBtn (true, () => {
-                    interactable.Interact (characterBase);
+                ShowCanEnterDoorBtn(true, () =>
+                {
+                    interactable.Interact(characterBase);
                 });
                 break;
 
             case Interactable.InteractableType.MapChange:
-                ShowCanGoMapBtn (true, () => {
-                    interactable.Interact (characterBase);
+                ShowCanGoMapBtn(true, () =>
+                {
+                    interactable.Interact(characterBase);
                 });
                 break;
         }
     }
 
-    void OnCantInteract (Interactable interactable) {
-        switch (interactable.GetInteractableType ()) {
+    void OnCantInteract(Interactable interactable)
+    {
+        switch (interactable.GetInteractableType())
+        {
             case Interactable.InteractableType.ItemPickUp:
                 if (characterBase.characterInventory.canPickUpItems.Count == 0)
-                    ShowPickUpBtn (false);
+                    ShowPickUpBtn(false);
                 break;
             case Interactable.InteractableType.HouseDoor:
-                ShowCanEnterDoorBtn (false);
+                ShowCanEnterDoorBtn(false);
                 break;
 
             case Interactable.InteractableType.MapChange:
-                ShowCanGoMapBtn (false);
+                ShowCanGoMapBtn(false);
                 break;
         }
     }
 
-    public void ShowPickUpBtn (bool show, Action onClick = null) {
-        if (show) {
-            pickUpBtn.transform.DOScale (Vector3.one, .1f);
+    public void ShowPickUpBtn(bool show, Action onClick = null)
+    {
+        if (show)
+        {
+            pickUpBtn.transform.DOScale(Vector3.one, .1f);
             //pickUpBtn.gameObject.SetActive(true);
-            pickUpBtn.onClick.RemoveAllListeners ();
-            pickUpBtn.onClick.AddListener (() => onClick ());
-        } else {
+            pickUpBtn.onClick.RemoveAllListeners();
+            pickUpBtn.onClick.AddListener(() => onClick());
+        }
+        else
+        {
 
-            pickUpBtn.transform.DOScale (Vector3.zero, .21f);
+            pickUpBtn.transform.DOScale(Vector3.zero, .21f);
         }
     }
 
-    public void ShowCanEnterDoorBtn (bool show, Action onClick = null) {
-        if (show) {
-            enterDoorBtn.transform.DOScale (Vector3.one, .1f);
-            enterDoorBtn.onClick.RemoveAllListeners ();
-            enterDoorBtn.onClick.AddListener (() => onClick ());
-        } else if (enterDoorBtn != null)
-            enterDoorBtn.transform.DOScale (Vector3.zero, .1f);
+    public void ShowCanEnterDoorBtn(bool show, Action onClick = null)
+    {
+        if (show)
+        {
+            enterDoorBtn.transform.DOScale(Vector3.one, .1f);
+            enterDoorBtn.onClick.RemoveAllListeners();
+            enterDoorBtn.onClick.AddListener(() => onClick());
+        }
+        else if (enterDoorBtn != null)
+            enterDoorBtn.transform.DOScale(Vector3.zero, .1f);
     }
 
-    public void ShowCanGoMapBtn (bool show, Action onClick = null) {
-        if (show) {
-            goMapBtn.transform.DOScale (Vector3.one, .1f);
-            goMapBtn.onClick.RemoveAllListeners ();
-            goMapBtn.onClick.AddListener (() => onClick ());
-        } else {
+    public void ShowCanGoMapBtn(bool show, Action onClick = null)
+    {
+        if (show)
+        {
+            goMapBtn.transform.DOScale(Vector3.one, .1f);
+            goMapBtn.onClick.RemoveAllListeners();
+            goMapBtn.onClick.AddListener(() => onClick());
+        }
+        else
+        {
 
             if (goMapBtn != null)
-                goMapBtn.transform.DOScale (Vector3.zero, .1f);
+                goMapBtn.transform.DOScale(Vector3.zero, .1f);
         }
     }
 
-    void HandlerReloadProgressAndBtn () {
+    void HandlerReloadProgressAndBtn()
+    {
 
         // if (aw != null)
         // {
@@ -215,16 +257,21 @@ public class MobileInputsUI : MonoBehaviour {
         // }
     }
 
-    void Wc_OnWeaponSwitch (object sender, EventArgs e) {
-        if (wc.GetCurrentWeapon ().WeaponIs (typeof (AutomaticWeapon))) {
-            aw = (AutomaticWeapon) wc.GetCurrentWeapon ();
-        } else {
+    void Wc_OnWeaponSwitch(Weapon weapon)
+    {
+        if (wc.GetCurrentWeapon().WeaponIs(typeof(AutomaticWeapon)))
+        {
+            aw = (AutomaticWeapon)wc.GetCurrentWeapon();
+        }
+        else
+        {
             aw = null;
         }
     }
 
     [System.Serializable]
-    public class TimerButton {
+    public class TimerButton
+    {
         [SerializeField]
         Button button;
         [SerializeField]
@@ -241,14 +288,16 @@ public class MobileInputsUI : MonoBehaviour {
         public bool isUsing;
         public bool isShow = false;
 
-        public void Show (float usingTime, Action onClickUse, Action onEndUse) {
-            button.transform.DOScale (Vector3.one, .21f);
-            imageProgress.gameObject.SetActive (false);
-            textTimer.gameObject.SetActive (false);
-            button.onClick.RemoveAllListeners ();
+        public void Show(float usingTime, Action onClickUse, Action onEndUse)
+        {
+            button.transform.DOScale(Vector3.one, .21f);
+            imageProgress.gameObject.SetActive(false);
+            textTimer.gameObject.SetActive(false);
+            button.onClick.RemoveAllListeners();
 
-            button.onClick.AddListener (delegate {
-                Use (usingTime);
+            button.onClick.AddListener(delegate
+            {
+                Use(usingTime);
             });
 
             onEndUseEvent = onEndUse;
@@ -256,55 +305,67 @@ public class MobileInputsUI : MonoBehaviour {
             isShow = true;
         }
 
-        public void Hide () {
+        public void Hide()
+        {
             isShow = false;
-            button.transform.DOScale (Vector3.zero, .21f);
-            Cancel ();
+            button.transform.DOScale(Vector3.zero, .21f);
+            Cancel();
         }
 
-        public void Cancel () {
-            imageProgress.gameObject.SetActive (false);
-            textTimer.gameObject.SetActive (false);
+        public void Cancel()
+        {
+            imageProgress.gameObject.SetActive(false);
+            textTimer.gameObject.SetActive(false);
             isUsing = false;
             curTimer = 0;
         }
 
-        void Use (float time) {
-            imageProgress.gameObject.SetActive (true);
-            textTimer.gameObject.SetActive (true);
+        void Use(float time)
+        {
+            imageProgress.gameObject.SetActive(true);
+            textTimer.gameObject.SetActive(true);
             curTimer = time;
             usingTime = time;
-            SetTimeProgress (time);
+            SetTimeProgress(time);
             isUsing = true;
 
             if (onClickEvent != null)
-                onClickEvent ();
+                onClickEvent();
         }
 
-        void OnEndUse () {
+        void OnEndUse()
+        {
             if (onEndUseEvent != null)
-                onEndUseEvent ();
+                onEndUseEvent();
         }
 
-        void SetTimeProgress (float progress) {
-            textTimer.text = string.Format ("{0}s", progress.ToString ("0.0"));
+        void SetTimeProgress(float progress)
+        {
+            textTimer.text = string.Format("{0}s", progress.ToString("0.0"));
             imageProgress.fillAmount = progress / usingTime;
         }
 
-        public void OnFixedUpdate () {
-            if (isUsing) {
-                if (curTimer > 0) {
+        public void OnFixedUpdate()
+        {
+            if (isUsing)
+            {
+                if (curTimer > 0)
+                {
                     curTimer -= Time.deltaTime;
-                } else if (curTimer <= 0) {
-                    Cancel ();
-                    OnEndUse ();
+                }
+                else if (curTimer <= 0)
+                {
+                    Cancel();
+                    OnEndUse();
                 }
             }
         }
 
-        public void OnUpdate () {
-            if (isUsing) {
-                SetTimeProgress (curTimer);
+        public void OnUpdate()
+        {
+            if (isUsing)
+            {
+                SetTimeProgress(curTimer);
             }
         }
     }

@@ -13,7 +13,6 @@ public class HealthSystem
     float armorTakeDamagePersent = .8f;
 
     public event EventHandler OnHealthChanged;
-
     public event EventHandler OnDamaged;
     public event EventHandler OnHealed;
 
@@ -75,6 +74,27 @@ public class HealthSystem
         }
 
         // Debug.Log("Damage " + damage + "  health" + health + "  armor " + armor);
+    }
+
+    public void DamageHealth(int damage)
+    {
+        if (health > 0)
+        {
+            health -= damage;
+
+            if (health <= 0)
+            {
+                health = 0;
+                if (OnHealthZero != null)
+                    OnHealthZero(this, EventArgs.Empty);
+            }
+
+            if (OnHealthChanged != null)
+                OnHealthChanged(this, EventArgs.Empty);
+
+            if (OnDamaged != null)
+                OnDamaged(this, EventArgs.Empty);
+        }
     }
 
     public void HealArmor(int heal)
