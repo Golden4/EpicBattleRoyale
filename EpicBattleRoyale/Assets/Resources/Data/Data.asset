@@ -52,3 +52,5 @@ MonoBehaviour:
     type: 3}
   pfMuzzleFlash: {fileID: 8991777449462202936, guid: 9753acc767aef684dbb6c0bfa4852a57,
     type: 3}
+  worldEntities:
+  - {fileID: 5650616457573533651, guid: 5a21643bc3d3a234696b58041c74e3a5, type: 3}

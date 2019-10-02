@@ -41,7 +41,17 @@ public class BulletHandler : EntityBase
                 }
                 else if (!hitArray[i].collider.isTrigger)
                 {
-                    DestroyBullet();
+                    EntityBase eb = hitArray[i].transform.GetComponent<EntityBase>();
+
+                    if (eb != null)
+                    {
+                        if (cb.CompareEntitiesPositions(eb))
+                            DestroyBullet();
+                    }
+                    else
+                    {
+                        DestroyBullet();
+                    }
                     break;
                 }
             }

@@ -191,6 +191,22 @@ public class GameAssets : ScriptableObject
     public SpriteRenderer pfEntityShadow;
     public ParticleSystem pfMuzzleFlash;
 
+    public List<WorldEntity> worldEntities;
+
+    public enum WorldEntityList
+    {
+        Stone
+    }
+
+    public WorldEntity GetWorldEntity(WorldEntityList worldEntity)
+    {
+        return worldEntities.Find(x =>
+         {
+             return x.entityName == worldEntity;
+         });
+    }
+
+
     /*	void OnValidate ()
     {
         for (int i = 0; i < weapons.Length; i++) {

@@ -489,7 +489,8 @@ public class WeaponController : MonoBehaviour
 
     void OnDisable()
     {
-        GetCurrentWeapon().OnWeaponSwitch(GetCurrentWeapon());
+        if (GetCurrentWeapon() != null)
+            GetCurrentWeapon().OnWeaponSwitch(GetCurrentWeapon());
     }
 
     [System.Serializable]

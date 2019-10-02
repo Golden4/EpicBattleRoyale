@@ -113,7 +113,6 @@ public class AutomaticWeapon : Weapon
                     wc.StopReloadAnimation();
                     if (OnReloadComplete != null)
                         OnReloadComplete();
-                    Debug.Log("Reload was done");
                 }
 
                 break;
@@ -253,10 +252,10 @@ public class AutomaticWeapon : Weapon
     {
         base.OnWeaponSwitch(weapon);
 
-        if (curState == State.Reloading)
-        {
-            StopCoroutine("ReloadCoroutine");
-        }
+        // if (curState == State.Reloading)
+        // {
+        //     StopCoroutine("ReloadCoroutine");
+        // }
 
         if (curState == State.Shooting)
         {

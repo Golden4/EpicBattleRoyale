@@ -127,6 +127,20 @@ public class MapsController : MonoBehaviour
         }
 
         SpawnItems(map, itemsSpawnPoints, mapGo.transform);
+
+        List<Vector3> spawnPoints = new List<Vector3>();
+
+        for (int i = (int)GetMapData(map.mapType).worldEndPoints.x + 10; i < (int)GetMapData(map.mapType).worldEndPoints.y - 10; i = i + 3)
+        {
+
+            if (UnityEngine.Random.Range(0, 2) == 0)
+            {
+                float yPos = UnityEngine.Random.Range(GetMapData(map.mapType).worldUpDownEndPoints.x, GetMapData(map.mapType).worldUpDownEndPoints.y);
+                spawnPoints.Add(new Vector3(i, yPos));
+            }
+        }
+
+        SpawnWorldObjects(map, spawnPoints, mapGo.transform);
         return mapGo;
     }
 
@@ -219,6 +233,18 @@ public class MapsController : MonoBehaviour
             }
 
         }
+    }
+
+    void SpawnWorldObjects(MapInfo map, List<Vector3> spawnPoints, Transform parent)
+    {
+        //check spawn point
+        for (int i = 0; i < spawnPoints.Count; i++)
+        {
+            WorldEntity wa = World.Ins.SpawnWorldEntity(GameAssets.WorldEntityList.Stone, spawnPoints[i]);
+            wa.transform.SetParent(parent, false);
+            wa.mapCoords = map.coord;
+        }
+
     }
 
     void ChangeMap(CharacterBase characterBase, Vector2Int targetMapCoords)

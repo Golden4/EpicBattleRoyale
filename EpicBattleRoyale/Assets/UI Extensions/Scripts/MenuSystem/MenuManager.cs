@@ -56,7 +56,6 @@ namespace UnityEngine.UI.Extensions
                     foreach (var menu in menuStack)
                     {
                         menu.gameObject.SetActive(false);
-                        Debug.Log(menu.gameObject.name);
 
                         if (menu.DisableMenusUnderneath)
                             break;

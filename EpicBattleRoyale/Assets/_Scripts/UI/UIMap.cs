@@ -16,7 +16,6 @@ public class UIMap : MonoBehaviour
     Dictionary<Vector2Int, UILineRenderer> lineRenderers = new Dictionary<Vector2Int, UILineRenderer>();
 
     public RawImage playerPointImage;
-    public bool increasedMap = false;
 
     void Awake()
     {
@@ -81,6 +80,9 @@ public class UIMap : MonoBehaviour
         yield return new WaitForEndOfFrame();
         Random.InitState(seed);
         CreateAllHouses();
+        Canvas canvas = playerPointImage.gameObject.AddComponent<Canvas>();
+        canvas.overrideSorting = true;
+        canvas.sortingOrder += 10;
     }
 
     static int seed = 0;
@@ -352,31 +354,25 @@ public class UIMap : MonoBehaviour
         return persent;
     }
 
-    public void ShowDecreaseMapBtn()
-    {
-        gameMapPanel.anchorMin = Vector2.one;
-        gameMapPanel.anchorMax = Vector2.one;
+    // public void ShowDecreaseMapBtn()
+    // {
+    //     gameMapPanel.anchorMin = Vector2.one;
+    //     gameMapPanel.anchorMax = Vector2.one;
 
-        gameMapPanel.localScale = Vector3.one * .25f;
-        gameMapPanel.pivot = Vector2.one;
-        gameMapPanel.anchoredPosition = Vector3.zero;
-        increasedMap = false;
-    }
+    //     gameMapPanel.localScale = Vector3.one * .25f;
+    //     gameMapPanel.pivot = Vector2.one;
+    //     gameMapPanel.anchoredPosition = Vector3.zero;
+    //     increasedMap = false;
+    // }
 
-    public void ShowIncreaseMapBtn()
-    {
-        gameMapPanel.anchorMin = Vector2.one * .5f;
-        gameMapPanel.anchorMax = Vector2.one * .5f;
+    // public void ShowIncreaseMapBtn()
+    // {
+    //     gameMapPanel.anchorMin = Vector2.one * .5f;
+    //     gameMapPanel.anchorMax = Vector2.one * .5f;
 
-        gameMapPanel.localScale = Vector3.one * .82f;
-        gameMapPanel.pivot = Vector2.one * .5f;
-        gameMapPanel.anchoredPosition = Vector3.zero;
-        increasedMap = true;
-    }
-
-    public void ShowMap()
-    {
-        MapScreen.Show();
-    }
-
+    //     gameMapPanel.localScale = Vector3.one * .82f;
+    //     gameMapPanel.pivot = Vector2.one * .5f;
+    //     gameMapPanel.anchoredPosition = Vector3.zero;
+    //     increasedMap = true;
+    // }
 }

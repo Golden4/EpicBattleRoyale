@@ -175,6 +175,20 @@ public class World : MonoBehaviour
         return ammoItemPickUp;
     }
 
+    public WorldEntity SpawnWorldEntity(GameAssets.WorldEntityList item, Vector3 position)
+    {
+        GameObject goPf = null;
+
+        goPf = GameAssets.Get.GetWorldEntity(item).gameObject;
+
+        GameObject go = Instantiate(goPf);
+
+        WorldEntity worldEntity = go.GetComponent<WorldEntity>();
+        worldEntity.Setup(position);
+
+        return worldEntity;
+    }
+
     public ItemPickUp GetClosestItem(Vector2Int mapCoords, Vector3 position)
     {
         int closeItemIndex = -1;
