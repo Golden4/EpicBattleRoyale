@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class CharacterBase : EntityBase
+public class CharacterBase : LivingEntity
 {
     public bool isPlayer;
     public GameAssets.CharacterList characterName;
-    bool isInit;
     public Vector2 maxSpeed;
     public Vector2 firingSpeed;
     public Vector2 healingSpeed;
@@ -34,8 +33,6 @@ public class CharacterBase : EntityBase
     public Vector2 moveInput;
     [HideInInspector]
     public bool isOnArea;
-    bool isDead;
-    public HealthSystem healthSystem;
 
     #region Components
     public CharacterInventory characterInventory;
@@ -54,18 +51,19 @@ public class CharacterBase : EntityBase
 
     #region Events
     public event Action<CharacterBase, Weapon, int, HitBox.HitBoxType> OnHittedEvent;
-    public event Action<CharacterBase> OnDie;
-
     public event Action<CharacterBase, CharacterBase, Weapon, HitBox.HitBoxType> OnKill;
     public static event Action<CharacterBase, CharacterBase, Weapon, HitBox.HitBoxType> OnKillStatic;
-    public static event Action<CharacterBase> OnDieStatic;
+
+    public event Action<CharacterBase> OnIsOnArea;
+    public event Action<CharacterBase> OnOutOfArea;
 
     #endregion
 
-    void Awake()
+    protected override void Awake()
     {
         if (!isInit)
             Setup();
+        base.Awake();
     }
 
     protected override void Start()
@@ -80,39 +78,12 @@ public class CharacterBase : EntityBase
         InitRenederers();
     }
 
-    float nextHitCooldown;
-
-    void Update()
-    {
-        if (isOnArea)
-        {
-            if (!AreaController.Ins.IsOnArea(mapCoords))
-            {
-                nextHitCooldown = AreaController.Ins.GetHitCoudown();
-            }
-        }
-        else
-        {
-            if (nextHitCooldown > 0)
-            {
-                nextHitCooldown -= Time.deltaTime;
-            }
-            else if (nextHitCooldown < 0)
-            {
-                nextHitCooldown += AreaController.Ins.GetHitCoudown();
-                healthSystem.DamageHealth(AreaController.Ins.GetDamageAmount());
-            }
-        }
-
-        isOnArea = AreaController.Ins.IsOnArea(mapCoords);
-    }
-
     public void Setup()
     {
         if (isInit)
             return;
+
         healthSystem = new HealthSystem(100, 0);
-        healthSystem.OnHealthZero += HealthSystem_OnHealthZero;
 
         groundCheck = transform.Find("GroundCheck");
         animator = GetComponentInChildren<Animator>();
@@ -204,20 +175,45 @@ public class CharacterBase : EntityBase
         Move(moveInput);
     }
 
-    void HealthSystem_OnHealthZero(object sender, EventArgs e)
+    float nextHitCooldown;
+
+    void Update()
     {
-        if (!IsDead())
-            Die();
+        if (isOnArea)
+        {
+            if (!AreaController.Ins.IsOnArea(mapCoords))
+            {
+                nextHitCooldown = AreaController.Ins.GetHitCoudown();
+
+                if (OnIsOnArea != null)
+                    OnIsOnArea(this);
+            }
+        }
+        else
+        {
+            if (AreaController.Ins.IsOnArea(mapCoords))
+            {
+                if (OnOutOfArea != null)
+                    OnOutOfArea(this);
+            }
+
+            if (nextHitCooldown > 0)
+            {
+                nextHitCooldown -= Time.deltaTime;
+            }
+            else if (nextHitCooldown < 0)
+            {
+                nextHitCooldown += AreaController.Ins.GetHitCoudown();
+                TakeHit(AreaController.Ins.GetDamageAmount());
+                // healthSystem.DamageHealth(AreaController.Ins.GetDamageAmount());
+            }
+        }
+
+        isOnArea = AreaController.Ins.IsOnArea(mapCoords);
     }
 
-    public bool IsDead()
+    public override void OnEntityDie()
     {
-        return isDead;
-    }
-
-    public void Die()
-    {
-        isDead = true;
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
         World.Ins.allCharacters.Remove(this);
@@ -226,12 +222,6 @@ public class CharacterBase : EntityBase
         {
             Destroy(gameObject);
         });
-
-        if (OnDie != null)
-            OnDie(this);
-
-        if (OnDieStatic != null)
-            OnDieStatic(this);
     }
 
     // IEnumerator FadeCharacter(float delay = 2, float fadeTime = 2, Color fadeColor = default, Action OnEndFade = null)
@@ -273,21 +263,21 @@ public class CharacterBase : EntityBase
         if (isGrounded || airControl)
         {
             moveDir = moveDir.normalized;
-            float maginitude = Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude));
-
-            animator.SetFloat("Speed", maginitude);
+            float animationSpeed = Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude));
 
             if (isFiring)
             {
                 if (moveDir.x < 0 && shootingSideRight || moveDir.x > 0 && !shootingSideRight)
                 {
-                    animator.SetFloat("SpeedMultiplayer", -.7f);
                     curSpeed = firingSpeed;
+
+                    animationSpeed = -.7f;
                 }
                 else
                 {
-                    animator.SetFloat("SpeedMultiplayer", .7f);
                     curSpeed = firingSpeed;
+
+                    animationSpeed = .7f;
                 }
                 Flip(shootingSideRight);
                 if (isHealing)
@@ -299,18 +289,23 @@ public class CharacterBase : EntityBase
                 if (moveDir.x != 0)
                     Flip(moveDir.x > 0);
 
-                animator.SetFloat("SpeedMultiplayer", .5f);
+                animationSpeed = .5f;
+
                 curSpeed = healingSpeed;
             }
             else
             {
-                animator.SetFloat("SpeedMultiplayer", 1);
-
+                animationSpeed = 1;
                 if (moveDir.x != 0)
                     Flip(moveDir.x > 0);
 
                 curSpeed = maxSpeed;
             }
+
+            if (Mathf.Abs(Mathf.Clamp01(moveDir.sqrMagnitude)) == 0)
+                animationSpeed = 0;
+
+            animator.SetFloat("Speed", animationSpeed);
 
             float xPos = worldPosition.x + moveDir.x * curSpeed.x * Time.fixedDeltaTime;
             float yPos = worldPosition.y + moveDir.y * curSpeed.y * Time.fixedDeltaTime;
@@ -353,6 +348,19 @@ public class CharacterBase : EntityBase
         return !IsDead();
     }
 
+    public void TakeHit(int damage)
+    {
+        healthSystem.Damage(damage);
+
+        LerpCharacter();
+
+        hitCooldown = .3f;
+
+        SpawnDamagePopUpText(damage);
+
+        characterAudio.PlaySound(characterAudio.hitSound);
+    }
+
     float hitCooldown;
 
     public void TakeHit(CharacterBase givedHitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
@@ -365,7 +373,7 @@ public class CharacterBase : EntityBase
 
         hitCooldown = .3f;
 
-        SpawnDamagePopUpText(givedHitCharacter, hitWeapon, damage);
+        SpawnDamagePopUpText(damage);
 
         if (hitBoxType == HitBox.HitBoxType.Head)
             characterAudio.PlaySound(characterAudio.headshotHitSound);
@@ -417,7 +425,7 @@ public class CharacterBase : EntityBase
         weaponController.EnableWeaponGraphicsInHand(true);
     }
 
-    void SpawnDamagePopUpText(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
+    void SpawnDamagePopUpText(int damage)
     {
         GameObject damagePopUp = Instantiate(GameAssets.Get.pfPopUpDamage.gameObject);
         TMPro.TextMeshPro tmp = damagePopUp.GetComponent<TMPro.TextMeshPro>();

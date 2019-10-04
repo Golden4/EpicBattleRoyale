@@ -159,6 +159,10 @@ public class AutomaticWeapon : Weapon
 
     public virtual void Shot(bool isFacingRight)
     {
+
+        if (wc.cb.IsDead())
+            return;
+
         /*	if (!bulletTracerPS.isPlaying) {
 			bulletTracerPS.Play ();//Воспроизводим партикл
 		}*/
@@ -187,12 +191,7 @@ public class AutomaticWeapon : Weapon
         BulletHandler bh = bullet.GetComponent<BulletHandler>();
 
         Vector2 position = (Vector2)wc.cb.worldPosition + Vector2.right * (-wc.cb.worldPosition.x + muzzlePoint.transform.position.x) + Vector2.right * (isFacingRight ? 1 : -1) * .3f;
-
-        float zPosition = /*-(wc.cb.worldPosition.y) */ (-wc.cb.worldPosition.y + muzzlePoint.transform.position.y);
-        bh.MoveTo(position, zPosition);
-        // bh.MoveTo(position, zPosition);
-        //bullet.transform.position = muzzlePoint.transform.position + Vector3.right * (isFacingRight ? 1 : -1) * .3f;
-
+        float zPosition = /*-(wc.cb.worldPosition.y) */ Mathf.Abs(-wc.cb.worldPosition.y + muzzlePoint.transform.position.y);
         int curBulletDamage = damage;
 
         if (bulletDamage != -1)
@@ -206,6 +205,7 @@ public class AutomaticWeapon : Weapon
         {
             bh.Setup(wc.cb, direction * (isFacingRight ? 1 : -1), zPosition, curBulletDamage, firingRange, this);
         }
+        bh.MoveTo(position, zPosition);
     }
 
     IEnumerator ShootCoroutine()

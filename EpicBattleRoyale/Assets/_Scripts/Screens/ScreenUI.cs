@@ -19,6 +19,8 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     public Text killsAmount;
     public Text areaTimer;
 
+    public Image areaOutImage;
+
     public override void OnInit()
     {
         World.OnPlayerSpawn += World_OnPlayerSpawn;
@@ -31,6 +33,16 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         UpdateKillsAmount(0);
     }
 
+    void World_OnPlayerSpawn(Player player)
+    {
+        healthArmorUI.Setup(player.characterBase.healthSystem);
+        weaponsUI.Setup(player.weaponController);
+        mobileInputsUI.Setup(player.weaponController, player.characterBase);
+        player.characterBase.OnKill += OnKill;
+        player.characterBase.OnIsOnArea += OnIsOnArea;
+        player.characterBase.OnOutOfArea += OnOutOfArea;
+    }
+
     private void OnNextDecreasingArea(int time)
     {
         ShowAreaInfoText("RESTRICTING THE PLAY AREA IN " + AreaController.TicksToTime(time));
@@ -41,12 +53,19 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         ShowAreaInfoText("WARNING! RESTRICTING THE PLAY AREA");
     }
 
-    void World_OnPlayerSpawn(Player player)
+    private void OnOutOfArea(CharacterBase characterBase)
     {
-        healthArmorUI.Setup(player.characterBase.healthSystem);
-        weaponsUI.Setup(player.weaponController);
-        mobileInputsUI.Setup(player.weaponController, player.characterBase);
-        Player.Ins.characterBase.OnKill += OnKill;
+        areaOutImage.gameObject.SetActive(true);
+        areaOutImage.DOFade(0, .3f).OnComplete(delegate
+        {
+            areaOutImage.gameObject.SetActive(false);
+        });
+    }
+
+    private void OnIsOnArea(CharacterBase characterBase)
+    {
+        areaOutImage.gameObject.SetActive(true);
+        areaOutImage.DOFade(.2f, .3f);
     }
 
     void OnKill(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
@@ -99,9 +118,10 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         killsListUI.AddKillToList(Player.Ins.characterBase, characterBase, characterBaseKilled, weapon.weaponName, hitBoxType);
     }
 
-    void OnDieStatic(CharacterBase characterBase)
+    void OnDieStatic(LivingEntity characterBase)
     {
-        UpdateAlifeAmount(World.Ins.allCharacters.Count);
+        if ((characterBase as CharacterBase) != null)
+            UpdateAlifeAmount(World.Ins.allCharacters.Count);
     }
 
     void UpdateAlifeAmount(int count)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WorldEntity : EntityBase
+public class WorldEntity : LivingEntity
 {
     public GameAssets.WorldEntityList entityName;
 

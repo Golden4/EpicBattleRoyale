@@ -80,6 +80,7 @@ public class UIMap : MonoBehaviour
         yield return new WaitForEndOfFrame();
         Random.InitState(seed);
         CreateAllHouses();
+
         Canvas canvas = playerPointImage.gameObject.AddComponent<Canvas>();
         canvas.overrideSorting = true;
         canvas.sortingOrder += 10;

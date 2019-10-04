@@ -97,8 +97,7 @@ public class HealthArmorUI : MonoBehaviour
                 if (targetDamagedAmount > curAmount)
                 {
                     float speed = (-curAmount + targetDamagedAmount);
-                    speed = Mathf.Clamp(speed, 10, 20);
-
+                    speed = Mathf.Clamp(speed, 10f, 30f);
                     barImage.fillAmount = GetPersent((int)targetAmount);
                     targetDamagedAmount -= Time.deltaTime * animatingSpeed * speed;
                     barDamageImage.fillAmount = GetPersent((int)targetDamagedAmount);

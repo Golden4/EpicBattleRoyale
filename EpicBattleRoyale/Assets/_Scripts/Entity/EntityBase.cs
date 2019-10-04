@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EntityBase : MonoBehaviour
 {
+    protected bool isInit;
     public Vector2Int mapCoords;
     SpriteRenderer shadow;
     public float shadowSize = 1;
