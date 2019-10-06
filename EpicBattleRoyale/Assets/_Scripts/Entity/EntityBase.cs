@@ -129,7 +129,7 @@ public class EntityBase : MonoBehaviour
         UpdateShadow(showShadow, position);
     }
 
-    void UpdateShadow(bool show, Vector2 position)
+    protected void UpdateShadow(bool show, Vector2 position = default)
     {
         if (show)
         {

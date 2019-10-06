@@ -58,19 +58,20 @@ public class AreaController : MonoBehaviour
 
     void Update() { }
 
-    void StartTimer(int timer, Action onTimerTick, Action OnTimerEnd = null)
+    void StartTimer(int timer, Action<int> onTimerTick, Action OnTimerEnd = null)
     {
         curWaitingTicks = timer;
         StartCoroutine(Timer(onTimerTick, OnTimerEnd));
     }
 
-    IEnumerator Timer(Action onTimerTick, Action OnTimerEnd)
+    IEnumerator Timer(Action<int> onTimerTick, Action OnTimerEnd)
     {
         while (curWaitingTicks > 0)
         {
 
             if (onTimerTick != null)
-                onTimerTick();
+                onTimerTick(curWaitingTicks);
+
             yield return new WaitForSeconds(1);
             curWaitingTicks--;
         }
@@ -117,8 +118,14 @@ public class AreaController : MonoBehaviour
 
         DecreasingAreaState();
 
-        StartTimer(areaLevels[curAreaLevel].waitingTime, () =>
+        StartTimer(areaLevels[curAreaLevel].waitingTime, (int time) =>
         {
+            if (time == 30)
+            {
+                if (OnNextDecreasingArea != null)
+                    OnNextDecreasingArea(time);
+            }
+
             ScreenUI.Instance.areaTimer.color = Color.white;
             ScreenUI.Instance.areaTimer.text = string.Format("{0}:{1}", (curWaitingTicks / 60).ToString("00"), (curWaitingTicks % 60).ToString("00"));
 
@@ -136,7 +143,7 @@ public class AreaController : MonoBehaviour
     {
 
         StartTimer(areaLevels[curAreaLevel].decreasingTime,
-        () =>
+        (int time) =>
         {
             ScreenUI.Instance.areaTimer.color = Color.red;
             ScreenUI.Instance.areaTimer.text = TicksToTime(curWaitingTicks);

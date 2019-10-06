@@ -55,11 +55,11 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
     private void OnOutOfArea(CharacterBase characterBase)
     {
-        areaOutImage.gameObject.SetActive(true);
-        areaOutImage.DOFade(0, .3f).OnComplete(delegate
-        {
-            areaOutImage.gameObject.SetActive(false);
-        });
+        if (areaOutImage.gameObject.activeInHierarchy)
+            areaOutImage.DOFade(0, .3f).OnComplete(delegate
+            {
+                areaOutImage.gameObject.SetActive(false);
+            });
     }
 
     private void OnIsOnArea(CharacterBase characterBase)

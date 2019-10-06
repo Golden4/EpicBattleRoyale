@@ -104,8 +104,10 @@ public class Enemy : MonoBehaviour
 
     public float findingTargetDelay = .5f;
     float findingTargetDelayCur;
+
     public float awayFromTargetTime = 3f;
     float awayFromTargetTimeCur;
+
     public float targetInRangeDistance = 6f;
     float curWaitingTime;
     float hittedRageTime;

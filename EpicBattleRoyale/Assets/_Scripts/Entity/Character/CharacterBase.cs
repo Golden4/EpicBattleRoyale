@@ -221,7 +221,9 @@ public class CharacterBase : LivingEntity
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
         World.Ins.allCharacters.Remove(this);
+
         showShadow = false;
+        UpdateShadow(showShadow);
 
         animator.SetInteger("Die", shootEnemyDirection);
 
