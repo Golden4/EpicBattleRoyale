@@ -95,10 +95,11 @@ MonoBehaviour:
   mapCoords: {x: 0, y: 0}
   shadowSize: 0.5
   pivotOffset: {x: 0, y: 0}
+  yPositionOffsetForComparePosition: 0.5
   worldPosition: {x: 0, y: 0, z: 0}
   damage: 0
   bulletSize: 0.2
-  speed: 18
+  speed: 25
   hitLayers:
     serializedVersion: 2
     m_Bits: 8193

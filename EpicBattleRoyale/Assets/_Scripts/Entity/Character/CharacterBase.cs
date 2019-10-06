@@ -110,11 +110,12 @@ public class CharacterBase : LivingEntity
     {
         foreach (Renderer item in renderers)
         {
-            if (item.material.shader.name == "Spine/SkeletonFill")
-            {
-                item.material.SetColor("_FillColor", Color.white);
-                item.material.DOFloat(0, "_FillAlpha", .1f).ChangeStartValue(1); //.SetFloat("_FillAlpha", t);
-            }
+            if (item != null)
+                if (item.material.shader.name == "Spine/SkeletonFill")
+                {
+                    item.material.SetColor("_FillColor", Color.white);
+                    item.material.DOFloat(0, "_FillAlpha", .1f).ChangeStartValue(1); //.SetFloat("_FillAlpha", t);
+                }
         }
     }
 
@@ -142,7 +143,7 @@ public class CharacterBase : LivingEntity
 
     private void FixedUpdate()
     {
-        if (animator.GetBool("Die") && isDead)
+        if (animator.GetInteger("Die") != -1 && isDead)
             return;
 
         if (curJumpPos > 0)
@@ -168,22 +169,25 @@ public class CharacterBase : LivingEntity
             isJumping = true;
         }
 
-        if (isGrounded && !animator.GetBool("Die") && isDead)
-            animator.SetBool("Die", true);
+        // if (isGrounded && animator.GetInteger("Die") == -1 && isDead)
+        //     animator.SetInteger("Die", true);
 
         animator.SetBool("Jump", !isGrounded);
         Move(moveInput);
     }
 
-    float nextHitCooldown;
+    float nextAreaHitCooldown;
 
     void Update()
     {
+        if (IsDead())
+            return;
+
         if (isOnArea)
         {
             if (!AreaController.Ins.IsOnArea(mapCoords))
             {
-                nextHitCooldown = AreaController.Ins.GetHitCoudown();
+                nextAreaHitCooldown = AreaController.Ins.GetHitCoudown();
 
                 if (OnIsOnArea != null)
                     OnIsOnArea(this);
@@ -197,14 +201,14 @@ public class CharacterBase : LivingEntity
                     OnOutOfArea(this);
             }
 
-            if (nextHitCooldown > 0)
+            if (nextAreaHitCooldown > 0)
             {
-                nextHitCooldown -= Time.deltaTime;
+                nextAreaHitCooldown -= Time.deltaTime;
             }
-            else if (nextHitCooldown < 0)
+            else if (nextAreaHitCooldown < 0)
             {
-                nextHitCooldown += AreaController.Ins.GetHitCoudown();
-                TakeHit(AreaController.Ins.GetDamageAmount());
+                nextAreaHitCooldown += AreaController.Ins.GetHitCoudown();
+                TakeHit(AreaController.Ins.GetDamageAmount(), false);
                 // healthSystem.DamageHealth(AreaController.Ins.GetDamageAmount());
             }
         }
@@ -217,6 +221,9 @@ public class CharacterBase : LivingEntity
         CapsuleCollider2D collider = GetComponent<CapsuleCollider2D>();
         gameObject.layer = LayerMask.NameToLayer("IgnoreCharacter");
         World.Ins.allCharacters.Remove(this);
+        showShadow = false;
+
+        animator.SetInteger("Die", shootEnemyDirection);
 
         FadeCharacter(delegate
         {
@@ -269,16 +276,16 @@ public class CharacterBase : LivingEntity
             {
                 if (moveDir.x < 0 && shootingSideRight || moveDir.x > 0 && !shootingSideRight)
                 {
-                    curSpeed = firingSpeed;
-
                     animationSpeed = -.7f;
                 }
                 else
                 {
-                    curSpeed = firingSpeed;
 
                     animationSpeed = .7f;
                 }
+
+                curSpeed = firingSpeed;
+
                 Flip(shootingSideRight);
                 if (isHealing)
                     EndHeal();
@@ -292,6 +299,17 @@ public class CharacterBase : LivingEntity
                 animationSpeed = .5f;
 
                 curSpeed = healingSpeed;
+            }
+            else if (hitCooldown > 0)
+            {
+                hitCooldown -= Time.fixedDeltaTime;
+                Debug.Log(hitCooldown);
+                animationSpeed = .8f;
+
+                if (moveDir.x != 0)
+                    Flip(moveDir.x > 0);
+
+                curSpeed = firingSpeed;
             }
             else
             {
@@ -348,26 +366,33 @@ public class CharacterBase : LivingEntity
         return !IsDead();
     }
 
-    public void TakeHit(int damage)
+    public void TakeHit(int damage, bool armorHit = true)
     {
-        healthSystem.Damage(damage);
-
-        LerpCharacter();
-
-        hitCooldown = .3f;
-
-        SpawnDamagePopUpText(damage);
-
-        characterAudio.PlaySound(characterAudio.hitSound);
+        TakeHit(null, null, damage, HitBox.HitBoxType.Body, armorHit);
     }
 
     float hitCooldown;
 
-    public void TakeHit(CharacterBase givedHitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType)
+    int shootEnemyDirection;
+
+    public void TakeHit(CharacterBase givedHitCharacter, Weapon hitWeapon, int damage, HitBox.HitBoxType hitBoxType, bool armorHit = true)
     {
+        if (givedHitCharacter != null)
+        {
+            if (isFacingRight)
+                shootEnemyDirection = ((worldPosition.x - givedHitCharacter.worldPosition.x) < 0) ? 0 : 1;
+            else
+                shootEnemyDirection = ((worldPosition.x - givedHitCharacter.worldPosition.x) < 0) ? 1 : 0;
+        }
+
         damage = Mathf.RoundToInt((float)damage * HitBox.GetDamagePersent(hitBoxType));
 
-        healthSystem.Damage(damage);
+        if (!armorHit)
+        {
+            healthSystem.DamageHealth(damage);
+        }
+        else
+            healthSystem.Damage(damage);
 
         LerpCharacter();
 
@@ -382,6 +407,22 @@ public class CharacterBase : LivingEntity
 
         if (OnHittedEvent != null)
             OnHittedEvent(givedHitCharacter, hitWeapon, damage, hitBoxType);
+
+        if (IsDead())
+        {
+            if (givedHitCharacter != null)
+                givedHitCharacter.OnKillCharacter(this, hitWeapon, hitBoxType);
+
+            if (OnKill != null)
+            {
+                OnKill(givedHitCharacter, this, hitWeapon, hitBoxType);
+            }
+
+            if (OnKillStatic != null)
+            {
+                OnKillStatic(givedHitCharacter, this, hitWeapon, hitBoxType);
+            }
+        }
     }
 
     public void GiveHit(CharacterBase takeHitCharacter, Weapon weapon, int damage, HitBox.HitBoxType hitBoxType)
@@ -396,15 +437,15 @@ public class CharacterBase : LivingEntity
     {
         killsCount++;
 
-        if (OnKill != null)
-        {
-            OnKill(this, killedCharacter, weapon, hitBoxType);
-        }
+        // if (OnKill != null)
+        // {
+        //     OnKill(this, killedCharacter, weapon, hitBoxType);
+        // }
 
-        if (OnKillStatic != null)
-        {
-            OnKillStatic(this, killedCharacter, weapon, hitBoxType);
-        }
+        // if (OnKillStatic != null)
+        // {
+        //     OnKillStatic(this, killedCharacter, weapon, hitBoxType);
+        // }
     }
 
     public void Heal()

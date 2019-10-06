@@ -7,12 +7,14 @@ public class ParticlesController : MonoBehaviour
     public static ParticlesController Ins;
     public ParticleSystem pfBloodSplash;
     public ParticleSystem pfHitEffect;
+    public ParticleSystem pfMuzzleFlash;
 
     void Awake()
     {
         Ins = this;
-        pfBloodSplash = Instantiate(Ins.pfBloodSplash.gameObject).GetComponent<ParticleSystem>();
-        pfHitEffect = Instantiate(Ins.pfHitEffect.gameObject).GetComponent<ParticleSystem>();
+        pfBloodSplash = Instantiate(pfBloodSplash.gameObject).GetComponent<ParticleSystem>();
+        pfHitEffect = Instantiate(pfHitEffect.gameObject).GetComponent<ParticleSystem>();
+        pfMuzzleFlash = Instantiate(pfMuzzleFlash.gameObject).GetComponent<ParticleSystem>();
     }
 
     public void PlayBloodSplashParticle(Vector2 position, Vector2 rotation)
@@ -27,5 +29,12 @@ public class ParticlesController : MonoBehaviour
         pfHitEffect.transform.position = position;
         pfHitEffect.transform.rotation = Utility.DirectionToRotation(rotation, true);
         pfHitEffect.Emit(Random.Range(15, 30));
+    }
+
+    public void PlayMuzzleFlashParticle(Vector2 position, Vector2 rotation)
+    {
+        pfMuzzleFlash.transform.position = position;
+        pfMuzzleFlash.transform.rotation = Utility.DirectionToRotation(rotation, true);
+        pfMuzzleFlash.Play(true);
     }
 }

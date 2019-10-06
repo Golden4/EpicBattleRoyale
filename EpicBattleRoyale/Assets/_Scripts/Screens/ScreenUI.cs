@@ -70,6 +70,9 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
     void OnKill(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
+        if (characterBase == null || characterBaseKilled == null)
+            return;
+
         ShowKilledText("Killed: " + characterBase.killsCount);
         ShowKillsInfoText("YOU kills " + characterBaseKilled.name + " using " + weapon.weaponName);
         UpdateKillsAmount(characterBase.killsCount);
@@ -115,13 +118,15 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
     void OnKillStatic(CharacterBase characterBase, CharacterBase characterBaseKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
-        killsListUI.AddKillToList(Player.Ins.characterBase, characterBase, characterBaseKilled, weapon.weaponName, hitBoxType);
+        killsListUI.AddKillToList(Player.Ins.characterBase, characterBase, characterBaseKilled, weapon, hitBoxType);
     }
 
     void OnDieStatic(LivingEntity characterBase)
     {
         if ((characterBase as CharacterBase) != null)
             UpdateAlifeAmount(World.Ins.allCharacters.Count);
+
+
     }
 
     void UpdateAlifeAmount(int count)
@@ -132,13 +137,5 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     void UpdateKillsAmount(int count)
     {
         killsAmount.text = string.Format("<color=white>{0}</color> <size=14>KILLS</size>", count);
-    }
-
-    void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.Space))
-        // {
-        //     OnKillStatic(World.Ins.allCharacters[Random.Range(0, 3)], World.Ins.allCharacters[Random.Range(0, 3)], GameAssets.Get.GetWeapon((GameAssets.WeaponsList)Random.Range(0, 6)));
-        // }
     }
 }

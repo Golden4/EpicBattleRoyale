@@ -151,9 +151,9 @@ public class MapsController : MonoBehaviour
         HouseDoor outsideHouse = outerHouse.AddComponent<HouseDoor>();
         outsideHouse.MoveTo(map.houses[houseIndex].GetHouseSpawnPosition(map));
         outsideHouse.Setup(map.coord, houseType, houseIndex);
-        HouseDoor door = outsideHouse.GetComponentInChildren<HouseDoor>();
-        door.doorType = HouseDoor.HouseDoorType.Outer;
-        door.mapCoords = map.coord;
+        outsideHouse.doorType = HouseDoor.HouseDoorType.Outer;
+        outsideHouse.mapCoords = map.coord;
+        outsideHouse.showShadow = false;
         return outerHouse;
     }
 

@@ -179,7 +179,10 @@ public class AutomaticWeapon : Weapon
 
         Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
 
+        // ParticlesController.Ins.PlayMuzzleFlashParticle(muzzlePoint.transform.position + Vector3.right * .2f, muzzlePoint.transform.localEulerAngles);
+
         muzzleFlash.Play(true);
+
         wc.cb.characterAudio.PlaySound(fireSound);
         //AudioManager.PlaySoundAtObject(fireSound, gameObject);
         //AudioManager.PlaySound(fireSound);
@@ -213,6 +216,7 @@ public class AutomaticWeapon : Weapon
         while (curState == State.Shooting && isActive && Mathf.Abs(firingSideInput) > 0 && Bullets > 0)
         {
             bool side = firingSideInput < 0;
+            wc.PlayAimAnimation();
             wc.PlayFireAnimation(.167f, shootAnimationTime, side);
             yield return new WaitForSeconds(shootAnimationTime / 2f);
 
@@ -223,6 +227,7 @@ public class AutomaticWeapon : Weapon
             yield return new WaitForSeconds(shootAnimationTime / 2f);
             wc.StopFireAnimation();
             yield return new WaitForSeconds(fireRate - shootAnimationTime);
+            wc.StopAimAnimation();
         }
 
         if (curState == State.Shooting)

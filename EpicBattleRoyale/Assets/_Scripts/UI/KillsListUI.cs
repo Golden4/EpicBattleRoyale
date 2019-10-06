@@ -10,9 +10,9 @@ public class KillsListUI : MonoBehaviour
     public Image pfKills;
     public List<Image> killsList = new List<Image>();
 
-    public void AddKillToList(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName, HitBox.HitBoxType hitBoxType)
+    public void AddKillToList(CharacterBase player, CharacterBase characterKill, CharacterBase characterKilled, Weapon weapon, HitBox.HitBoxType hitBoxType)
     {
-        Image goKill = SpawnKillInfo(player, characterKillName, characterKilledName, weaponName, hitBoxType);
+        Image goKill = SpawnKillInfo(player, characterKill, characterKilled, weapon, hitBoxType);
 
         killsList.Add(goKill);
 
@@ -61,29 +61,46 @@ public class KillsListUI : MonoBehaviour
         // });
     }
 
-    Image SpawnKillInfo(CharacterBase player, CharacterBase characterKillName, CharacterBase characterKilledName, GameAssets.WeaponsList weaponName, HitBox.HitBoxType hitBoxType)
+    Image SpawnKillInfo(CharacterBase player, CharacterBase characterKill, CharacterBase characterKilled, Weapon weaponName, HitBox.HitBoxType hitBoxType)
     {
         GameObject goKill = Instantiate(pfKills.gameObject);
         goKill.gameObject.SetActive(true);
         goKill.transform.SetParent(transform, false);
         Text name1 = goKill.transform.GetChild(0).GetComponent<Text>();
-        Text name2 = goKill.transform.GetChild(3).GetComponent<Text>();
+        Text name2 = goKill.transform.GetChild(4).GetComponent<Text>();
 
-        name1.text = "  " + characterKillName.name + "  ";
-        name2.text = "  " + characterKilledName.name + "  ";
-
-        if (player == characterKillName)
+        if (characterKill == null)
         {
-            name1.color = Color.yellow;
+
+            goKill.transform.GetChild(0).gameObject.SetActive(false);
+            goKill.transform.GetChild(1).gameObject.SetActive(false);
+            goKill.transform.GetChild(3).gameObject.SetActive(true);
+        }
+        else
+        {
+
+            goKill.transform.GetChild(0).gameObject.SetActive(true);
+            goKill.transform.GetChild(1).gameObject.SetActive(true);
+            goKill.transform.GetChild(3).gameObject.SetActive(false);
+
+            Image weaponImage = goKill.transform.GetChild(1).GetComponent<Image>();
+            weaponImage.material.SetColor("_FillColor", Color.white);
+            weaponImage.sprite = GameAssets.Get.GetWeapon(weaponName.weaponName).sprite;
+
+            if (player == characterKill)
+            {
+                name1.color = Color.yellow;
+            }
+
+            name1.text = "  " + characterKill.name + "  ";
         }
 
-        if (player == characterKilledName)
+        name2.text = "  " + characterKilled.name + "  ";
+
+        if (player == characterKilled)
         {
             name2.color = Color.yellow;
         }
-        Image weaponImage = goKill.transform.GetChild(1).GetComponent<Image>();
-        weaponImage.material.SetColor("_FillColor", Color.white);
-        weaponImage.sprite = GameAssets.Get.GetWeapon(weaponName).sprite;
 
         if (hitBoxType == HitBox.HitBoxType.Head)
             goKill.transform.GetChild(2).gameObject.SetActive(true);

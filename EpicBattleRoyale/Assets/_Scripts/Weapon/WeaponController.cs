@@ -456,6 +456,22 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    public void PlayAimAnimation()
+    {
+        if (cb.animator.runtimeAnimatorController != null)
+        {
+            cb.animator.SetBool("isAiming", true);
+        }
+    }
+
+    public void StopAimAnimation()
+    {
+        if (cb.animator.runtimeAnimatorController != null)
+        {
+            cb.animator.SetBool("isAiming", false);
+        }
+    }
+
     public void StopFireAnimation()
     {
         if (cb.animator.runtimeAnimatorController != null)

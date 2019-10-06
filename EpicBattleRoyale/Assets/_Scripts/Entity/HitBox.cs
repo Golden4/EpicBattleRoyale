@@ -23,7 +23,7 @@ public class HitBox : MonoBehaviour
     public void TakeHit(CharacterBase hitCharacter, Weapon hitWeapon, int damage)
     {
         characterBase.TakeHit(hitCharacter, hitWeapon, damage, hitBoxType);
-        hitCharacter.GiveHit(characterBase, hitWeapon, damage, hitBoxType);
+        // hitCharacter.GiveHit(characterBase, hitWeapon, damage, hitBoxType);
     }
 
     public bool CanHit()

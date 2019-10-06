@@ -7,6 +7,7 @@ public class EntityBase : MonoBehaviour
     protected bool isInit;
     public Vector2Int mapCoords;
     SpriteRenderer shadow;
+    public bool showShadow = true;
     public float shadowSize = 1;
     public Vector2 pivotOffset;
     public float yPositionOffsetForComparePosition = .5f;
@@ -125,7 +126,7 @@ public class EntityBase : MonoBehaviour
 
         transform.position = new Vector3(worldPosition.x + pivotOffset.x, worldPosition.y - pivotOffset.y + worldPosition.z);
 
-        UpdateShadow(zJumpPosition > 0, position);
+        UpdateShadow(showShadow, position);
     }
 
     void UpdateShadow(bool show, Vector2 position)
