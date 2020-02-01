@@ -34,7 +34,7 @@ public class AreaController : MonoBehaviour
         {
             for (int j = 0; j < MapsController.mapSize; j++)
             {
-                areas[i, j] = new Area(Area.AreaState.Normal);
+                areas[i, j] = new Area(Area.AreaState.Normal, new Vector2Int(i,j));
             }
         }
         curAreaSize = MapsController.mapSize - 1;
@@ -56,7 +56,6 @@ public class AreaController : MonoBehaviour
         return 3f / curAreaLevel;
     }
 
-    void Update() { }
 
     void StartTimer(int timer, Action<int> onTimerTick, Action OnTimerEnd = null)
     {
@@ -239,6 +238,8 @@ public class AreaController : MonoBehaviour
         }
 
         public AreaState curAreaState;
+        public Vector2Int coords;
+        public int enemiesCount;
 
         public void ChangeState(AreaState state)
         {
@@ -255,9 +256,10 @@ public class AreaController : MonoBehaviour
 
         public Area() { }
 
-        public Area(AreaState curAreaState)
+        public Area(AreaState curAreaState, Vector2Int coords)
         {
             this.curAreaState = curAreaState;
+            this.coords = coords;
         }
     }
 

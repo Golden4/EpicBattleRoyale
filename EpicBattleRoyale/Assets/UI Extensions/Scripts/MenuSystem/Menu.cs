@@ -12,8 +12,8 @@
 
         protected void OnDestroy()
         {
-            Instance = null;
             OnCleanUp();
+            Instance = null;
         }
 
         protected static void Open()
@@ -38,9 +38,7 @@
             MenuManager.Instance.CloseMenu(Instance);
 
         }
-
-
-
+        
         public override void OnBackPressed()
         {
             Close();

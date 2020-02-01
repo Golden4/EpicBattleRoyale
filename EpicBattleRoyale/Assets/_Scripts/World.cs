@@ -10,7 +10,7 @@ public class World : MonoBehaviour
     public Player player;
 
     public List<CharacterBase> allCharacters = new List<CharacterBase>();
-    public Dictionary<Vector2Int, List<EntityBase>> entities = new Dictionary<Vector2Int, List<EntityBase>>();
+    public Dictionary<Vector2Int, List<Enemy>> enemyEntities = new Dictionary<Vector2Int, List<Enemy>>();
 
     public static event Action<Player> OnPlayerSpawn;
     public static event Action<Enemy> OnEnemySpawn;
@@ -25,8 +25,9 @@ public class World : MonoBehaviour
 
     void Start()
     {
-        SpawnCharacterPlayer(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
-
+        Player player = SpawnCharacterPlayer(Vector2Int.zero, GameAssets.CharacterList.Soldier, new Vector3(0, -3f));
+        ((AutomaticWeapon)player.weaponController.GiveWeapon(GameAssets.WeaponsList.AK12)).bulletSystem.GiveBullets(50);
+        // player.characterBase.characterInventory.AddItem(GameAssets.Get.pickUpItems.GetPickUpItem(GameAssets.PickUpItemsData.AmmoList.Ammo556mm).)
         int spawnedEnemyCount = 0;
 
         while (spawnedEnemyCount < GameController.CHARACTERS_COUNT_MAX - 1)
@@ -61,6 +62,8 @@ public class World : MonoBehaviour
 
         enemy.characterBase.characterMapNavigate.ChangeMap(mapCoords);
         enemy.characterBase.MoveToPosition(position, true);
+
+        AddEntity(mapCoords, enemy);
 
         if (OnEnemySpawn != null)
         {
@@ -238,13 +241,29 @@ public class World : MonoBehaviour
         }
     }
 
-    public void AddEntity(Vector2Int mapCoords, EntityBase entity)
+    public void AddEntity(Vector2Int mapCoords, Enemy entity)
     {
-        entities[mapCoords].Add(entity);
+        if (!enemyEntities.ContainsKey(mapCoords))
+        {
+            enemyEntities[mapCoords] = new List<Enemy>();
+        }
+
+        enemyEntities[mapCoords].Add(entity);
     }
 
-    public void RemoveEntity(Vector2Int mapCoords, EntityBase entity)
+    public void RemoveEntity(Vector2Int mapCoords, Enemy entity)
     {
-        entities[mapCoords].Remove(entity);
+        enemyEntities[mapCoords].Remove(entity);
     }
+
+    public int GetCurrentEntityCount()
+    {
+        return GetEntityCountInCoords(MapsController.Ins.curMapCoords);
+    }
+
+    public int GetEntityCountInCoords(Vector2Int coords)
+    {
+        return enemyEntities[coords].Count;
+    }
+
 }

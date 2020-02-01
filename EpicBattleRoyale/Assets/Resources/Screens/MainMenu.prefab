@@ -4971,7 +4971,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  fixedTime: 1
+  fixedTime: 0
   foundShader: {fileID: 4800000, guid: e064104788d94b349ab13141a30b5660, type: 3}
 --- !u!1 &3357184433901420507
 GameObject:

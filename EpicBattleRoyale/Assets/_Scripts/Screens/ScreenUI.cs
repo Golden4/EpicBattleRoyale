@@ -29,6 +29,12 @@ public class ScreenUI : SimpleMenu<ScreenUI>
 
         AreaController.OnStartDecresingArea += OnStartDecresingArea;
         AreaController.OnNextDecreasingArea += OnNextDecreasingArea;
+    }
+
+
+    public override void OnShow()
+    {
+        base.OnShow();
         UpdateAlifeAmount(GameController.CHARACTERS_COUNT_MAX);
         UpdateKillsAmount(0);
     }
@@ -113,6 +119,8 @@ public class ScreenUI : SimpleMenu<ScreenUI>
         if (Player.Ins != null)
         {
             Player.Ins.characterBase.OnKill -= OnKill;
+            Player.Ins.characterBase.OnIsOnArea -= OnIsOnArea;
+            Player.Ins.characterBase.OnOutOfArea -= OnOutOfArea;
         }
     }
 
@@ -124,9 +132,7 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     void OnDieStatic(LivingEntity characterBase)
     {
         if ((characterBase as CharacterBase) != null)
-            UpdateAlifeAmount(World.Ins.allCharacters.Count);
-
-
+            UpdateAlifeAmount(World.Ins.GetCurrentEntityCount());
     }
 
     void UpdateAlifeAmount(int count)
@@ -138,4 +144,5 @@ public class ScreenUI : SimpleMenu<ScreenUI>
     {
         killsAmount.text = string.Format("<color=white>{0}</color> <size=14>KILLS</size>", count);
     }
+
 }

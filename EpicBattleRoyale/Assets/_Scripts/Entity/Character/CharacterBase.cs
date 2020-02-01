@@ -225,6 +225,7 @@ public class CharacterBase : LivingEntity
         showShadow = false;
         UpdateShadow(showShadow);
 
+        animator.Play("Die" + shootEnemyDirection, 0);
         animator.SetInteger("Die", shootEnemyDirection);
 
         FadeCharacter(delegate
@@ -305,7 +306,6 @@ public class CharacterBase : LivingEntity
             else if (hitCooldown > 0)
             {
                 hitCooldown -= Time.fixedDeltaTime;
-                Debug.Log(hitCooldown);
                 animationSpeed = .8f;
 
                 if (moveDir.x != 0)

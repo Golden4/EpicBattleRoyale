@@ -62,20 +62,6 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
 
-                // foreach (var menu in menuStack)
-                // {
-
-                //     if (menu == instance)
-                //     {
-                //         menu.gameObject.GetComponent<GraphicRaycaster>().enabled = true;
-                //     }
-                //     else
-                //     {
-                //         menu.gameObject.GetComponent<GraphicRaycaster>().enabled = false;
-                //     }
-
-                // }
-
                 var topCanvas = instance.GetComponent<Canvas>();
                 var previousCanvas = menuStack.Peek().GetComponent<Canvas>();
                 topCanvas.sortingOrder = previousCanvas.sortingOrder + 1;

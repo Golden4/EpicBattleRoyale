@@ -186,6 +186,7 @@ public class HealthArmorUI : MonoBehaviour
         bars[1].SetAnimatedAmount(healthSystem.GetArmor());
     }
 
+#if UNITY_EDITOR
     void Update()
     {
         if (Debug.isDebugBuild)
@@ -211,4 +212,5 @@ public class HealthArmorUI : MonoBehaviour
         }
     }
 
+#endif
 }

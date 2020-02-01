@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class AutomaticWeapon : Weapon
 {
@@ -178,6 +179,9 @@ public class AutomaticWeapon : Weapon
         bulletSystem.ShotBullet(1);
 
         Shell.SpawnShell(shellPoint.position, shellPoint.localEulerAngles, weaponType);
+
+        if (wc.cb.isPlayer)
+            CameraController.Ins.ShakeCamera(fireRate / 1.5f);
 
         // ParticlesController.Ins.PlayMuzzleFlashParticle(muzzlePoint.transform.position + Vector3.right * .2f, muzzlePoint.transform.localEulerAngles);
 

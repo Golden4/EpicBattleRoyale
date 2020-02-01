@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
         Ins = this;
 
+        characterBase.isPlayer = true;
+
         this.characterBase = characterBase;
         characterBase.Setup();
 

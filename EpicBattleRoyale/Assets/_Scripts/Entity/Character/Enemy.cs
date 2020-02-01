@@ -63,7 +63,7 @@ public class Enemy : MonoBehaviour
 
     void OnDie(LivingEntity characterBase)
     {
-
+        World.Ins.RemoveEntity(characterBase.mapCoords, this);
     }
 
     public bool FindClosestTargetItem()
